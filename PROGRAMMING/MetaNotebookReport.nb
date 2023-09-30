@@ -1,0 +1,975 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.4' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     40710,        967]
+NotebookOptionsPosition[     40225,        945]
+NotebookOutlinePosition[     40613,        962]
+CellTagsIndexPosition[     40570,        959]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["A Single Expression To Evaluate", "Subchapter",
+ CellChangeTimes->{{3.669629148002792*^9, 3.66962915743342*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+     "myNotebook", ",", "myCells", ",", "myStyles", ",", "myDemoIntegral", 
+      ",", "myDemoSolution", ",", "myMathGroup", ",", "myItemGroup", ",", 
+      "myNumberedGroup", ",", "myCode", ",", "myProgramText", ",", 
+      "myMeatyContentGroup", ",", "mySectionGroup", ",", "myDocumentGroup", 
+      ",", "myFontFunction", ",", "myDefaultStyles", ",", 
+      "myNonDefaultStyles"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"myDemoIntegral", "=", 
+      RowBox[{"RowBox", "[", 
+       RowBox[{"{", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"RowBox", "[", 
+          RowBox[{"{", 
+           RowBox[{"\"\<\[Integral]\>\"", ",", 
+            RowBox[{"RowBox", "[", 
+             RowBox[{"{", 
+              RowBox[{"\"\<x\>\"", ",", 
+               RowBox[{"RowBox", "[", 
+                RowBox[{"{", 
+                 RowBox[{"\"\<\[DifferentialD]\>\"", ",", "\"\<x\>\""}], 
+                 "}"}], "]"}]}], "}"}], "]"}]}], "}"}], "]"}], ",", 
+         "\[IndentingNewLine]", "\"\<+\>\"", ",", 
+         RowBox[{"SqrtBox", "[", "\"\<z\>\"", "]"}]}], "}"}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"myDemoSolution", "=", 
+      RowBox[{"RowBox", "[", 
+       RowBox[{"{", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"FractionBox", "[", 
+          RowBox[{
+           RowBox[{"SuperscriptBox", "[", 
+            RowBox[{"\"\<x\>\"", ",", "\"\<2\>\""}], "]"}], ",", 
+           "\"\<2\>\""}], "]"}], ",", "\[IndentingNewLine]", "\"\<+\>\"", ",", 
+         RowBox[{"SqrtBox", "[", "\"\<z\>\"", "]"}]}], "}"}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"myMathGroup", "=", 
+      RowBox[{"CellGroupData", "[", 
+       RowBox[{
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Cell", "[", 
+           RowBox[{
+            RowBox[{"BoxData", "[", "myDemoIntegral", "]"}], ",", 
+            "\"\<Input\>\""}], "]"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{
+            RowBox[{"BoxData", "[", "myDemoSolution", "]"}], ",", 
+            "\"\<Output\>\""}], "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
+        "Open"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"myItemGroup", "=", 
+      RowBox[{"CellGroupData", "[", 
+       RowBox[{
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Item\>\"", ",", "\"\<Item\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<ItemParagraph\>\"", ",", "\"\<ItemParagraph\>\""}], 
+           "]"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"CellGroupData", "[", 
+            RowBox[{
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"Cell", "[", 
+                RowBox[{"\"\<Subitem\>\"", ",", "\"\<Subitem\>\""}], "]"}], 
+               ",", "\[IndentingNewLine]", 
+               RowBox[{"Cell", "[", 
+                RowBox[{
+                "\"\<SubitemParagraph\>\"", ",", "\"\<SubitemParagraph\>\""}],
+                 "]"}], ",", "\[IndentingNewLine]", 
+               RowBox[{"Cell", "[", 
+                RowBox[{"CellGroupData", "[", 
+                 RowBox[{
+                  RowBox[{"{", "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"Cell", "[", 
+                    RowBox[{"\"\<Subsubitem\>\"", ",", "\"\<Subsubitem\>\""}],
+                     "]"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"Cell", "[", 
+                    RowBox[{
+                    "\"\<SubsubitemParagraph\>\"", ",", 
+                    "\"\<SubsubitemParagraph\>\""}], "]"}]}], "}"}], ",", 
+                  "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",",
+              "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",", 
+        "\[IndentingNewLine]", "Open"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"myNumberedGroup", "=", 
+      RowBox[{"CellGroupData", "[", 
+       RowBox[{
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<ItemNumbered\>\"", ",", "\"\<ItemNumbered\>\""}], 
+           "]"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<ItemParagraph\>\"", ",", "\"\<ItemParagraph\>\""}], 
+           "]"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"CellGroupData", "[", 
+            RowBox[{
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"Cell", "[", 
+                RowBox[{
+                "\"\<SubitemNumbered\>\"", ",", "\"\<SubitemNumbered\>\""}], 
+                "]"}], ",", "\[IndentingNewLine]", 
+               RowBox[{"Cell", "[", 
+                RowBox[{
+                "\"\<SubitemParagraph\>\"", ",", "\"\<SubitemParagraph\>\""}],
+                 "]"}], ",", "\[IndentingNewLine]", 
+               RowBox[{"Cell", "[", 
+                RowBox[{"CellGroupData", "[", 
+                 RowBox[{
+                  RowBox[{"{", "\[IndentingNewLine]", 
+                   RowBox[{
+                    RowBox[{"Cell", "[", 
+                    RowBox[{
+                    "\"\<SubsubitemNumbered\>\"", ",", 
+                    "\"\<SubsubitemNumbered\>\""}], "]"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"Cell", "[", 
+                    RowBox[{
+                    "\"\<SubsubitemParagraph\>\"", ",", 
+                    "\"\<SubsubitemParagraph\>\""}], "]"}]}], "}"}], ",", 
+                  "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",",
+              "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",", 
+        "\[IndentingNewLine]", "Open"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"myCode", "=", 
+      RowBox[{"RowBox", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"RowBox", "[", 
+          RowBox[{"{", 
+           RowBox[{
+           "\"\<fun\>\"", ",", "\"\<[\>\"", ",", "\"\<x_\>\"", ",", 
+            "\"\<]\>\""}], "}"}], "]"}], ",", "\"\<:=\>\"", ",", 
+         "\"\<1\>\""}], "}"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{
+     "myProgramText", "=", 
+      "\"\<\\<DLLEXPORT int fun(WolframLibraryData libData, mreal A1, mreal \
+*Res)\n{\n mreal R0_0;\n mreal R0_1;\n R0_0 = A1;\n R0_1 = R0_0 * R0_0;\n \
+*Res = R0_1;\n funStructCompile->WolframLibraryData_cleanUp(libData, 1);\n \
+return 0;\n}\\>\>\""}], ";", "\[IndentingNewLine]", 
+     RowBox[{"myMeatyContentGroup", "=", 
+      RowBox[{"CellGroupData", "[", 
+       RowBox[{
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Subsubsection\>\"", ",", "\"\<Subsubsection\>\""}], 
+           "]"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Text\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", "myMathGroup", "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", "myItemGroup", "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", "myNumberedGroup", "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<DisplayFormula\>\"", ",", "\"\<Text\>\""}], "]"}], 
+          ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{
+            RowBox[{"BoxData", "[", 
+             RowBox[{"FormBox", "[", 
+              RowBox[{"myDemoIntegral", ",", "TraditionalForm"}], "]"}], 
+             "]"}], ",", "\"\<DisplayFormula\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{
+            RowBox[{"TextData", "[", 
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{"\"\<InlineFormula: \>\"", ",", "\[IndentingNewLine]", 
+               RowBox[{"Cell", "[", 
+                RowBox[{"BoxData", "[", 
+                 RowBox[{"FormBox", "[", 
+                  RowBox[{"myDemoSolution", ",", "TraditionalForm"}], "]"}], 
+                 "]"}], "]"}], ",", "\[IndentingNewLine]", "\"\<.\>\""}], 
+              "}"}], "]"}], ",", "\[IndentingNewLine]", "\"\<Text\>\""}], 
+           "]"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<NumberedDisplay\>\"", ",", "\"\<Text\>\""}], "]"}], 
+          ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{
+            RowBox[{"BoxData", "[", 
+             RowBox[{"FormBox", "[", 
+              RowBox[{"myDemoIntegral", ",", "TraditionalForm"}], "]"}], 
+             "]"}], ",", "\"\<DisplayFormulaNumbered\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Code\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{
+            RowBox[{"BoxData", "[", "myCode", "]"}], ",", "\"\<Code\>\""}], 
+           "]"}], ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Program\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"myProgramText", ",", "\"\<Program\>\""}], "]"}]}], "}"}], 
+        ",", "\[IndentingNewLine]", "Open"}], "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"mySectionGroup", "=", 
+      RowBox[{"CellGroupData", "[", 
+       RowBox[{
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Section\>\"", ",", "\"\<Section\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"CellGroupData", "[", 
+            RowBox[{
+             RowBox[{"{", "\[IndentingNewLine]", 
+              RowBox[{
+               RowBox[{"Cell", "[", 
+                RowBox[{"\"\<Subsection\>\"", ",", "\"\<Subsection\>\""}], 
+                "]"}], ",", "\[IndentingNewLine]", 
+               RowBox[{"Cell", "[", "myMeatyContentGroup", "]"}]}], "}"}], 
+             ",", "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",",
+         "\[IndentingNewLine]", "Open"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"myDocumentGroup", "=", 
+      RowBox[{"CellGroupData", "[", 
+       RowBox[{
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Title\>\"", ",", "\"\<Title\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Subtitle\>\"", ",", "\"\<Subtitle\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Subsubtitle\>\"", ",", "\"\<Subsubtitle\>\""}], "]"}],
+           ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Author\>\"", ",", "\"\<Author\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Department\>\"", ",", "\"\<Department\>\""}], "]"}], 
+          ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Date\>\"", ",", "\"\<Date\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Chapter\>\"", ",", "\"\<Chapter\>\""}], "]"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", 
+           RowBox[{"\"\<Subchapter\>\"", ",", "\"\<Subchapter\>\""}], "]"}], 
+          ",", "\[IndentingNewLine]", 
+          RowBox[{"Cell", "[", "mySectionGroup", "]"}]}], "}"}], ",", 
+        "\[IndentingNewLine]", "Open"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"myCells", "=", 
+      RowBox[{"{", 
+       RowBox[{"Cell", "[", "myDocumentGroup", "]"}], "}"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"myFontFunction", "[", 
+       RowBox[{"siz_", ",", 
+        RowBox[{"fam_:", "\"\<Candara\>\""}], ",", 
+        RowBox[{"wgt_:", "\"\<Plain\>\""}], ",", 
+        RowBox[{"slt_:", "\"\<Plain\>\""}]}], "]"}], ":=", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"FontFamily", "\[Rule]", "fam"}], ",", 
+        RowBox[{"FontSize", "\[Rule]", "siz"}], ",", 
+        RowBox[{"FontWeight", "\[Rule]", "wgt"}], ",", 
+        RowBox[{"FontSlant", "\[Rule]", "slt"}]}], "}"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"myDefaultStyles", "=", 
+      RowBox[{"{", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"\"\<Title\>\"", ",", "44"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Subtitle\>\"", ",", "24"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Subsubtitle\>\"", ",", "16"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Author\>\"", ",", "14"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Department\>\"", ",", "11"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Date\>\"", ",", "11"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Chapter\>\"", ",", "34"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Subchapter\>\"", ",", "28"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Section\>\"", ",", "28"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Subsection\>\"", ",", "20"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Subsubsection\>\"", ",", "19"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Text\>\"", ",", "14"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Item\>\"", ",", "15"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<ItemParagraph\>\"", ",", "14"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Subitem\>\"", ",", "13.5"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<SubitemParagraph\>\"", ",", "13.5"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<Subsubitem\>\"", ",", "13"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<SubsubitemParagraph\>\"", ",", "13"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<ItemNumbered\>\"", ",", "15"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<SubitemNumbered\>\"", ",", "13.5"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<SubsubitemNumbered\>\"", ",", "13"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{"\"\<DisplayFormula\>\"", ",", "14"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\"\<DisplayFormulaNumbered\>\"", ",", "14"}], "}"}]}], 
+       "}"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"myNonDefaultStyles", "=", 
+      RowBox[{"{", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<InlineFormula\>\"", ",", "12.6", ",", "\"\<Palatino\>\"", ",", 
+          "\"\<Plain\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Code\>\"", ",", "12", ",", "\"\<Inconsolata\>\"", ",", 
+          "\"\<Bold\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Program\>\"", ",", "12", ",", "\"\<Courier\>\"", ",", 
+          "\"\<Plain\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Input\>\"", ",", "13", ",", "\"\<Inconsolata\>\"", ",", 
+          "\"\<Bold\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Output\>\"", ",", "13", ",", "\"\<Inconsolata\>\"", ",", 
+          "\"\<Plain\>\""}], "}"}]}], "}"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"myStyles", "=", 
+      RowBox[{"{", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Cell", "[", 
+         RowBox[{"StyleData", "[", "\[IndentingNewLine]", 
+          RowBox[{"StyleDefinitions", "\[Rule]", 
+           RowBox[{"FrontEnd`FileName", "[", 
+            RowBox[{
+             RowBox[{"{", "\"\<Report\>\"", "}"}], ",", 
+             "\"\<StandardReport.nb\>\"", ",", 
+             RowBox[{"CharacterEncoding", "\[Rule]", "\"\<UTF-8\>\""}]}], 
+            "]"}]}], "]"}], "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"Sequence", "@@", 
+         RowBox[{"MapThread", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Cell", "[", 
+             RowBox[{
+              RowBox[{"StyleData", "[", "#1", "]"}], ",", 
+              RowBox[{"myFontFunction", "[", "#2", "]"}]}], "]"}], "&"}], ",",
+            "\[IndentingNewLine]", 
+           RowBox[{"Transpose", "[", "myDefaultStyles", "]"}]}], "]"}]}], ",",
+         "\[IndentingNewLine]", 
+        RowBox[{"Sequence", "@@", 
+         RowBox[{"MapThread", "[", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Cell", "[", 
+             RowBox[{
+              RowBox[{"StyleData", "[", "#1", "]"}], ",", 
+              RowBox[{"myFontFunction", "[", 
+               RowBox[{"#2", ",", "#3", ",", "#4"}], "]"}]}], "]"}], "&"}], 
+           ",", "\[IndentingNewLine]", 
+           RowBox[{"Transpose", "[", "myNonDefaultStyles", "]"}]}], "]"}]}]}],
+        "}"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"CreateDocument", "[", "\[IndentingNewLine]", 
+      RowBox[{"myNotebook", "=", 
+       RowBox[{"Notebook", "[", "\[IndentingNewLine]", 
+        RowBox[{"myCells", ",", "\[IndentingNewLine]", 
+         RowBox[{"StyleDefinitions", "\[Rule]", 
+          RowBox[{"Notebook", "[", "\[IndentingNewLine]", 
+           RowBox[{"myStyles", ",", "\[IndentingNewLine]", 
+            RowBox[{"Visible", "\[Rule]", "False"}]}], "]"}]}]}], "]"}]}], 
+      "]"}]}]}], "]"}], ";"}]], "Input",
+ CellChangeTimes->{{3.669571935503723*^9, 3.669571951266981*^9}, {
+   3.669572016760468*^9, 3.669572110052988*^9}, {3.6695727430519953`*^9, 
+   3.6695728824299726`*^9}, {3.6695729219251328`*^9, 3.669572934827523*^9}, {
+   3.669572968554088*^9, 3.6695731933144703`*^9}, {3.669573267447674*^9, 
+   3.669573357979178*^9}, {3.669573447611719*^9, 3.669573688769038*^9}, {
+   3.669573822723132*^9, 3.669573860743976*^9}, {3.669579108633403*^9, 
+   3.6695791281441593`*^9}, {3.669579179335753*^9, 3.6695791892456617`*^9}, {
+   3.6695792802127333`*^9, 3.6695792870416737`*^9}, {3.6695794138615522`*^9, 
+   3.669579520588853*^9}, {3.669579604992016*^9, 3.6695796176882133`*^9}, {
+   3.669579649461794*^9, 3.6695797296061487`*^9}, {3.6695797759545507`*^9, 
+   3.6695797808059273`*^9}, {3.669579845203726*^9, 3.669579912071865*^9}, {
+   3.669579952647655*^9, 3.669580006358116*^9}, {3.6695800395258293`*^9, 
+   3.669580076797332*^9}, {3.669580113866693*^9, 3.669580231809219*^9}, {
+   3.6695802899151497`*^9, 3.669580352110798*^9}, {3.669580419534292*^9, 
+   3.669580453030027*^9}, {3.669580528811816*^9, 3.669580535337978*^9}, {
+   3.669580567346594*^9, 3.6695805675122004`*^9}, {3.6695806850935783`*^9, 
+   3.669580715962619*^9}, 3.669580751597681*^9, {3.6695807834050913`*^9, 
+   3.669580786844294*^9}, 3.6695808969365263`*^9, {3.6695809576789007`*^9, 
+   3.669581021396688*^9}, {3.669581055358582*^9, 3.669581080110059*^9}, {
+   3.669581120980226*^9, 3.6695811347813787`*^9}, {3.669581186945167*^9, 
+   3.669581278692338*^9}, {3.669581390536378*^9, 3.66958142464412*^9}, {
+   3.6695814914991913`*^9, 3.669581599735941*^9}, {3.669581663160749*^9, 
+   3.669581910541813*^9}, {3.66958194242551*^9, 3.6695821098515987`*^9}, {
+   3.669582145283003*^9, 3.6695821732953377`*^9}, {3.6695822979813023`*^9, 
+   3.6695825220413094`*^9}, {3.669582574321889*^9, 3.6695826185516787`*^9}, {
+   3.669582667532111*^9, 3.669582724830551*^9}, {3.669582759197425*^9, 
+   3.669582785459545*^9}, {3.6695828523544416`*^9, 3.6695829267056503`*^9}, {
+   3.66958299969949*^9, 3.669583078080311*^9}, {3.669583122314938*^9, 
+   3.669583136850498*^9}, {3.669583617475178*^9, 3.669583846139545*^9}, 
+   3.669583984240184*^9, {3.6695842415715837`*^9, 3.6695843133424053`*^9}, {
+   3.6695844008077793`*^9, 3.669584444095378*^9}, {3.669584517994347*^9, 
+   3.669584623205496*^9}, {3.669584696054817*^9, 3.6695847330751*^9}, {
+   3.6695847720316896`*^9, 3.669584773312784*^9}, {3.669584860238227*^9, 
+   3.669584860405793*^9}, {3.669584953267871*^9, 3.6695849551317472`*^9}, {
+   3.669585023681703*^9, 3.669585066375876*^9}, {3.6695851597522583`*^9, 
+   3.6695852212985373`*^9}, {3.6695853283100348`*^9, 3.669585367597109*^9}, {
+   3.6695854005332747`*^9, 3.6695854456737022`*^9}, {3.669585485113538*^9, 
+   3.669585503102273*^9}, {3.669585535071554*^9, 3.669585635571169*^9}, {
+   3.669585761245964*^9, 3.6695858566742687`*^9}, {3.669586026948874*^9, 
+   3.669586043768531*^9}, {3.669627098012575*^9, 3.669627125174547*^9}}]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Functional Refactoring", "Subchapter",
+ CellChangeTimes->{{3.669629176038198*^9, 3.669629180238298*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{
+   "myNotebook", ",", "myStyles", ",", "myDemoIntegral", ",", 
+    "myDemoSolution", ",", "myMathGroup", ",", "myItemGroup", ",", 
+    "myNumberedGroup", ",", "myCode", ",", "myProgramText", ",", 
+    "myMeatyContentGroup", ",", "mySectionGroup", ",", "myDocumentGroup", ",",
+     "myFontFunction", ",", "myDefaultStyles", ",", "myNonDefaultStyles"}], 
+   "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myNotebook", "[", 
+    RowBox[{"myStyles_", ",", "myDocumentGroup_"}], "]"}], ":=", 
+   "\[IndentingNewLine]", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "result", "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"CreateDocument", "[", "\[IndentingNewLine]", 
+       RowBox[{"result", "=", 
+        RowBox[{"Notebook", "[", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"Cell", "[", "myDocumentGroup", "]"}], "}"}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"StyleDefinitions", "\[Rule]", 
+           RowBox[{"Notebook", "[", "\[IndentingNewLine]", 
+            RowBox[{"myStyles", ",", "\[IndentingNewLine]", 
+             RowBox[{"Visible", "\[Rule]", "False"}]}], "]"}]}]}], "]"}]}], 
+       "]"}], ";", "\[IndentingNewLine]", "result"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myDemoIntegral", "[", "]"}], ":=", "\[IndentingNewLine]", 
+   RowBox[{"RowBox", "[", 
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"RowBox", "[", 
+       RowBox[{"{", 
+        RowBox[{"\"\<\[Integral]\>\"", ",", 
+         RowBox[{"RowBox", "[", 
+          RowBox[{"{", 
+           RowBox[{"\"\<x\>\"", ",", 
+            RowBox[{"RowBox", "[", 
+             RowBox[{"{", 
+              RowBox[{"\"\<\[DifferentialD]\>\"", ",", "\"\<x\>\""}], "}"}], 
+             "]"}]}], "}"}], "]"}]}], "}"}], "]"}], ",", 
+      "\[IndentingNewLine]", "\"\<+\>\"", ",", 
+      RowBox[{"SqrtBox", "[", "\"\<z\>\"", "]"}]}], "}"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myDemoSolution", "[", "]"}], ":=", "\[IndentingNewLine]", 
+   RowBox[{"RowBox", "[", 
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"FractionBox", "[", 
+       RowBox[{
+        RowBox[{"SuperscriptBox", "[", 
+         RowBox[{"\"\<x\>\"", ",", "\"\<2\>\""}], "]"}], ",", "\"\<2\>\""}], 
+       "]"}], ",", "\[IndentingNewLine]", "\"\<+\>\"", ",", 
+      RowBox[{"SqrtBox", "[", "\"\<z\>\"", "]"}]}], "}"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myMathGroup", "[", 
+    RowBox[{"input_", ",", "output_"}], "]"}], ":=", 
+   RowBox[{"CellGroupData", "[", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"BoxData", "[", "input", "]"}], ",", "\"\<Input\>\""}], 
+        "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"BoxData", "[", "output", "]"}], ",", "\"\<Output\>\""}], 
+        "]"}]}], "}"}], ",", "\[IndentingNewLine]", "Open"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myItemGroup", "[", "]"}], ":=", 
+   RowBox[{"CellGroupData", "[", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Item\>\"", ",", "\"\<Item\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<ItemParagraph\>\"", ",", "\"\<ItemParagraph\>\""}], 
+        "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"CellGroupData", "[", 
+         RowBox[{
+          RowBox[{"{", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Cell", "[", 
+             RowBox[{"\"\<Subitem\>\"", ",", "\"\<Subitem\>\""}], "]"}], ",", 
+            "\[IndentingNewLine]", 
+            RowBox[{"Cell", "[", 
+             RowBox[{
+             "\"\<SubitemParagraph\>\"", ",", "\"\<SubitemParagraph\>\""}], 
+             "]"}], ",", "\[IndentingNewLine]", 
+            RowBox[{"Cell", "[", 
+             RowBox[{"CellGroupData", "[", 
+              RowBox[{
+               RowBox[{"{", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"Cell", "[", 
+                  RowBox[{"\"\<Subsubitem\>\"", ",", "\"\<Subsubitem\>\""}], 
+                  "]"}], ",", "\[IndentingNewLine]", 
+                 RowBox[{"Cell", "[", 
+                  RowBox[{
+                  "\"\<SubsubitemParagraph\>\"", ",", 
+                   "\"\<SubsubitemParagraph\>\""}], "]"}]}], "}"}], ",", 
+               "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",", 
+          "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", "Open"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myNumberedGroup", "[", "]"}], ":=", 
+   RowBox[{"CellGroupData", "[", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<ItemNumbered\>\"", ",", "\"\<ItemNumbered\>\""}], "]"}], 
+       ",", "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<ItemParagraph\>\"", ",", "\"\<ItemParagraph\>\""}], 
+        "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"CellGroupData", "[", 
+         RowBox[{
+          RowBox[{"{", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Cell", "[", 
+             RowBox[{
+             "\"\<SubitemNumbered\>\"", ",", "\"\<SubitemNumbered\>\""}], 
+             "]"}], ",", "\[IndentingNewLine]", 
+            RowBox[{"Cell", "[", 
+             RowBox[{
+             "\"\<SubitemParagraph\>\"", ",", "\"\<SubitemParagraph\>\""}], 
+             "]"}], ",", "\[IndentingNewLine]", 
+            RowBox[{"Cell", "[", 
+             RowBox[{"CellGroupData", "[", 
+              RowBox[{
+               RowBox[{"{", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"Cell", "[", 
+                  RowBox[{
+                  "\"\<SubsubitemNumbered\>\"", ",", 
+                   "\"\<SubsubitemNumbered\>\""}], "]"}], ",", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"Cell", "[", 
+                  RowBox[{
+                  "\"\<SubsubitemParagraph\>\"", ",", 
+                   "\"\<SubsubitemParagraph\>\""}], "]"}]}], "}"}], ",", 
+               "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",", 
+          "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", "Open"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myCode", "[", "]"}], ":=", 
+   RowBox[{"RowBox", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"RowBox", "[", 
+       RowBox[{"{", 
+        RowBox[{
+        "\"\<fun\>\"", ",", "\"\<[\>\"", ",", "\"\<x_\>\"", ",", 
+         "\"\<]\>\""}], "}"}], "]"}], ",", "\"\<:=\>\"", ",", "\"\<1\>\""}], 
+     "}"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myProgramText", "[", "]"}], ":=", 
+   "\"\<\\<DLLEXPORT int fun(WolframLibraryData libData, mreal A1, mreal \
+*Res)\n{\n mreal R0_0;\n mreal R0_1;\n R0_0 = A1;\n R0_1 = R0_0 * R0_0;\n \
+*Res = R0_1;\n funStructCompile->WolframLibraryData_cleanUp(libData, 1);\n \
+return 0;\n}\\>\>\""}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myMeatyContentGroup", "[", "]"}], ":=", 
+   RowBox[{"CellGroupData", "[", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Subsubsection\>\"", ",", "\"\<Subsubsection\>\""}], 
+        "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Text\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"myMathGroup", "[", 
+         RowBox[{
+          RowBox[{"myDemoIntegral", "[", "]"}], ",", 
+          RowBox[{"myDemoSolution", "[", "]"}]}], "]"}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"myItemGroup", "[", "]"}], "]"}], ",", "\[IndentingNewLine]", 
+       
+       RowBox[{"Cell", "[", 
+        RowBox[{"myNumberedGroup", "[", "]"}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<DisplayFormula\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"BoxData", "[", 
+          RowBox[{"FormBox", "[", 
+           RowBox[{
+            RowBox[{"myDemoIntegral", "[", "]"}], ",", "TraditionalForm"}], 
+           "]"}], "]"}], ",", "\"\<DisplayFormula\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"TextData", "[", 
+          RowBox[{"{", "\[IndentingNewLine]", 
+           RowBox[{"\"\<InlineFormula: \>\"", ",", "\[IndentingNewLine]", 
+            RowBox[{"Cell", "[", 
+             RowBox[{"BoxData", "[", 
+              RowBox[{"FormBox", "[", 
+               RowBox[{
+                RowBox[{"myDemoSolution", "[", "]"}], ",", 
+                "TraditionalForm"}], "]"}], "]"}], "]"}], ",", 
+            "\[IndentingNewLine]", "\"\<.\>\""}], "}"}], "]"}], ",", 
+         "\[IndentingNewLine]", "\"\<Text\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<NumberedDisplay\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"BoxData", "[", 
+          RowBox[{"FormBox", "[", 
+           RowBox[{
+            RowBox[{"myDemoIntegral", "[", "]"}], ",", "TraditionalForm"}], 
+           "]"}], "]"}], ",", "\"\<DisplayFormulaNumbered\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Code\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"BoxData", "[", 
+          RowBox[{"myCode", "[", "]"}], "]"}], ",", "\"\<Code\>\""}], "]"}], 
+       ",", "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Program\>\"", ",", "\"\<Text\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"myProgramText", "[", "]"}], ",", "\"\<Program\>\""}], 
+        "]"}]}], "}"}], ",", "\[IndentingNewLine]", "Open"}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"mySectionGroup", "[", "]"}], ":=", 
+   RowBox[{"CellGroupData", "[", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Section\>\"", ",", "\"\<Section\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"CellGroupData", "[", 
+         RowBox[{
+          RowBox[{"{", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Cell", "[", 
+             RowBox[{"\"\<Subsection\>\"", ",", "\"\<Subsection\>\""}], "]"}],
+             ",", "\[IndentingNewLine]", 
+            RowBox[{"Cell", "[", 
+             RowBox[{"myMeatyContentGroup", "[", "]"}], "]"}]}], "}"}], ",", 
+          "\[IndentingNewLine]", "Open"}], "]"}], "]"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", "Open"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myDocumentGroup", "[", "]"}], ":=", 
+   RowBox[{"CellGroupData", "[", 
+    RowBox[{
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Title\>\"", ",", "\"\<Title\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Subtitle\>\"", ",", "\"\<Subtitle\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Subsubtitle\>\"", ",", "\"\<Subsubtitle\>\""}], "]"}], 
+       ",", "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Author\>\"", ",", "\"\<Author\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Department\>\"", ",", "\"\<Department\>\""}], "]"}], ",",
+        "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Date\>\"", ",", "\"\<Date\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Chapter\>\"", ",", "\"\<Chapter\>\""}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"\"\<Subchapter\>\"", ",", "\"\<Subchapter\>\""}], "]"}], ",",
+        "\[IndentingNewLine]", 
+       RowBox[{"Cell", "[", 
+        RowBox[{"mySectionGroup", "[", "]"}], "]"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", "Open"}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myFontFunction", "[", 
+    RowBox[{"siz_", ",", 
+     RowBox[{"fam_:", "\"\<Candara\>\""}], ",", 
+     RowBox[{"wgt_:", "\"\<Plain\>\""}], ",", 
+     RowBox[{"slt_:", "\"\<Plain\>\""}]}], "]"}], ":=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"FontFamily", "\[Rule]", "fam"}], ",", 
+     RowBox[{"FontSize", "\[Rule]", "siz"}], ",", 
+     RowBox[{"FontWeight", "\[Rule]", "wgt"}], ",", 
+     RowBox[{"FontSlant", "\[Rule]", "slt"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myDefaultStyles", "[", "]"}], ":=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<Title\>\"", ",", "44"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Subtitle\>\"", ",", "24"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Subsubtitle\>\"", ",", "16"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Author\>\"", ",", "14"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Department\>\"", ",", "11"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Date\>\"", ",", "11"}], "}"}], ",", "\[IndentingNewLine]", 
+     
+     RowBox[{"{", 
+      RowBox[{"\"\<Chapter\>\"", ",", "34"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Subchapter\>\"", ",", "28"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Section\>\"", ",", "28"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Subsection\>\"", ",", "20"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Subsubsection\>\"", ",", "19"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Text\>\"", ",", "15"}], "}"}], ",", "\[IndentingNewLine]", 
+     
+     RowBox[{"{", 
+      RowBox[{"\"\<Item\>\"", ",", "15"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<ItemParagraph\>\"", ",", "15"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Subitem\>\"", ",", "15"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<SubitemParagraph\>\"", ",", "15"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<Subsubitem\>\"", ",", "15"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<SubsubitemParagraph\>\"", ",", "15"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<ItemNumbered\>\"", ",", "15"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<SubitemNumbered\>\"", ",", "15"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<SubsubitemNumbered\>\"", ",", "15"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"\"\<DisplayFormula\>\"", ",", "15"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<DisplayFormulaNumbered\>\"", ",", "15"}], "}"}]}], "}"}]}],
+   ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myNonDefaultStyles", "[", "]"}], ":=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<InlineFormula\>\"", ",", "15", ",", "\"\<Palatino\>\"", ",", 
+       "\"\<Plain\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Code\>\"", ",", "15", ",", "\"\<Inconsolata\>\"", ",", 
+       "\"\<Bold\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Program\>\"", ",", "15", ",", "\"\<Courier\>\"", ",", 
+       "\"\<Plain\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Input\>\"", ",", "15", ",", "\"\<Inconsolata\>\"", ",", 
+       "\"\<Bold\>\""}], "}"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Output\>\"", ",", "15", ",", "\"\<Inconsolata\>\"", ",", 
+       "\"\<Plain\>\""}], "}"}]}], "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"myStyles", "[", "]"}], ":=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Cell", "[", 
+      RowBox[{"StyleData", "[", "\[IndentingNewLine]", 
+       RowBox[{"StyleDefinitions", "\[Rule]", 
+        RowBox[{"FrontEnd`FileName", "[", 
+         RowBox[{
+          RowBox[{"{", "\"\<Report\>\"", "}"}], ",", 
+          "\"\<StandardReport.nb\>\"", ",", 
+          RowBox[{"CharacterEncoding", "\[Rule]", "\"\<UTF-8\>\""}]}], 
+         "]"}]}], "]"}], "]"}], ",", "\[IndentingNewLine]", 
+     RowBox[{"Sequence", "@@", 
+      RowBox[{"MapThread", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Cell", "[", 
+          RowBox[{
+           RowBox[{"StyleData", "[", "#1", "]"}], ",", 
+           RowBox[{"myFontFunction", "[", "#2", "]"}]}], "]"}], "&"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Transpose", "[", 
+         RowBox[{"myDefaultStyles", "[", "]"}], "]"}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Sequence", "@@", 
+      RowBox[{"MapThread", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Cell", "[", 
+          RowBox[{
+           RowBox[{"StyleData", "[", "#1", "]"}], ",", 
+           RowBox[{"myFontFunction", "[", 
+            RowBox[{"#2", ",", "#3", ",", "#4"}], "]"}]}], "]"}], "&"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Transpose", "[", 
+         RowBox[{"myNonDefaultStyles", "[", "]"}], "]"}]}], "]"}]}]}], 
+    "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"myNotebook", "[", 
+   RowBox[{
+    RowBox[{"myStyles", "[", "]"}], ",", 
+    RowBox[{"myDocumentGroup", "[", "]"}]}], "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.669636687763712*^9, 3.669636696907949*^9}, {
+  3.669637204561595*^9, 3.669637216707596*^9}, {3.669637282025691*^9, 
+  3.669637308089779*^9}, {3.669896204386725*^9, 3.669896245760751*^9}}]
+}, Open  ]]
+},
+WindowSize->{1273, 855},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+Magnification:>1.25 Inherited,
+FrontEndVersion->"10.4 for Mac OS X x86 (32-bit, 64-bit Kernel) (February 25, \
+2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 118, 1, 78, "Subchapter"],
+Cell[701, 25, 21064, 448, 3230, "Input"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[21802, 478, 110, 1, 57, "Subchapter"],
+Cell[21915, 481, 18294, 461, 2679, "Input"]
+}, Open  ]]
+}
+]
+*)
+

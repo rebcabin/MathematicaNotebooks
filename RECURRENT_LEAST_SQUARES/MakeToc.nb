@@ -1,0 +1,161 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      5345,        153]
+NotebookOptionsPosition[      4100,        124]
+NotebookOutlinePosition[      4554,        141]
+CellTagsIndexPosition[      4511,        138]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "AuthorTools`"}]], "Input",
+ CellChangeTimes->{{3.72817164559601*^9, 
+  3.7281716520360613`*^9}},ExpressionUUID->"77769f91-5a3b-46a1-a597-\
+db43d423deb2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Notebooks", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.72817167030893*^9, 
+  3.728171675986261*^9}},ExpressionUUID->"68c30b8c-2d85-4080-a4bd-\
+c762f2c786a8"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   TemplateBox[{FrontEndObject[
+      LinkObject["hvhgv_shm", 3, 1]],74,
+     "FrontEndObject[LinkObject[\"hvhgv_shm\", 3, 1]]","74","\"MakeToc.nb\"",
+     "\"/Users/bbeckman/RecurrentLeastSquares/MakeToc.nb\""},
+    "NotebookObject"], ",", 
+   TemplateBox[{FrontEndObject[
+      LinkObject["hvhgv_shm", 3, 1]],20,
+     "FrontEndObject[LinkObject[\"hvhgv_shm\", 3, 1]]","20",
+     "\"RecurrentLeastSquaresMore.nb\"",
+     "\"/Users/bbeckman/RecurrentLeastSquares/RecurrentLeastSquaresMore.nb\""},
+    "NotebookObject"], ",", 
+   TemplateBox[{FrontEndObject[
+      LinkObject["hvhgv_shm", 3, 1]],15,
+     "FrontEndObject[LinkObject[\"hvhgv_shm\", 3, 1]]","15",
+     "\"DuplicateNotebookPalette.nb\"",
+     "\"/Users/bbeckman/Library/Mathematica/SystemFiles/FrontEnd/Palettes/\
+DuplicateNotebookPalette.nb\""},
+    "NotebookObject"], ",", 
+   TemplateBox[{FrontEndObject[
+      LinkObject["hvhgv_shm", 3, 1]],1,
+     "FrontEndObject[LinkObject[\"hvhgv_shm\", 3, 1]]","1","\"Messages\""},
+    "NotebookObjectUnsaved"]}], "}"}]], "Output",
+ CellChangeTimes->{
+  3.728171676576057*^9, {3.72817171714526*^9, 3.7281717328876133`*^9}, 
+   3.72817359389608*^9},ExpressionUUID->"ff543696-c358-492c-b74c-\
+bcbcd8e15739"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"nb", "=", 
+  RowBox[{"%", "[", 
+   RowBox[{"[", "2", "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.7281717404555693`*^9, 
+  3.728171750950077*^9}},ExpressionUUID->"29b7d39f-378a-4442-aaf4-\
+4b89cbf1d40a"],
+
+Cell[BoxData[
+ TemplateBox[{FrontEndObject[
+    LinkObject["hvhgv_shm", 3, 1]],20,
+   "FrontEndObject[LinkObject[\"hvhgv_shm\", 3, 1]]","20",
+   "\"RecurrentLeastSquaresMore.nb\"",
+   "\"/Users/bbeckman/RecurrentLeastSquares/RecurrentLeastSquaresMore.nb\""},
+  "NotebookObject"]], "Output",
+ CellChangeTimes->{3.7281717515315733`*^9, 
+  3.7281735967291803`*^9},ExpressionUUID->"23d45ebd-1d0f-4daa-8c7f-\
+c7d3458d1f2e"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"Paginate", "[", "nb", "]"}]], "Input",
+ CellChangeTimes->{{3.7281717636419497`*^9, 
+  3.728171769475567*^9}},ExpressionUUID->"3141e934-cc95-4fb8-9ab4-\
+4e2613c8e1c2"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MakeContents", "[", 
+  RowBox[{"nb", ",", "\"\<Book\>\"", ",", 
+   RowBox[{"SelectedCellStyles", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<Title\>\"", ",", "\"\<Chapter\>\"", ",", "\"\<Subchapter\>\"", ",", 
+      "\"\<Subsection\>\"", ",", "\"\<Subsubsection\>\""}], "}"}]}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.72817178720973*^9, 
+  3.7281718563569803`*^9}},ExpressionUUID->"30d6ec22-adce-49c8-9d05-\
+9334e3f6243b"],
+
+Cell[BoxData[
+ TemplateBox[{FrontEndObject[
+    LinkObject["hvhgv_shm", 3, 1]],95,
+   "FrontEndObject[LinkObject[\"hvhgv_shm\", 3, 1]]","95","\"TOC.nb\"",
+   "\"/Users/bbeckman/RecurrentLeastSquares/TOC.nb\""},
+  "NotebookObject"]], "Output",
+ CellChangeTimes->{3.7281718579545383`*^9, 
+  3.728173608692525*^9},ExpressionUUID->"fdd7ab25-223a-411b-8167-\
+5d002b57be98"]
+}, Open  ]],
+
+Cell[BoxData[" "], "Input",
+ CellChangeTimes->{
+  3.7282173838993607`*^9},ExpressionUUID->"142f87db-19bf-49df-a4ac-\
+ddedefe9e61c"]
+},
+WindowSize->{720, 851},
+WindowMargins->{{Automatic, 0}, {Automatic, 0}},
+FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+10, 2017)",
+StyleDefinitions->FrontEnd`FileName[{$RootDirectory, "Users", "bbeckman"}, 
+  "DefaultStyles.nb", CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 183, 4, 41, "Input",ExpressionUUID->"77769f91-5a3b-46a1-a597-db43d423deb2"],
+Cell[CellGroupData[{
+Cell[766, 28, 182, 4, 41, "Input",ExpressionUUID->"68c30b8c-2d85-4080-a4bd-c762f2c786a8"],
+Cell[951, 34, 1249, 28, 80, "Output",ExpressionUUID->"ff543696-c358-492c-b74c-bcbcd8e15739"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2237, 67, 230, 6, 41, "Input",ExpressionUUID->"29b7d39f-378a-4442-aaf4-4b89cbf1d40a"],
+Cell[2470, 75, 418, 9, 50, "Output",ExpressionUUID->"23d45ebd-1d0f-4daa-8c7f-c7d3458d1f2e"]
+}, Open  ]],
+Cell[2903, 87, 190, 4, 41, "Input",ExpressionUUID->"3141e934-cc95-4fb8-9ab4-4e2613c8e1c2"],
+Cell[CellGroupData[{
+Cell[3118, 95, 461, 11, 84, "Input",ExpressionUUID->"30d6ec22-adce-49c8-9d05-9334e3f6243b"],
+Cell[3582, 108, 368, 8, 50, "Output",ExpressionUUID->"fdd7ab25-223a-411b-8167-5d002b57be98"]
+}, Open  ]],
+Cell[3965, 119, 131, 3, 41, "Input",ExpressionUUID->"142f87db-19bf-49df-a4ac-ddedefe9e61c"]
+}
+]
+*)
+

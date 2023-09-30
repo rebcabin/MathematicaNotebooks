@@ -1,0 +1,205 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      5953,        195]
+NotebookOptionsPosition[      4937,        163]
+NotebookOutlinePosition[      5389,        180]
+CellTagsIndexPosition[      5346,        177]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"Sum", "[", 
+    RowBox[{
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{
+        SubscriptBox["x", "i"], "-", "m"}], ")"}], "2"], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}], "\[Equal]", 
+   RowBox[{
+    RowBox[{"Sum", "[", 
+     RowBox[{
+      SubsuperscriptBox["x", "i", "2"], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}], "-", 
+    RowBox[{"n", " ", 
+     SuperscriptBox["m", "2"]}]}]}], "//", "OutputForm"}]], "Input",
+ CellChangeTimes->{{3.7035258709849358`*^9, 
+  3.703525982182295*^9}},ExpressionUUID->"549799ad-8ccc-412b-9b70-\
+9d4c02ba18d1"],
+
+Cell[OutputFormData["\<\
+Sum[(-m + Subscript[x, i])^2, {i, 1, n}] == -(m^2*n) + Sum[Subscript[x, i]^2, \
+{i, 1, n}]\
+\>", "\<\
+             2                   2            2
+Sum[(-m + x ) , {i, 1, n}] == -(m  n) + Sum[x  , {i, 1, n}]
+           i                                 i\
+\>"], "Output",
+ CellChangeTimes->{{3.703525918831016*^9, 3.70352594589857*^9}, 
+   3.703525984139715*^9},ExpressionUUID->"525e6aeb-e664-4a3c-8d52-\
+72bfd6de88ce"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"x", "[", "i", "]"}], "-", "m"}], ")"}], "2"], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", "10"}], "}"}]}], "]"}], "\[Equal]", 
+     RowBox[{
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        SuperscriptBox[
+         RowBox[{"x", "[", "i", "]"}], "2"], ",", 
+        RowBox[{"{", 
+         RowBox[{"i", ",", "1", ",", "10"}], "}"}]}], "]"}], "-", 
+      RowBox[{"10", " ", 
+       SuperscriptBox["m", "2"]}]}]}], "//.", 
+    RowBox[{"{", 
+     RowBox[{"m", "\[Rule]", 
+      RowBox[{
+       RowBox[{"Sum", "[", 
+        RowBox[{
+         RowBox[{"x", "[", "i", "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", "10"}], "}"}]}], "]"}], "/", "10"}]}], 
+     "}"}]}], "//", "FullSimplify"}], "//", "OutputForm"}]], "Input",
+ CellChangeTimes->{{3.7035258709849358`*^9, 3.703525982182295*^9}, {
+  3.703526017579496*^9, 3.703526115232527*^9}, {3.70352615414814*^9, 
+  3.703526174081702*^9}},ExpressionUUID->"e84c4777-e0e8-4a22-b652-\
+96800ffa8fc8"],
+
+Cell[OutputFormData["\<\
+True\
+\>", "\<\
+True\
+\>"], "Output",
+ CellChangeTimes->{{3.703526033040588*^9, 3.7035260695482473`*^9}, 
+   3.703526116568046*^9, 
+   3.70352617494103*^9},ExpressionUUID->"51bff08c-fe6b-43d9-9a2b-\
+143f09679a40"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"x", "[", "i", "]"}], "-", "m"}], ")"}], "2"], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}], "\[Equal]", 
+     RowBox[{
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        SuperscriptBox[
+         RowBox[{"x", "[", "i", "]"}], "2"], ",", 
+        RowBox[{"{", 
+         RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}], "-", 
+      RowBox[{"n", " ", 
+       SuperscriptBox["m", "2"]}]}]}], "//.", 
+    RowBox[{"{", 
+     RowBox[{"m", "\[Rule]", 
+      RowBox[{
+       RowBox[{"Sum", "[", 
+        RowBox[{
+         RowBox[{"x", "[", "i", "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", "n"}], "}"}]}], "]"}], "/", "n"}]}], 
+     "}"}]}], "//", "FullSimplify"}], "//", "OutputForm"}]], "Input",
+ CellChangeTimes->{{3.7035258709849358`*^9, 3.703525982182295*^9}, {
+  3.703526017579496*^9, 3.703526115232527*^9}, {3.70352615414814*^9, 
+  3.7035262088033457`*^9}},ExpressionUUID->"50086323-ad42-4689-93cb-\
+85379cc753a0"],
+
+Cell[OutputFormData["\<\
+Sum[x[i]^2, {i, 1, n}] == Sum[x[i], {i, 1, n}]^2/n + 
+  Sum[(-(Sum[x[i], {i, 1, n}]/n) + x[i])^2, {i, 1, n}]\
+\>", "\<\
+                                             2
+        2                Sum[x[i], {i, 1, n}]
+Sum[x[i] , {i, 1, n}] == --------------------- + 
+                                   n
+ 
+          Sum[x[i], {i, 1, n}]         2
+   Sum[(-(--------------------) + x[i]) , {i, 1, n}]
+                   n\
+\>"], "Output",
+ CellChangeTimes->{
+  3.703526209887273*^9},ExpressionUUID->"687ffffd-29f6-4704-bd98-\
+b31191b60d89"]
+}, Open  ]]
+},
+WindowSize->{808, 751},
+WindowMargins->{{20, Automatic}, {Automatic, 44}},
+FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 18, \
+2017)",
+StyleDefinitions->FrontEnd`FileName[{$RootDirectory, "Users", "bbeckman"}, 
+  "DefaultStyles.nb", CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 681, 21, 44, "Input", "ExpressionUUID" -> \
+"549799ad-8ccc-412b-9b70-9d4c02ba18d1"],
+Cell[1264, 45, 446, 10, 79, "Output", "ExpressionUUID" -> \
+"525e6aeb-e664-4a3c-8d52-72bfd6de88ce"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1747, 60, 1168, 34, 65, "Input", "ExpressionUUID" -> \
+"e84c4777-e0e8-4a22-b652-96800ffa8fc8"],
+Cell[2918, 96, 238, 8, 57, "Output", "ExpressionUUID" -> \
+"51bff08c-fe6b-43d9-9a2b-143f09679a40"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3193, 109, 1165, 34, 65, "Input", "ExpressionUUID" -> \
+"50086323-ad42-4689-93cb-85379cc753a0"],
+Cell[4361, 145, 560, 15, 133, "Output", "ExpressionUUID" -> \
+"687ffffd-29f6-4704-bd98-b31191b60d89"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

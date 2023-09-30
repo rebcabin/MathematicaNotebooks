@@ -1,0 +1,1763 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     83095,       1755]
+NotebookOptionsPosition[     79724,       1686]
+NotebookOutlinePosition[     81349,       1730]
+CellTagsIndexPosition[     81306,       1727]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Drone Ballistics ", "Title",ExpressionUUID->"839c80c1-8ebb-4af3-831f-2944055361fd"],
+
+Cell[CellGroupData[{
+
+Cell["Brian Beckman, Amazon Prime Air, 02 Nov 2016", "Subsection",ExpressionUUID->"bbb5659c-0b27-4d39-9d9a-5e511cb627ac"],
+
+Cell[TextData[{
+ "How far away from a flying drone should you stand so that you don\
+\[CloseCurlyQuote]t get hit if the drone goes ballistic? The answer depends \
+on initial vector position and vector velocity, vector wind, and parameters \
+like mass ",
+ Cell[BoxData[
+  FormBox["m", TraditionalForm]],ExpressionUUID->
+  "346c99a4-59a9-40df-9da5-f08273c19401"],
+ ", area ",
+ Cell[BoxData[
+  FormBox["A", TraditionalForm]],ExpressionUUID->
+  "84335714-78b7-402c-abf8-18f1b188e975"],
+ " presented to the wind (",
+ StyleBox["wetted area",
+  FontSlant->"Italic"],
+ "), and coefficient of drag ",
+ Cell[BoxData[
+  FormBox[
+   SubscriptBox["C", "d"], TraditionalForm]],ExpressionUUID->
+  "b79e98fe-d415-4e4e-901f-61857eb3b69c"],
+ ". The solution here consists in several parts:"
+}], "Text",ExpressionUUID->"9b86448f-23d1-4a3c-91a4-155c8fd3cf39"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Yellow Trajectory\.7f --- plotted as downrange versus altitude: deterministic \
+path accounting for drag from three sources: \
+\>", "ItemNumbered",ExpressionUUID->"aa2bab74-ceef-4d8d-8f9d-337aa485313c"],
+
+Cell["\<\
+resistance opposing the tangential motion of the vehicle (along its \
+trajectory curve)\
+\>", "SubitemNumbered",ExpressionUUID->"be550f55-2b21-4504-9df7-5e7015062a01"],
+
+Cell["\<\
+constant prevailing downrange and crossrange wind in knots, input to the \
+simulation\.7f from the UI sliders\
+\>", "SubitemNumbered",ExpressionUUID->"f9d04854-d388-448a-81d1-f1cafcbfb540"]
+}, Open  ]],
+
+Cell["\<\
+If the vehicle begins with no forward velocity, it will be blown off the \
+vertical fall plumb-line by prevailing and gust wind. Prevailing and gust \
+wind have no vertical components.\
+\>", "Text",ExpressionUUID->"729242f0-da4f-4801-8c25-022648b64733"],
+
+Cell["\<\
+Blue Trajectory --- plotted as downrange versus altitude: deterministic path \
+with no drag or relative effect from the wind at all. This is the \
+\[OpenCurlyDoubleQuote]high-school-physics\[CloseCurlyDoubleQuote] solution \
+provided as a sanity check against the yellow trajectory curve.\
+\>", "ItemNumbered",ExpressionUUID->"7170e546-02d9-4cac-a431-1c09bd7e8f19"],
+
+Cell["\<\
+Monte-Carlo CEP (Circular Error Probable) --- scatter-plotted separately on a \
+grid, downrange versus crossrange: a collection of strike points on the \
+ground derived by varying launch angles and gust wind velocities according to \
+given input\.7f standard deviations. \
+\>", "ItemNumbered",ExpressionUUID->"fda297b6-1e67-4fba-a974-bff766b5fbe0"],
+
+Cell["\<\
+The initial conditions are two-dimensional: altitude (positive up in the \
+trajectory diagram) and downrange ground speed in knots. \
+\>", "Text",ExpressionUUID->"6d106a6f-5797-48ad-bdc9-fc9d98530db6"],
+
+Cell[TextData[{
+ "To interact with the program, you will need Wolfram's free CDF player from \
+here: ",
+ ButtonBox["https://www.wolfram.com/cdf-player/",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://www.wolfram.com/cdf-player/"], None},
+  ButtonNote->"https://www.wolfram.com/cdf-player/"]
+}], "Text",ExpressionUUID->"bd8af859-6d6e-4607-b8c4-c655c011f625"],
+
+Cell["\<\
+Looks like with a 5-knot wind, a 55-lb drone going at a climb angle of 28 \
+degrees, a speed of 50 mph at a height of 90 feet will land somewhere between \
+125 and 200 feet from the point where it goes ballistic.\
+\>", "Text",ExpressionUUID->"a715955e-bda2-4f02-9b77-bb5d34ff1a4f"],
+
+Cell["\<\
+The coordinate system is Earth-fixed: x = downrange (positive to the right), \
+y = altitude (positive upward), z = crossrange (positive direction is \
+\[OpenCurlyDoubleQuote]out of the page.\[CloseCurlyDoubleQuote]). Ground zero \
+is the launch point where the drone goes ballistic with whatever residual \
+velocity it had.\
+\>", "Text",ExpressionUUID->"f5544617-19f6-4711-bc36-b65e65f58e10"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["References", "Section",ExpressionUUID->"73a1cc1d-e54d-46b4-b6bd-f1d5142d269e"],
+
+Cell[TextData[{
+ ButtonBox["http://tinyurl.com/o9q654r",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://tinyurl.com/o9q654r"], None},
+  ButtonNote->"http://tinyurl.com/o9q654r"],
+ "\n",
+ ButtonBox["http://tinyurl.com/h9sbzd5",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://tinyurl.com/h9sbzd5"], None},
+  ButtonNote->"http://tinyurl.com/h9sbzd5"],
+ "\n",
+ ButtonBox["http://tinyurl.com/je8wq8q",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://tinyurl.com/je8wq8q"], None},
+  ButtonNote->"http://tinyurl.com/je8wq8q"],
+ "\n",
+ ButtonBox["http://tinyurl.com/zxubzcc",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["http://tinyurl.com/zxubzcc"], None},
+  ButtonNote->"http://tinyurl.com/zxubzcc"]
+}], "Text",ExpressionUUID->"c1e7fc1d-6af9-4db6-9b57-fab52b54799d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Units", " ", "of", " ", "measure", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+      "could", " ", "be", " ", "handled", " ", "in", " ", "a", " ", "variety",
+        " ", "of", " ", "ways"}], ";", " ", 
+      RowBox[{
+      "this", " ", "is", " ", "the", " ", "easiest", " ", "to", " ", 
+       "understand", " ", "but", " ", "maybe", " ", "not", " ", "the", " ", 
+       "most", " ", 
+       RowBox[{"elegant", "."}]}]}], ")"}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"With", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"mpsPerMph", "=", "0.44704"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"mpsPerKnot", "=", "0.514444"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"feetPerMeter", "=", "3.28084"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"kgPerPound", "=", "0.453592"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"gMpS2", "=", "9.81"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"\[Rho]KgPerM3", "=", "1.25"}]}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", "\[IndentingNewLine]", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"v0mps", " ", "is", " ", "the", " ", "2"}], "-", 
+           RowBox[{
+           "vector", " ", "initial", " ", "vehicle", " ", "ground", " ", 
+            "velocity", " ", "in", " ", "meters", " ", "per", " ", 
+            "second"}]}], ",", " ", 
+          RowBox[{
+          "at", " ", "elevation", " ", "angle", " ", "\[Alpha]VerticalDeg", 
+           " ", "upward", " ", "from", " ", "the", " ", "horizontal", " ", 
+           "in", " ", 
+           RowBox[{"degrees", "."}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"v0mps", "=", 
+          RowBox[{"mpsPerKnot", "*", "vVxKnot", 
+           RowBox[{"{", 
+            RowBox[{"1.0", ",", 
+             RowBox[{
+              RowBox[{"Sin", "[", 
+               RowBox[{"\[Alpha]VerticalDeg", " ", "\[Degree]"}], "]"}], "/", 
+              
+              RowBox[{"Cos", "[", 
+               RowBox[{"\[Alpha]VerticalDeg", " ", "\[Degree]"}], "]"}]}], 
+             ",", "0"}], 
+            RowBox[{"(*", "crossrange", "*)"}], "}"}]}]}], ",", 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{
+           "p0m", " ", "is", " ", "the", " ", "initial", " ", "position", " ",
+             "vector"}], ",", " ", 
+           RowBox[{
+           "starting", " ", "off", " ", "as", " ", "pure", " ", "altitude", 
+            " ", 
+            RowBox[{"(", 
+             RowBox[{"no", " ", "downrange", " ", "component"}], ")"}]}], ",",
+            " ", 
+           RowBox[{"in", " ", 
+            RowBox[{"meters", ".", " ", "Ground"}], " ", "zero", " ", "is", 
+            " ", "the", " ", "point", " ", "at", " ", "which", " ", "the", 
+            " ", "vehicle", " ", "goes", " ", 
+            RowBox[{"ballistic", "."}]}]}], " ", "*)"}], 
+         "\[IndentingNewLine]", 
+         RowBox[{"p0m", "=", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", 
+            RowBox[{"hFeet", "/", "feetPerMeter"}], ",", "0"}], "}"}]}], ",", 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{
+           "Mass", " ", "of", " ", "the", " ", "vehicle", " ", "in", " ", 
+            "kilograms"}], ",", " ", 
+           RowBox[{
+           "converted", " ", "from", " ", "pounds", " ", "mass", " ", 
+            RowBox[{"(", 
+             RowBox[{"approximately", " ", 
+              RowBox[{"1", "/", "32"}], " ", "of", " ", "a", " ", "slug"}], 
+             ")"}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+         RowBox[{"mKg", "=", 
+          RowBox[{"mPound", " ", "kgPerPound"}]}], ",", "\[IndentingNewLine]",
+          "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{
+           "Density", " ", "of", " ", "dry", " ", "air", " ", "multiplied", 
+            " ", "by", " ", "area"}], "-", "in", "-", "square", "-", 
+           RowBox[{"meters", " ", "presented", " ", "to", " ", "the", " ", 
+            RowBox[{"wind", "."}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+         RowBox[{"\[Rho]PerM", "=", 
+          RowBox[{"AMeter2", " ", "\[Rho]KgPerM3"}]}], ",", 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+            "Run", " ", "for", " ", "maxTSeconds", " ", "of", " ", 
+             "simulation", " ", "time", " ", "with", " ", "a", " ", "time"}], 
+            "-", 
+            RowBox[{"step", " ", "of", " ", 
+             RowBox[{"dtSeconds", ".", " ", "Smaller"}], " ", "time", " ", 
+             "steps", " ", "run", " ", "slower", " ", "but", " ", "produce", 
+             " ", "more", " ", "faithful", " ", 
+             RowBox[{"answers", ".", " ", "To"}], " ", "tune", " ", "the", 
+             " ", "simulation"}]}], ",", " ", 
+           RowBox[{
+           "reduce", " ", "dtSeconds", " ", "until", " ", "the", " ", 
+            "solution", " ", "does", " ", "not", " ", "change", " ", 
+            RowBox[{"character", "."}]}]}], " ", "*)"}], 
+         "\[IndentingNewLine]", 
+         RowBox[{"maxTSeconds", "=", "20"}], ",", 
+         RowBox[{"dtSeconds", "=", "0.1"}], ",", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{
+           "Get", " ", "n", " ", "random", " ", "launch", " ", "angles"}], 
+           ",", " ", 
+           RowBox[{
+           "with", " ", "mean", " ", "\[Alpha]VerticalDeg", " ", "and", " ", 
+            "standard", " ", "deviation", " ", 
+            RowBox[{"\[Sigma]VerticalAngleDeg", "."}]}]}], " ", "*)"}], 
+         "\[IndentingNewLine]", 
+         RowBox[{"anglesRad", "=", 
+          RowBox[{"RandomVariate", "[", 
+           RowBox[{
+            RowBox[{"NormalDistribution", "[", 
+             RowBox[{
+              RowBox[{"\[Alpha]VerticalDeg", " ", "\[Degree]"}], ",", 
+              RowBox[{"\[Sigma]VerticalAngleDeg", " ", "\[Degree]"}]}], "]"}],
+             ",", "nSamples"}], "]"}]}], ",", "\[IndentingNewLine]", 
+         "\[IndentingNewLine]", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{"Get", " ", "random", " ", "gust", " ", 
+            RowBox[{"wind", ":", " ", 
+             RowBox[{"mean", " ", "speed", " ", "zero"}]}]}], ",", " ", 
+           RowBox[{"given", " ", "standard", " ", "deviation"}], ",", " ", 
+           RowBox[{
+           "and", " ", "uniformly", " ", "random", " ", "azimuth", " ", 
+            RowBox[{"angle", ".", " ", 
+             RowBox[{"TODO", ":", " ", 
+              RowBox[{
+              "Weibull", " ", "or", " ", "Rayleigh", " ", "distribution", " ",
+                "is", " ", "more", " ", 
+               RowBox[{"standard", "."}]}]}]}]}]}], " ", "*)"}], 
+         "\[IndentingNewLine]", 
+         RowBox[{"randomGustAzimuthRad", "=", 
+          RowBox[{"Function", "[", 
+           RowBox[{"RandomReal", "[", 
+            RowBox[{"{", 
+             RowBox[{"0.0", ",", 
+              RowBox[{"2.0", "\[Pi]"}]}], "}"}], "]"}], "]"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"randomGustSpeedMps", "=", 
+          RowBox[{"Function", "[", 
+           RowBox[{"RandomVariate", "[", 
+            RowBox[{"NormalDistribution", "[", 
+             RowBox[{"0", ",", 
+              RowBox[{"mpsPerKnot", "*", "\[Sigma]vKnotGust"}]}], "]"}], 
+            "]"}], "]"}]}]}], "}"}], ",", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"With", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"randomGustVectorMps", "=", 
+           RowBox[{"Function", "[", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{"randomGustSpeedMps", "[", "]"}], "*", 
+             RowBox[{"With", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"a", "=", 
+                 RowBox[{"randomGustAzimuthRad", "[", "]"}]}], "}"}], ",", 
+               "\[IndentingNewLine]", 
+               RowBox[{"{", 
+                RowBox[{"(*", "downrange", "*)"}], 
+                RowBox[{
+                 RowBox[{"Cos", "[", "a", "]"}], ",", 
+                 RowBox[{"(*", "vertical", "*)"}], "0.0", ",", 
+                 RowBox[{"(*", "crossrange", "*)"}], 
+                 RowBox[{"Sin", "[", "a", "]"}]}], "}"}]}], "]"}]}], "]"}]}], 
+          "}"}], ",", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         RowBox[{"With", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"(*", " ", 
+             RowBox[{"The", " ", "initial", " ", "vector", " ", "wind", " ", 
+              RowBox[{"velocity", ":", " ", 
+               RowBox[{
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{
+                   RowBox[{"positive", " ", "downrange", " ", 
+                    RowBox[{"(", "x", ")"}], " ", "means", " ", "blowing", 
+                    " ", "left"}], "-", "to", "-", "right"}], ";", " ", 
+                  RowBox[{"positive", " ", "crossrange", " ", 
+                   RowBox[{"(", "z", ")"}], " ", "means", " ", "blowing", " ",
+                    "out", " ", "of", " ", "the", " ", "page"}]}], ")"}], 
+                "."}]}]}], "  ", "*)"}], "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{"vWvectorMps", "=", 
+              RowBox[{"mpsPerKnot", " ", 
+               RowBox[{"{", 
+                RowBox[{"(*", "downrange", "*)"}], 
+                RowBox[{"vWxKnot", ",", 
+                 RowBox[{"(*", "vertical", "*)"}], "0", ",", 
+                 RowBox[{"(*", "crossrange", "*)"}], "vWzKnot"}], "}"}]}]}], 
+             ",", "\[IndentingNewLine]", 
+             RowBox[{"vWspeedMps", "=", 
+              RowBox[{"mpsPerKnot", "*", 
+               RowBox[{"Sqrt", "[", 
+                RowBox[{
+                 RowBox[{"vWxKnot", "*", "vWxKnot"}], "+", 
+                 RowBox[{"vWzKnot", "*", "vWzKnot"}]}], "]"}]}]}]}], "}"}], 
+           ",", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "Get", " ", "random", " ", "variations", " ", "in", "\.7f", " ", 
+             "gust", " ", "wind", " ", "and", " ", "launch", " ", 
+             RowBox[{"angle", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+           RowBox[{"With", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"vZerosMps", "=", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{"v0mps", "+", 
+                   RowBox[{"randomGustVectorMps", "[", "]"}], "+", 
+                   "\[IndentingNewLine]", 
+                   RowBox[{"{", 
+                    RowBox[{"(*", "downrange", "*)"}], 
+                    RowBox[{
+                    RowBox[{"Cos", "[", "#", "]"}], ",", 
+                    RowBox[{"(*", "vertical", "*)"}], "0.0", ",", 
+                    RowBox[{"(*", "crossrange", "*)"}], 
+                    RowBox[{"Sin", "[", "#", "]"}]}], "}"}]}], ")"}], "&"}], "/@",
+                 " ", "anglesRad"}]}], "}"}], ",", "\[IndentingNewLine]", 
+             "\[IndentingNewLine]", 
+             RowBox[{"(*", " ", 
+              RowBox[{
+               RowBox[{
+               "Given", " ", "initial", " ", "position", " ", "p0", " ", 
+                "and", " ", "velocity", " ", "v0"}], ",", " ", 
+               RowBox[{"solve", " ", "for", " ", "a", " ", "trajectory"}], 
+               ",", " ", 
+               RowBox[{"triples", " ", 
+                RowBox[{"{", 
+                 RowBox[{"qx", ",", " ", "qy", ",", " ", "qz"}], "}"}], " ", 
+                "and", " ", "their", " ", "time", " ", "derivatives", " ", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{"qx", "'"}], ",", " ", 
+                   RowBox[{
+                    RowBox[{"qy", "'"}], " ", 
+                    RowBox[{"qz", "'"}]}]}], "}"}], "."}]}]}], " ", "*)"}], 
+             "\[IndentingNewLine]", 
+             RowBox[{"(*", " ", 
+              RowBox[{"TODO", ":", " ", 
+               RowBox[{"add", " ", "random", " ", 
+                RowBox[{"winds", ".", " ", "This"}], " ", 
+                RowBox[{"is", " ", "'"}], "closed", " ", 
+                RowBox[{"over", "'"}], " ", "the", " ", "constant", " ", 
+                "prevailing", " ", 
+                RowBox[{"wind", "."}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+             RowBox[{"With", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"solver", "=", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"p0", ",", "v0"}], "}"}], "\[Function]", 
+                   RowBox[{"NDSolve", "[", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{"Arrow", " ", "notation", " ", 
+                    RowBox[{"means", " ", "'"}], "function", " ", "of", " ", 
+                    "p0", " ", "and", " ", 
+                    RowBox[{"v0", ".", "'"}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    RowBox[{
+                    "Vehicle", " ", "downrage", " ", "groundspeed", " ", 
+                    RowBox[{"qx", "'"}], " ", "is", " ", "measured", " ", 
+                    "against", " ", "the", " ", "downrange", " ", 
+                    "coordinate", " ", "axis", " ", "x", 
+                    RowBox[{"\.7f", ".", " ", "rx"}], " ", "is", " ", 
+                    "downrange", " ", "airspeed"}], ",", " ", 
+                    RowBox[{"needed", " ", "for", " ", 
+                    RowBox[{"drag", ".", "  ", "If"}], " ", 
+                    RowBox[{"qx", "'"}], " ", "is", " ", "positive", " ", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    "vehicle", " ", "moving", " ", "to", " ", "the", " ", 
+                    "right", " ", "wrt", " ", "ground"}], ")"}], " ", "and", 
+                    " ", "vWvectorMps", " ", "has", " ", "the", " ", "same", 
+                    " ", "magnitude", " ", "and", " ", "is", " ", "positive", 
+                    " ", 
+                    RowBox[{"(", 
+                    RowBox[{"blowing", " ", "to", " ", "the", " ", "right"}], 
+                    ")"}]}], ",", " ", 
+                    RowBox[{
+                    "then", " ", "the", " ", "downrange", " ", "airspeed"}], 
+                    ",", " ", 
+                    RowBox[{
+                    RowBox[{"namely", " ", "rx", " ", "is", " ", 
+                    RowBox[{"zero", ".", " ", "That"}], " ", "means", " ", 
+                    "that", " ", "rx", " ", "must", " ", "be", " ", 
+                    RowBox[{"qx", "'"}]}], " ", "-", " ", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    "vWvectorMps", "\[LeftDoubleBracket]", "x", 
+                    "\[RightDoubleBracket]"}], ".", " ", "Likewise"}], " ", 
+                    "for", " ", 
+                    RowBox[{"qy", "'"}], " ", "and", " ", 
+                    RowBox[{
+                    RowBox[{"qz", "'"}], "."}]}]}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"rx", "=", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"qx", "'"}], "[", "t", "]"}], "-", 
+                    RowBox[{
+                    "vWvectorMps", "\[LeftDoubleBracket]", "1", 
+                    "\[RightDoubleBracket]"}]}]}], ",", 
+                    RowBox[{"ry", "=", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"qy", "'"}], "[", "t", "]"}], "-", 
+                    RowBox[{
+                    "vWvectorMps", "\[LeftDoubleBracket]", "2", 
+                    "\[RightDoubleBracket]"}]}]}], ",", 
+                    RowBox[{"rz", "=", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"qz", "'"}], "[", "t", "]"}], "-", 
+                    RowBox[{
+                    "vWvectorMps", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}]}]}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"v", "=", 
+                    RowBox[{"Sqrt", "[", 
+                    RowBox[{
+                    RowBox[{"rx", " ", "rx"}], "+", 
+                    RowBox[{"ry", " ", "ry"}], "+", 
+                    RowBox[{"rz", " ", "rz"}]}], "]"}]}], "}"}], ",", " ", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    RowBox[{
+                    "This", " ", "speed", " ", "is", " ", "always", " ", 
+                    "positive"}], ",", " ", 
+                    RowBox[{"by", " ", 
+                    RowBox[{"construction", "."}]}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"mKg", " ", 
+                    RowBox[{
+                    RowBox[{"qx", "''"}], "[", "t", "]"}]}], "\[Equal]", 
+                    RowBox[{"-", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    FractionBox["1", "2"], "\[Rho]PerM", " ", "Cd", " ", "v", 
+                    " ", "rx"}], ")"}]}]}], ",", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    RowBox[{
+                    "Force", " ", "of", " ", "drag", " ", "opposes", " ", 
+                    "airspeed"}], ",", " ", 
+                    RowBox[{
+                    "hence", " ", "the", " ", "extra", " ", "minus", " ", 
+                    RowBox[{"signs", ".", " ", "If"}], " ", "rx", " ", "is", 
+                    " ", "positive"}], ",", " ", 
+                    RowBox[{
+                    "then", " ", "the", " ", "vehicle", " ", "is", " ", 
+                    "moving", " ", "rightwards", " ", "with", " ", "respect", 
+                    " ", "to", " ", "the", " ", "wind", " ", "and", " ", 
+                    "the", " ", "drag", " ", "force", " ", "must", " ", "be", 
+                    " ", "leftwards"}], ",", " ", 
+                    RowBox[{"that", " ", "is"}], ",", " ", 
+                    RowBox[{"negative", "."}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"mKg", " ", 
+                    RowBox[{
+                    RowBox[{"qy", "''"}], "[", "t", "]"}]}], "\[Equal]", 
+                    RowBox[{
+                    RowBox[{"-", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    FractionBox["1", "2"], "\[Rho]PerM", " ", "Cd", " ", "v", 
+                    " ", "ry"}], ")"}]}], "-", 
+                    RowBox[{"gMpS2", " ", "mKg"}]}]}], ",", 
+                    RowBox[{"(*", "vertical", "*)"}], "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"mKg", " ", 
+                    RowBox[{
+                    RowBox[{"qz", "''"}], "[", "t", "]"}]}], "\[Equal]", 
+                    RowBox[{"-", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    FractionBox["1", "2"], "\[Rho]PerM", " ", "Cd", " ", "v", 
+                    " ", "rz"}], ")"}]}]}], 
+                    RowBox[{"(*", "crosswind", "*)"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "The", " ", "following", " ", "are", " ", "the", " ", 
+                    "initial", " ", 
+                    RowBox[{"conditions", "."}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"qx", "[", "0", "]"}], "\[Equal]", 
+                    RowBox[{
+                    "p0", "\[LeftDoubleBracket]", "1", 
+                    "\[RightDoubleBracket]"}]}], ",", 
+                    RowBox[{
+                    RowBox[{"qy", "[", "0", "]"}], "\[Equal]", 
+                    RowBox[{
+                    "p0", "\[LeftDoubleBracket]", "2", 
+                    "\[RightDoubleBracket]"}]}], ",", 
+                    RowBox[{
+                    RowBox[{"qz", "[", "0", "]"}], "\[Equal]", 
+                    RowBox[{
+                    "p0", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"qx", "'"}], "[", "0", "]"}], "\[Equal]", 
+                    RowBox[{
+                    "v0", "\[LeftDoubleBracket]", "1", 
+                    "\[RightDoubleBracket]"}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"qy", "'"}], "[", "0", "]"}], "\[Equal]", 
+                    RowBox[{
+                    "v0", "\[LeftDoubleBracket]", "2", 
+                    "\[RightDoubleBracket]"}]}], ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"qz", "'"}], "[", "0", "]"}], "\[Equal]", 
+                    RowBox[{
+                    "v0", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}]}]}], "}"}]}], "]"}]}], "]"}], 
+                    ",", "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"qx", "[", "t", "]"}], ",", 
+                    RowBox[{"qy", "[", "t", "]"}], ",", 
+                    RowBox[{"qz", "[", "t", "]"}]}], "}"}], ",", " ", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    RowBox[{
+                    "Solve", " ", "for", " ", "these", " ", "quantities"}], 
+                    "..."}], " ", "*)"}], "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{"t", ",", "0", ",", "maxTSeconds"}], "}"}]}], 
+                    "]"}]}]}], ",", " ", 
+                 RowBox[{"(*", " ", 
+                  RowBox[{"for", " ", "these", " ", 
+                   RowBox[{"times", "."}]}], " ", "*)"}], 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"(*", " ", 
+                  RowBox[{
+                   RowBox[{"Give", " ", "me", " ", "a", " ", 
+                    RowBox[{"solution", " ", "'"}], 
+                    RowBox[{"soln", "'"}]}], ",", " ", 
+                   RowBox[{
+                   "which", " ", "has", " ", "a", " ", "complicated", " ", 
+                    "structure"}], ",", " ", 
+                   RowBox[{
+                   "and", " ", "I", " ", "will", " ", "pick", " ", "out", " ",
+                     "the", " ", "x"}], ",", " ", "y", ",", " ", "z", ",", 
+                   " ", 
+                   RowBox[{"and", " ", 
+                    RowBox[{"t", "."}]}]}], " ", "*)"}], 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"solPicker", "=", 
+                  RowBox[{"soln", "\[Function]", 
+                   RowBox[{"<|", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{"Arrow", " ", "notation", " ", 
+                    RowBox[{"means", " ", "'"}], "function", " ", "of", " ", 
+                    RowBox[{"soln", ".", "'"}], " ", "The", " ", "result", 
+                    " ", "is", " ", "a", " ", "hashmap", " ", "bracketed", 
+                    " ", "with", " ", 
+                    RowBox[{"<|", "...", "|>"}], " ", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"'", 
+                    RowBox[{"Association", "'"}], " ", "in", " ", "Wolfram"}],
+                     "-", "speak"}], ")"}], "."}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"\"\<x\>\"", "\[Rule]", 
+                    RowBox[{"soln", "\[LeftDoubleBracket]", 
+                    RowBox[{"1", ",", "1", ",", "2"}], 
+                    "\[RightDoubleBracket]"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"\"\<y\>\"", "\[Rule]", 
+                    RowBox[{"soln", "\[LeftDoubleBracket]", 
+                    RowBox[{"1", ",", "2", ",", "2"}], 
+                    "\[RightDoubleBracket]"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"\"\<z\>\"", "\[Rule]", 
+                    RowBox[{"soln", "\[LeftDoubleBracket]", 
+                    RowBox[{"1", ",", "3", ",", "2"}], 
+                    "\[RightDoubleBracket]"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"\"\<t\>\"", "\[Rule]", 
+                    RowBox[{"Floor", "[", 
+                    RowBox[{
+                    RowBox[{"soln", "\[LeftDoubleBracket]", 
+                    RowBox[{
+                    "1", ",", "1", ",", "2", ",", "0", ",", "1", ",", "1", 
+                    ",", "2"}], "\[RightDoubleBracket]"}], ",", "0.001"}], 
+                    "]"}]}]}], "|>"}]}]}]}], "}"}], ",", 
+               "\[IndentingNewLine]", 
+               RowBox[{"(*", " ", 
+                RowBox[{
+                 RowBox[{"Solve", " ", "for", " ", "the", " ", "main"}], ",", 
+                 " ", 
+                 RowBox[{"yellow", " ", "trajectory"}], ",", " ", 
+                 RowBox[{"qs", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+               RowBox[{"With", "[", 
+                RowBox[{
+                 RowBox[{"{", 
+                  RowBox[{"qs", "=", 
+                   RowBox[{"solPicker", "[", 
+                    RowBox[{"solver", "[", 
+                    RowBox[{"p0m", ",", "v0mps"}], "]"}], "]"}]}], "}"}], ",",
+                  "\[IndentingNewLine]", 
+                 RowBox[{"(*", " ", 
+                  RowBox[{
+                   RowBox[{"Solve", " ", "for", " ", "nearby"}], ",", " ", 
+                   RowBox[{"randomized", " ", "trajectories"}], ",", " ", 
+                   RowBox[{"qss", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+                 RowBox[{"With", "[", 
+                  RowBox[{
+                   RowBox[{"{", 
+                    RowBox[{"qss", "=", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"solPicker", "[", 
+                    RowBox[{"solver", "[", 
+                    RowBox[{"p0m", ",", "#"}], "]"}], "]"}], "&"}], "/@", 
+                    "vZerosMps"}]}], "}"}], ",", "\[IndentingNewLine]", 
+                   RowBox[{"(*", " ", 
+                    RowBox[{
+                    "Pick", " ", "out", " ", "the", " ", "main", " ", 
+                    "series", " ", "of", " ", "positions", " ", "and", " ", 
+                    RowBox[{"times", "."}]}], " ", "*)"}], 
+                   "\[IndentingNewLine]", 
+                   RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"qx", "=", 
+                    RowBox[{"qs", "[", "\"\<x\>\"", "]"}]}], ",", 
+                    RowBox[{"qy", "=", 
+                    RowBox[{"qs", "[", "\"\<y\>\"", "]"}]}], ",", 
+                    RowBox[{"qz", "=", 
+                    RowBox[{"qs", "[", "\"\<z\>\"", "]"}]}], ",", 
+                    RowBox[{"t1m", "=", 
+                    RowBox[{"qs", "[", "\"\<t\>\"", "]"}]}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    RowBox[{"The", " ", "following"}], ",", " ", "qpd", ",", 
+                    " ", 
+                    RowBox[{
+                    RowBox[{"is", " ", "a", " ", "high"}], "-", 
+                    RowBox[{
+                    "school", " ", "solver", " ", "for", " ", "a", " ", 
+                    "\.7ftrajectory", " ", "with", " ", "no", " ", "wind", 
+                    RowBox[{"\.7f", ".", " ", 
+                    RowBox[{"It", "'"}]}], "s", " ", "included", " ", "just", 
+                    " ", "for", " ", "visual", " ", "reference", " ", "for", 
+                    " ", "the", " ", "parabolas", " ", "and", " ", "does", 
+                    " ", "not", " ", "produce", " ", "the", " ", 
+                    RowBox[{"CEP", ".", " ", "The"}], " ", "CEP", " ", 
+                    "comes", " ", "only", " ", "from", " ", "the", " ", 
+                    "more", " ", "accurate", " ", "numerical", " ", 
+                    RowBox[{"solution", "."}]}]}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"qpd", "=", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"p0", ",", "v0", ",", "vW", ",", "tm"}], "}"}], 
+                    "\[Function]", 
+                    RowBox[{"p0", "+", 
+                    RowBox[{
+                    RowBox[{"(", "v0", ")"}], " ", "tm"}], "+", 
+                    RowBox[{
+                    FractionBox["1", "2"], " ", 
+                    RowBox[{"{", 
+                    RowBox[{"0", ",", 
+                    RowBox[{"-", "gMpS2"}], ",", "0"}], "}"}], 
+                    SuperscriptBox["tm", "2"]}]}]}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    RowBox[{
+                    "Here", " ", "is", " ", "a", " ", "function", " ", "to", 
+                    " ", "pick", " ", "out", " ", "time", " ", "series", " ", 
+                    "from", " ", "any", " ", "trajectory"}], ",", " ", 
+                    RowBox[{"reference", " ", "or", " ", "numerical", 
+                    RowBox[{"\.7f", "."}]}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"qpf", "=", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"picked", ",", "tm"}], "}"}], "\[Function]", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"picked", "[", "\"\<x\>\"", "]"}], ",", 
+                    RowBox[{"picked", "[", "\"\<y\>\"", "]"}], ",", 
+                    RowBox[{"picked", "[", "\"\<z\>\"", "]"}]}], "}"}], "/.", 
+                    
+                    RowBox[{"{", 
+                    RowBox[{"t", "\[Rule]", 
+                    RowBox[{"Min", "[", 
+                    RowBox[{"tm", ",", 
+                    RowBox[{"picked", "[", "\"\<t\>\"", "]"}]}], "]"}]}], 
+                    "}"}]}], ")"}]}]}]}], "}"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "Get", " ", "a", " ", "reference", " ", "curve", " ", "D",
+                     " ", "from", " ", "the", " ", "same", " ", "initial", 
+                    " ", "conditions", " ", "as", " ", "the", " ", 
+                    "numerical", " ", 
+                    RowBox[{"solution", "."}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"trajAndTimesD", "=", 
+                    RowBox[{"Module", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"i", "=", "0"}], "}"}], ",", 
+                    RowBox[{"Table", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"++", "i"}], ",", "t2", ",", 
+                    RowBox[{"qpd", "[", 
+                    RowBox[{
+                    "p0m", ",", "v0mps", ",", "vWvectorMps", ",", "t2"}], 
+                    "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "t2", ",", "0", ",", "maxTSeconds", ",", "dtSeconds"}], 
+                    "}"}]}], "]"}]}], "]"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "Get", " ", "a", " ", "realistic", " ", "curve", " ", "E",
+                     " ", "from", " ", "the", " ", "main", " ", "numerical", 
+                    " ", "solution", " ", 
+                    RowBox[{"qs", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+                    RowBox[{"trajAndTimesE", "=", 
+                    RowBox[{"Module", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"i", "=", "0"}], "}"}], ",", 
+                    RowBox[{"Table", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"++", "i"}], ",", "t2", ",", 
+                    RowBox[{"qpf", "[", 
+                    RowBox[{"qs", ",", "t2"}], "]"}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "t2", ",", "0", ",", "maxTSeconds", ",", "dtSeconds"}], 
+                    "}"}]}], "]"}]}], "]"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "Get", " ", "trajectoies", " ", "Fs", " ", "for", " ", 
+                    "the", " ", "randomized", " ", "numerical", " ", 
+                    "solutions", " ", 
+                    RowBox[{"qss", "."}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"trajAndTimesFs", "=", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Module", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"i", "=", "0"}], "}"}], ",", 
+                    RowBox[{"Table", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"++", "i"}], ",", "t2", ",", 
+                    RowBox[{"qpf", "[", 
+                    RowBox[{"#", ",", "t2"}], "]"}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    "t2", ",", "0", ",", "maxTSeconds", ",", "dtSeconds"}], 
+                    "}"}]}], "]"}]}], "]"}], "&"}], "/@", "qss"}]}]}], "}"}], 
+                    ",", "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "The", " ", "rest", " ", "of", " ", "this", " ", "is", 
+                    " ", "plotting", " ", 
+                    RowBox[{"code", ".", " ", "D"}], " ", "is", " ", "the", 
+                    " ", "reference", " ", "trajectory", " ", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"analytical", ",", " ", "unrealistic"}], ")"}], 
+                    ".", " ", "E"}], " ", "is", " ", "the", " ", "main", " ", 
+                    "numerical", " ", 
+                    RowBox[{"solution", ".", " ", "Fs"}], " ", "are", " ", 
+                    "the", " ", "randomized", " ", "solutions", " ", "near", 
+                    " ", 
+                    RowBox[{"E", "."}]}], " ", "*)"}], "\[IndentingNewLine]", 
+                    
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"tibbleD", "=", 
+                    RowBox[{"Select", "[", 
+                    RowBox[{"trajAndTimesD", ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"#", "\[LeftDoubleBracket]", 
+                    RowBox[{"3", ",", "2"}], "\[RightDoubleBracket]"}], 
+                    "\[GreaterEqual]", "0"}], "&"}]}], " ", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"tibbleE", "=", 
+                    RowBox[{"Select", "[", 
+                    RowBox[{"trajAndTimesE", ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"#", "\[LeftDoubleBracket]", 
+                    RowBox[{"3", ",", "2"}], "\[RightDoubleBracket]"}], 
+                    "\[GreaterEqual]", "0"}], "&"}]}], " ", "]"}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"tibbleFs", "=", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Select", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"#", "\[LeftDoubleBracket]", 
+                    RowBox[{"3", ",", "2"}], "\[RightDoubleBracket]"}], 
+                    "\[GreaterEqual]", "0"}], "&"}]}], " ", "]"}], "&"}], "/@",
+                     "trajAndTimesFs"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "A", " ", "function", " ", "to", " ", "find", " ", 
+                    "landing", " ", "times", " ", "so", " ", "we", " ", "can",
+                     " ", "stop", " ", "drawing", " ", "the", " ", "line", 
+                    " ", "when", " ", "we", " ", "hit", " ", "the", " ", 
+                    RowBox[{"ground", "."}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"landingTime", "=", 
+                    RowBox[{
+                    RowBox[{"{", "trajTime", "}"}], "\[Function]", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"lastUp", "=", 
+                    RowBox[{"Last", "@", 
+                    RowBox[{"Select", "[", 
+                    RowBox[{"trajTime", ",", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"#", "\[LeftDoubleBracket]", 
+                    RowBox[{"3", ",", "2"}], "\[RightDoubleBracket]"}], 
+                    "\[GreaterEqual]", "0"}], "&"}]}], "]"}]}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"indexLastUp", "=", 
+                    RowBox[{"lastUp", "\[LeftDoubleBracket]", "1", 
+                    "\[RightDoubleBracket]"}]}], ",", 
+                    RowBox[{"lastUpHeight", "=", 
+                    RowBox[{"lastUp", "\[LeftDoubleBracket]", 
+                    RowBox[{"3", ",", "2"}], "\[RightDoubleBracket]"}]}], ",", 
+                    RowBox[{"lastUpTime", "=", 
+                    RowBox[{
+                    "lastUp", "\[LeftDoubleBracket]", "2", 
+                    "\[RightDoubleBracket]"}]}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"firstDownTime", "=", 
+                    RowBox[{"trajTime", "\[LeftDoubleBracket]", 
+                    RowBox[{
+                    RowBox[{"indexLastUp", "+", "1"}], ",", "2"}], 
+                    "\[RightDoubleBracket]"}]}], ",", 
+                    RowBox[{"firstDownHeight", "=", 
+                    RowBox[{"trajTime", "\[LeftDoubleBracket]", 
+                    RowBox[{
+                    RowBox[{"indexLastUp", "+", "1"}], ",", "3", ",", "2"}], 
+                    "\[RightDoubleBracket]"}]}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"lastUpTime", "+", 
+                    RowBox[{"lastUpHeight", " ", 
+                    FractionBox[
+                    RowBox[{"firstDownTime", "-", "lastUpTime"}], 
+                    RowBox[{"lastUpHeight", "-", "firstDownHeight"}]]}]}]}], 
+                    "]"}]}], "]"}]}], "]"}]}]}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"(*", " ", 
+                    RowBox[{
+                    "Make", " ", "display", " ", "units", " ", "from", " ", 
+                    "the", " ", "internal", " ", 
+                    RowBox[{"SI", " ", "/", " ", "SCDU"}], " ", 
+                    RowBox[{"units", "."}]}], " ", "*)"}], 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"trajD", "=", 
+                    RowBox[{"feetPerMeter", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    "#", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}], "&"}], "/@", "tibbleD"}], 
+                    ")"}]}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"trajQ", "=", 
+                    RowBox[{"feetPerMeter", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    "#", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}], "&"}], "/@", "tibbleE"}], 
+                    ")"}]}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"trajFs", "=", " ", 
+                    RowBox[{"feetPerMeter", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{"tibbleF", "\[Function]", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    "#", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}], "&"}], "/@", "tibbleF"}]}], 
+                    ")"}], "/@", "tibbleFs"}], ")"}]}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"tD", "=", 
+                    RowBox[{"landingTime", "[", "trajAndTimesD", "]"}]}], ",",
+                     "\[IndentingNewLine]", 
+                    RowBox[{"tE", "=", 
+                    RowBox[{"landingTime", "[", "trajAndTimesE", "]"}]}], ",",
+                     "\[IndentingNewLine]", 
+                    RowBox[{"tFs", "=", 
+                    RowBox[{"landingTime", "/@", "trajAndTimesFs"}]}]}], 
+                    "}"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"landingPointD", "=", 
+                    RowBox[{"feetPerMeter", "*", 
+                    RowBox[{"qpd", "[", 
+                    RowBox[{"p0m", ",", "v0mps", ",", "vWvectorMps", ",", 
+                    "tD"}], "]"}]}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"landingPointE", "=", 
+                    RowBox[{"feetPerMeter", "*", 
+                    RowBox[{"qpf", "[", 
+                    RowBox[{"qs", ",", "tE"}], "]"}]}]}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"landingPointFs", "=", 
+                    RowBox[{"feetPerMeter", "*", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{"qpf", "@@", "#"}], "&"}], ")"}], "/@", 
+                    RowBox[{"Transpose", "[", 
+                    RowBox[{"{", 
+                    RowBox[{"qss", ",", "tFs"}], "}"}], "]"}]}], ")"}]}]}]}], 
+                    "}"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", "\[IndentingNewLine]", 
+                    RowBox[{"cpe", "=", 
+                    RowBox[{"GraphicsRow", "[", "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"ListLinePlot", "[", "\[IndentingNewLine]", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Drop", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"-", "1"}]}], "]"}], "&"}], "/@", "trajD"}], ",", 
+                    
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Drop", "[", 
+                    RowBox[{"#", ",", 
+                    RowBox[{"-", "1"}]}], "]"}], "&"}], "/@", "trajQ"}]}], 
+                    "}"}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"AxesLabel", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<x[Feet]\>\"", ",", "\"\<y[Feet]\>\""}], 
+                    "}"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"PlotMarkers", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"\[FilledCircle]", ",", " ", "8"}], "}"}], ",", 
+                    " ", 
+                    RowBox[{"{", 
+                    RowBox[{"\[FilledSquare]", ",", " ", "8"}], "}"}]}], 
+                    "}"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"ImageSize", "\[Rule]", "Medium"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"Epilog", "\[Rule]", "\[IndentingNewLine]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"PointSize", "@", "0.03"}], ",", 
+                    RowBox[{"Point", "[", 
+                    RowBox[{"Drop", "[", 
+                    RowBox[{"landingPointD", ",", 
+                    RowBox[{"-", "1"}]}], "]"}], "]"}], ",", 
+                    RowBox[{"Point", "[", 
+                    RowBox[{"Drop", "[", 
+                    RowBox[{"landingPointE", ",", 
+                    RowBox[{"-", "1"}]}], "]"}], "]"}]}], "}"}]}]}], "]"}], 
+                    ",", "\[IndentingNewLine]", 
+                    RowBox[{"With", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"ex", "=", "500"}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"Graphics", "[", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"Red", ",", 
+                    RowBox[{"Point", "[", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    "landingPointE", "\[LeftDoubleBracket]", "1", 
+                    "\[RightDoubleBracket]"}], ",", 
+                    RowBox[{
+                    "landingPointE", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}]}], "}"}], "]"}], ",", 
+                    "\[IndentingNewLine]", "Black", ",", 
+                    RowBox[{"Point", "/@", 
+                    RowBox[{"(", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    "#", "\[LeftDoubleBracket]", "1", 
+                    "\[RightDoubleBracket]"}], ",", 
+                    RowBox[{
+                    "#", "\[LeftDoubleBracket]", "3", 
+                    "\[RightDoubleBracket]"}]}], "}"}], "&"}], "/@", 
+                    "landingPointFs"}], ")"}]}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"Axes", "\[Rule]", "True"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"FrameLabel", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"\"\<cross-range [feet]\>\"", ",", "\"\<\>\""}], 
+                    "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<down-range [feet]\>\"", ",", "\"\<\>\""}], 
+                    "}"}]}], "}"}]}], ",", "\[IndentingNewLine]", 
+                    RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"GridLines", "\[Rule]", "Automatic"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"PlotRange", "\[Rule]", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{"{", 
+                    RowBox[{"0", ",", "ex"}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"-", "ex"}], "/", "2"}], ",", 
+                    RowBox[{"ex", "/", "2"}]}], "}"}]}], "}"}]}]}], "]"}]}], 
+                    "]"}]}], "}"}], "]"}]}], "}"}], ",", 
+                    "\[IndentingNewLine]", 
+                    RowBox[{"Show", "[", 
+                    RowBox[{"{", "cpe", "}"}], "]"}]}], "\[IndentingNewLine]",
+                     "]"}]}], "]"}]}], "]"}]}], "]"}]}], "]"}]}], "]"}]}], 
+                    "]"}]}], "]"}]}], "]"}]}], "]"}]}], "]"}]}], "]"}]}], 
+        "]"}]}], "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"Grid", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "vVxKnot", ",", "25", ",", 
+              "\"\<initial downrange vehicle\\nground speed [knot]\>\""}], 
+             "}"}], ",", 
+            RowBox[{"-", "50"}], ",", "50", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "\[Alpha]VerticalDeg", ",", "0", ",", 
+              "\"\<initial vertical\\nangle [deg]\>\""}], "}"}], ",", 
+            RowBox[{"-", "89"}], ",", "89", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"\[Sigma]VerticalAngleDeg", ",", 
+              RowBox[{"15", "\[Degree]"}], ",", 
+              "\"\<variation in\\nvertical angle [deg]\>\""}], "}"}], ",", 
+            RowBox[{"1", "\[Degree]"}], ",", 
+            RowBox[{"22", "\[Degree]"}], ",", 
+            RowBox[{"1", "\[Degree]"}], ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "hFeet", ",", "90", ",", "\"\<altitude\\nat launch [feet]\>\""}],
+              "}"}], ",", "1", ",", "400", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         "\"\<---------------------------------------------------------\>\"", 
+         ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "mPound", ",", "55", ",", 
+              "\"\<vehicle mass /\\nweight [pound]\>\""}], "}"}], ",", "1", 
+            ",", "100", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "AMeter2", ",", "1", ",", 
+              "\"\<Area presented\\nto the wind [\!\(\*SuperscriptBox[\(m\), \
+\(2\)]\)]\>\""}], "}"}], ",", "0", ",", "5", ",", "0.01", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "Cd", ",", "1", ",", 
+              "\"\<Coefficient of drag\\n[dimensionless]\>\""}], "}"}], ",", 
+            "0", ",", "2.1", ",", ".05", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}]}], "}"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "vWxKnot", ",", "0", ",", 
+              "\"\<fixed downrange\\nwind [knot]\>\""}], "}"}], ",", 
+            RowBox[{"-", "50"}], ",", "50", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "vWzKnot", ",", "0", ",", 
+              "\"\<fixed crossrange\\nwind [knot]\>\""}], "}"}], ",", 
+            RowBox[{"-", "50"}], ",", "50", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", "\"\<\>\"", ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "\[Sigma]vKnotGust", ",", "5", ",", 
+              "\"\<variation in\\ngust wind [knot]\>\""}], "}"}], ",", "1", 
+            ",", "25", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"Control", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+             "nSamples", ",", "5", ",", 
+              "\"\<number of\\nrandomized trajectories\>\""}], "}"}], ",", 
+            "1", ",", "100", ",", "1", ",", 
+            RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], 
+          "]"}], ",", "\[IndentingNewLine]", 
+         "\"\<---------------------------------------------------------\>\"", 
+         ",", "\[IndentingNewLine]", 
+         "\"\<Blue line is reference solution: no effect from wind or drag.\>\
+\"", ",", "\[IndentingNewLine]", 
+         "\"\<Yellow line is affected by drag and wind.\>\""}], 
+        "\[IndentingNewLine]", "}"}]}], "}"}], "//", "Transpose"}], "]"}]}], 
+  "]"}]], "Input",ExpressionUUID->"4a7a2d62-c793-49b7-a68a-a13e8ef485bd"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`AMeter2$$ = 1, $CellContext`Cd$$ = 
+    1, $CellContext`hFeet$$ = 81, $CellContext`mPound$$ = 
+    18, $CellContext`nSamples$$ = 100, $CellContext`vVxKnot$$ = 
+    25, $CellContext`vWxKnot$$ = 3, $CellContext`vWzKnot$$ = 
+    11, $CellContext`\[Alpha]VerticalDeg$$ = 
+    17, $CellContext`\[Sigma]VerticalAngleDeg$$ = 13 
+    Degree, $CellContext`\[Sigma]vKnotGust$$ = 19, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`vVxKnot$$], 25, 
+       "initial downrange vehicle\nground speed [knot]"}, -50, 50, 1}, {{
+       Hold[$CellContext`\[Alpha]VerticalDeg$$], 0, 
+       "initial vertical\nangle [deg]"}, -89, 89, 1}, {{
+       Hold[$CellContext`\[Sigma]VerticalAngleDeg$$], 15 Degree, 
+       "variation in\nvertical angle [deg]"}, Degree, 22 Degree, Degree}, {{
+       Hold[$CellContext`hFeet$$], 90, "altitude\nat launch [feet]"}, 1, 400, 
+      1}, {{
+       Hold[$CellContext`mPound$$], 55, "vehicle mass /\nweight [pound]"}, 1, 
+      100, 1}, {{
+       Hold[$CellContext`AMeter2$$], 1, 
+       "Area presented\nto the wind [\!\(\*SuperscriptBox[\(m\), \(2\)]\)]"}, 
+      0, 5, 0.01}, {{
+       Hold[$CellContext`Cd$$], 1, "Coefficient of drag\n[dimensionless]"}, 0,
+       2.1, 0.05}, {{
+       Hold[$CellContext`vWxKnot$$], 0, "fixed downrange\nwind [knot]"}, -50, 
+      50, 1}, {{
+       Hold[$CellContext`vWzKnot$$], 0, "fixed crossrange\nwind [knot]"}, -50,
+       50, 1}, {{
+       Hold[$CellContext`\[Sigma]vKnotGust$$], 5, 
+       "variation in\ngust wind [knot]"}, 1, 25, 1}, {{
+       Hold[$CellContext`nSamples$$], 5, 
+       "number of\nrandomized trajectories"}, 1, 100, 1}, {
+      Hold[
+       Grid[{{
+          Manipulate`Place[1], 
+          Manipulate`Place[8]}, {
+          Manipulate`Place[2], 
+          Manipulate`Place[9]}, {
+          Manipulate`Place[3], ""}, {
+          Manipulate`Place[4], 
+          Manipulate`Place[10]}, {
+         "---------------------------------------------------------", 
+          Manipulate`Place[11]}, {
+          Manipulate`Place[5], 
+          "---------------------------------------------------------"}, {
+          Manipulate`Place[6], 
+          "Blue line is reference solution: no effect from wind or drag."}, {
+          Manipulate`Place[7], 
+          "Yellow line is affected by drag and wind."}}]], 
+      Manipulate`Dump`ThisIsNotAControl}}, Typeset`size$$ = {
+    900., {195., 203.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
+    Typeset`skipInitDone$$ = True, $CellContext`vVxKnot$443519$$ = 
+    0, $CellContext`\[Alpha]VerticalDeg$443520$$ = 
+    0, $CellContext`\[Sigma]VerticalAngleDeg$443521$$ = 
+    0, $CellContext`hFeet$443522$$ = 0, $CellContext`mPound$443523$$ = 
+    0, $CellContext`AMeter2$443524$$ = 0, $CellContext`Cd$443525$$ = 
+    0, $CellContext`vWxKnot$443526$$ = 0, $CellContext`vWzKnot$443527$$ = 
+    0, $CellContext`\[Sigma]vKnotGust$443528$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     2, StandardForm, 
+      "Variables" :> {$CellContext`AMeter2$$ = 1, $CellContext`Cd$$ = 
+        1, $CellContext`hFeet$$ = 90, $CellContext`mPound$$ = 
+        55, $CellContext`nSamples$$ = 5, $CellContext`vVxKnot$$ = 
+        25, $CellContext`vWxKnot$$ = 0, $CellContext`vWzKnot$$ = 
+        0, $CellContext`\[Alpha]VerticalDeg$$ = 
+        0, $CellContext`\[Sigma]VerticalAngleDeg$$ = 
+        15 Degree, $CellContext`\[Sigma]vKnotGust$$ = 5}, 
+      "ControllerVariables" :> {
+        Hold[$CellContext`vVxKnot$$, $CellContext`vVxKnot$443519$$, 0], 
+        Hold[$CellContext`\[Alpha]VerticalDeg$$, \
+$CellContext`\[Alpha]VerticalDeg$443520$$, 0], 
+        Hold[$CellContext`\[Sigma]VerticalAngleDeg$$, \
+$CellContext`\[Sigma]VerticalAngleDeg$443521$$, 0], 
+        Hold[$CellContext`hFeet$$, $CellContext`hFeet$443522$$, 0], 
+        Hold[$CellContext`mPound$$, $CellContext`mPound$443523$$, 0], 
+        Hold[$CellContext`AMeter2$$, $CellContext`AMeter2$443524$$, 0], 
+        Hold[$CellContext`Cd$$, $CellContext`Cd$443525$$, 0], 
+        Hold[$CellContext`vWxKnot$$, $CellContext`vWxKnot$443526$$, 0], 
+        Hold[$CellContext`vWzKnot$$, $CellContext`vWzKnot$443527$$, 0], 
+        Hold[$CellContext`\[Sigma]vKnotGust$$, \
+$CellContext`\[Sigma]vKnotGust$443528$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      With[{$CellContext`mpsPerMph$ = 0.44704, $CellContext`mpsPerKnot$ = 
+         0.514444, $CellContext`feetPerMeter$ = 
+         3.28084, $CellContext`kgPerPound$ = 0.453592, $CellContext`gMpS2$ = 
+         9.81, $CellContext`\[Rho]KgPerM3$ = 1.25}, 
+        With[{$CellContext`v0mps$ = ($CellContext`mpsPerKnot$ \
+$CellContext`vVxKnot$$) {
+            1., Sin[$CellContext`\[Alpha]VerticalDeg$$ Degree]/
+             Cos[$CellContext`\[Alpha]VerticalDeg$$ Degree], 
+             0}, $CellContext`p0m$ = {
+           0, $CellContext`hFeet$$/$CellContext`feetPerMeter$, 
+            0}, $CellContext`mKg$ = $CellContext`mPound$$ \
+$CellContext`kgPerPound$, $CellContext`\[Rho]PerM$ = $CellContext`AMeter2$$ \
+$CellContext`\[Rho]KgPerM3$, $CellContext`maxTSeconds$ = 
+          20, $CellContext`dtSeconds$ = 0.1, $CellContext`anglesRad$ = 
+          RandomVariate[
+            
+            NormalDistribution[$CellContext`\[Alpha]VerticalDeg$$ 
+             Degree, $CellContext`\[Sigma]VerticalAngleDeg$$ 
+             Degree], $CellContext`nSamples$$], \
+$CellContext`randomGustAzimuthRad$ = 
+          RandomReal[{0., 2. Pi}]& , $CellContext`randomGustSpeedMps$ = 
+          RandomVariate[
+            NormalDistribution[
+            0, $CellContext`mpsPerKnot$ $CellContext`\[Sigma]vKnotGust$$]]& }, 
+         With[{$CellContext`randomGustVectorMps$ = \
+$CellContext`randomGustSpeedMps$[] 
+            With[{$CellContext`a = $CellContext`randomGustAzimuthRad$[]}, {
+               Cos[$CellContext`a], 0., 
+               Sin[$CellContext`a]}]& }, 
+          
+          With[{$CellContext`vWvectorMps$ = $CellContext`mpsPerKnot$ \
+{$CellContext`vWxKnot$$, 
+               0, $CellContext`vWzKnot$$}, $CellContext`vWspeedMps$ = \
+$CellContext`mpsPerKnot$ 
+             Sqrt[$CellContext`vWxKnot$$ $CellContext`vWxKnot$$ + \
+$CellContext`vWzKnot$$ $CellContext`vWzKnot$$]}, 
+           
+           With[{$CellContext`vZerosMps$ = 
+             Map[$CellContext`v0mps$ + $CellContext`randomGustVectorMps$[] + {
+                
+                 Cos[#], 0., 
+                 Sin[#]}& , $CellContext`anglesRad$]}, 
+            
+            With[{$CellContext`solver$ = 
+              Function[{$CellContext`p0$, $CellContext`v0$}, 
+                NDSolve[
+                 
+                 With[{$CellContext`rx$ = 
+                   Derivative[1][$CellContext`qx][$CellContext`t] - 
+                    Part[$CellContext`vWvectorMps$, 1], $CellContext`ry$ = 
+                   Derivative[1][$CellContext`qy][$CellContext`t] - 
+                    Part[$CellContext`vWvectorMps$, 2], $CellContext`rz$ = 
+                   Derivative[1][$CellContext`qz][$CellContext`t] - 
+                    Part[$CellContext`vWvectorMps$, 3]}, 
+                  
+                  With[{$CellContext`v$ = 
+                    Sqrt[$CellContext`rx$ $CellContext`rx$ + $CellContext`ry$ \
+$CellContext`ry$ + $CellContext`rz$ $CellContext`rz$]}, {$CellContext`mKg$ 
+                    Derivative[
+                    2][$CellContext`qx][$CellContext`t] == -(((((1/
+                    2) $CellContext`\[Rho]PerM$) $CellContext`Cd$$) \
+$CellContext`v$) $CellContext`rx$), $CellContext`mKg$ 
+                    Derivative[
+                    2][$CellContext`qy][$CellContext`t] == -(((((1/
+                    2) $CellContext`\[Rho]PerM$) $CellContext`Cd$$) \
+$CellContext`v$) $CellContext`ry$) - $CellContext`gMpS2$ $CellContext`mKg$, \
+$CellContext`mKg$ Derivative[
+                    2][$CellContext`qz][$CellContext`t] == -(((((1/
+                    2) $CellContext`\[Rho]PerM$) $CellContext`Cd$$) \
+$CellContext`v$) $CellContext`rz$), $CellContext`qx[0] == 
+                    Part[$CellContext`p0$, 1], $CellContext`qy[0] == 
+                    Part[$CellContext`p0$, 2], $CellContext`qz[0] == 
+                    Part[$CellContext`p0$, 3], 
+                    Derivative[1][$CellContext`qx][0] == 
+                    Part[$CellContext`v0$, 1], 
+                    Derivative[1][$CellContext`qy][0] == 
+                    Part[$CellContext`v0$, 2], 
+                    Derivative[1][$CellContext`qz][0] == 
+                    Part[$CellContext`v0$, 3]}]], {
+                  $CellContext`qx[$CellContext`t], 
+                  $CellContext`qy[$CellContext`t], 
+                  $CellContext`qz[$CellContext`t]}, {$CellContext`t, 
+                  0, $CellContext`maxTSeconds$}]], $CellContext`solPicker$ = 
+              Function[$CellContext`soln, <|
+                "x" -> Part[$CellContext`soln, 1, 1, 2], "y" -> 
+                 Part[$CellContext`soln, 1, 2, 2], "z" -> 
+                 Part[$CellContext`soln, 1, 3, 2], "t" -> Floor[
+                   Part[$CellContext`soln, 1, 1, 2, 0, 1, 1, 2], 0.001]|>]}, 
+             With[{$CellContext`qs$ = $CellContext`solPicker$[
+                 $CellContext`solver$[$CellContext`p0m$, \
+$CellContext`v0mps$]]}, 
+              With[{$CellContext`qss$ = Map[$CellContext`solPicker$[
+                   $CellContext`solver$[$CellContext`p0m$, #]]& , \
+$CellContext`vZerosMps$]}, 
+               
+               With[{$CellContext`qx$ = $CellContext`qs$[
+                  "x"], $CellContext`qy$ = $CellContext`qs$[
+                  "y"], $CellContext`qz$ = $CellContext`qs$[
+                  "z"], $CellContext`t1m$ = $CellContext`qs$["t"]}, 
+                
+                With[{$CellContext`qpd$ = 
+                  Function[{$CellContext`p0$, $CellContext`v0$, \
+$CellContext`vW$, $CellContext`tm$}, $CellContext`p0$ + $CellContext`v0$ \
+$CellContext`tm$ + ((1/2) {
+                    0, -$CellContext`gMpS2$, 
+                    0}) $CellContext`tm$^2], $CellContext`qpf$ = 
+                  Function[{$CellContext`picked, $CellContext`tm}, 
+                    ReplaceAll[{
+                    $CellContext`picked["x"], 
+                    $CellContext`picked["y"], 
+                    $CellContext`picked["z"]}, {$CellContext`t -> 
+                    Min[$CellContext`tm, 
+                    $CellContext`picked["t"]]}]]}, 
+                 
+                 With[{$CellContext`trajAndTimesD$ = 
+                   Module[{$CellContext`i$ = 0}, 
+                    Table[{
+                    PreIncrement[$CellContext`i$], $CellContext`t2, 
+                    $CellContext`qpd$[$CellContext`p0m$, $CellContext`v0mps$, \
+$CellContext`vWvectorMps$, $CellContext`t2]}, {$CellContext`t2, 
+                    0, $CellContext`maxTSeconds$, $CellContext`dtSeconds$}]], \
+$CellContext`trajAndTimesE$ = Module[{$CellContext`i$ = 0}, 
+                    Table[{
+                    PreIncrement[$CellContext`i$], $CellContext`t2, 
+                    $CellContext`qpf$[$CellContext`qs$, $CellContext`t2]}, \
+{$CellContext`t2, 
+                    0, $CellContext`maxTSeconds$, $CellContext`dtSeconds$}]], \
+$CellContext`trajAndTimesFs$ = Map[Module[{$CellContext`i$ = 0}, 
+                    Table[{
+                    PreIncrement[$CellContext`i$], $CellContext`t2, 
+                    $CellContext`qpf$[#, $CellContext`t2]}, {$CellContext`t2, 
+                    0, $CellContext`maxTSeconds$, $CellContext`dtSeconds$}]]& \
+, $CellContext`qss$]}, 
+                  
+                  With[{$CellContext`tibbleD$ = 
+                    Select[$CellContext`trajAndTimesD$, Part[#, 3, 2] >= 
+                    0& ], $CellContext`tibbleE$ = 
+                    Select[$CellContext`trajAndTimesE$, Part[#, 3, 2] >= 
+                    0& ], $CellContext`tibbleFs$ = 
+                    Map[Select[#, Part[#, 3, 2] >= 
+                    0& ]& , $CellContext`trajAndTimesFs$], \
+$CellContext`landingTime$ = Function[{$CellContext`trajTime}, 
+                    With[{$CellContext`lastUp = Last[
+                    Select[$CellContext`trajTime, Part[#, 3, 2] >= 0& ]]}, 
+                    
+                    With[{$CellContext`indexLastUp = 
+                    Part[$CellContext`lastUp, 1], $CellContext`lastUpHeight = 
+                    Part[$CellContext`lastUp, 3, 2], $CellContext`lastUpTime = 
+                    Part[$CellContext`lastUp, 2]}, 
+                    
+                    With[{$CellContext`firstDownTime = 
+                    Part[$CellContext`trajTime, $CellContext`indexLastUp + 1, 
+                    2], $CellContext`firstDownHeight = 
+                    Part[$CellContext`trajTime, $CellContext`indexLastUp + 1, 
+                    3, 2]}, $CellContext`lastUpTime + \
+$CellContext`lastUpHeight (($CellContext`firstDownTime - \
+$CellContext`lastUpTime)/($CellContext`lastUpHeight - \
+$CellContext`firstDownHeight))]]]]}, 
+                   
+                   With[{$CellContext`trajD$ = $CellContext`feetPerMeter$ 
+                    Map[Part[#, 
+                    3]& , $CellContext`tibbleD$], $CellContext`trajQ$ = \
+$CellContext`feetPerMeter$ 
+                    Map[Part[#, 
+                    3]& , $CellContext`tibbleE$], $CellContext`trajFs$ = \
+$CellContext`feetPerMeter$ Map[
+                    Function[$CellContext`tibbleF, 
+                    Map[Part[#, 
+                    3]& , $CellContext`tibbleF]], $CellContext`tibbleFs$], \
+$CellContext`tD$ = $CellContext`landingTime$[$CellContext`trajAndTimesD$], \
+$CellContext`tE$ = $CellContext`landingTime$[$CellContext`trajAndTimesE$], \
+$CellContext`tFs$ = 
+                    Map[$CellContext`landingTime$, \
+$CellContext`trajAndTimesFs$]}, 
+                    
+                    With[{$CellContext`landingPointD$ = \
+$CellContext`feetPerMeter$ $CellContext`qpd$[$CellContext`p0m$, \
+$CellContext`v0mps$, $CellContext`vWvectorMps$, $CellContext`tD$], \
+$CellContext`landingPointE$ = $CellContext`feetPerMeter$ \
+$CellContext`qpf$[$CellContext`qs$, $CellContext`tE$], \
+$CellContext`landingPointFs$ = $CellContext`feetPerMeter$ 
+                    Map[Apply[$CellContext`qpf$, #]& , 
+                    Transpose[{$CellContext`qss$, $CellContext`tFs$}]]}, 
+                    With[{$CellContext`cpe = GraphicsRow[{
+                    ListLinePlot[{
+                    Map[Drop[#, -1]& , $CellContext`trajD$], 
+                    Map[Drop[#, -1]& , $CellContext`trajQ$]}, 
+                    AxesLabel -> {"x[Feet]", "y[Feet]"}, 
+                    PlotMarkers -> {{$CellContext`\[FilledCircle], 
+                    8}, {$CellContext`\[FilledSquare], 8}}, ImageSize -> 
+                    Medium, Epilog -> {
+                    PointSize[0.03], 
+                    Point[
+                    Drop[$CellContext`landingPointD$, -1]], 
+                    Point[
+                    Drop[$CellContext`landingPointE$, -1]]}], 
+                    With[{$CellContext`ex$ = 500}, 
+                    Graphics[{Red, 
+                    Point[{
+                    Part[$CellContext`landingPointE$, 1], 
+                    Part[$CellContext`landingPointE$, 3]}], Black, 
+                    Map[Point, 
+                    Map[{
+                    Part[#, 1], 
+                    Part[#, 3]}& , $CellContext`landingPointFs$]]}, Axes -> 
+                    True, FrameLabel -> {{"cross-range [feet]", ""}, {
+                    "down-range [feet]", ""}}, Frame -> True, GridLines -> 
+                    Automatic, 
+                    PlotRange -> {{
+                    0, $CellContext`ex$}, {(-$CellContext`ex$)/
+                    2, $CellContext`ex$/2}}]]}]}, 
+                    Show[{$CellContext`cpe}]]]]]]]]]]]]]]]], 
+      "Specifications" :> {{{$CellContext`vVxKnot$$, 25, 
+          "initial downrange vehicle\nground speed [knot]"}, -50, 50, 1, 
+         Appearance -> "Labeled", ControlPlacement -> 
+         1}, {{$CellContext`\[Alpha]VerticalDeg$$, 0, 
+          "initial vertical\nangle [deg]"}, -89, 89, 1, Appearance -> 
+         "Labeled", ControlPlacement -> 
+         2}, {{$CellContext`\[Sigma]VerticalAngleDeg$$, 15 Degree, 
+          "variation in\nvertical angle [deg]"}, Degree, 22 Degree, Degree, 
+         Appearance -> "Labeled", ControlPlacement -> 
+         3}, {{$CellContext`hFeet$$, 90, "altitude\nat launch [feet]"}, 1, 
+         400, 1, Appearance -> "Labeled", ControlPlacement -> 
+         4}, {{$CellContext`mPound$$, 55, "vehicle mass /\nweight [pound]"}, 
+         1, 100, 1, Appearance -> "Labeled", ControlPlacement -> 
+         5}, {{$CellContext`AMeter2$$, 1, 
+          "Area presented\nto the wind [\!\(\*SuperscriptBox[\(m\), \
+\(2\)]\)]"}, 0, 5, 0.01, Appearance -> "Labeled", ControlPlacement -> 
+         6}, {{$CellContext`Cd$$, 1, "Coefficient of drag\n[dimensionless]"}, 
+         0, 2.1, 0.05, Appearance -> "Labeled", ControlPlacement -> 
+         7}, {{$CellContext`vWxKnot$$, 0, 
+          "fixed downrange\nwind [knot]"}, -50, 50, 1, Appearance -> 
+         "Labeled", ControlPlacement -> 
+         8}, {{$CellContext`vWzKnot$$, 0, 
+          "fixed crossrange\nwind [knot]"}, -50, 50, 1, Appearance -> 
+         "Labeled", ControlPlacement -> 
+         9}, {{$CellContext`\[Sigma]vKnotGust$$, 5, 
+          "variation in\ngust wind [knot]"}, 1, 25, 1, Appearance -> 
+         "Labeled", ControlPlacement -> 
+         10}, {{$CellContext`nSamples$$, 5, 
+          "number of\nrandomized trajectories"}, 1, 100, 1, Appearance -> 
+         "Labeled", ControlPlacement -> 11}, 
+        Grid[{{
+           Manipulate`Place[1], 
+           Manipulate`Place[8]}, {
+           Manipulate`Place[2], 
+           Manipulate`Place[9]}, {
+           Manipulate`Place[3], ""}, {
+           Manipulate`Place[4], 
+           Manipulate`Place[10]}, {
+          "---------------------------------------------------------", 
+           Manipulate`Place[11]}, {
+           Manipulate`Place[5], 
+           "---------------------------------------------------------"}, {
+           Manipulate`Place[6], 
+           "Blue line is reference solution: no effect from wind or drag."}, {
+          
+           Manipulate`Place[7], 
+           "Yellow line is affected by drag and wind."}}]}, "Options" :> {}, 
+      "DefaultOptions" :> {}],
+     ImageSizeCache->{1153., {449., 458.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",ExpressionUUID->"147d0887-\
+7857-409a-8903-8b181d0a748d"]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",ExpressionUUID->"2aded39e-193b-4749-83bb-da6c0133a57e"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1440, 1051},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+Visible->True,
+ScrollingOptions->{"VerticalScrollRange"->Fit},
+PrintingCopies->1,
+PrintingPageRange->{Automatic, Automatic},
+PrintingOptions->{"PaperOrientation"->"Portrait",
+"PaperSize"->{Automatic, Automatic},
+"PostScriptOutputFile"->"/home/ANT.AMAZON.COM/bbeckman/Dropbox/MMA/\
+BallisticsWithCEP_20161102_002.pdf"},
+ShowCellBracket->Automatic,
+CellContext->Notebook,
+TrackCellChangeTimes->False,
+Magnification:>1.5 Inherited,
+FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (July 24, 2023)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[StyleDefinitions -> "Default.nb"]], 
+   Cell[
+    StyleData["Text"], FontFamily -> "Candara", FontSize -> 14, FontWeight -> 
+    "Regular", FontSlant -> "Plain", 
+    PrivateFontOptions -> {"FontPostScriptName" -> "Automatic"}], 
+   Cell[
+    StyleData["ItemNumbered"], FontFamily -> "Candara", FontSize -> 14, 
+    FontWeight -> "Regular", FontSlant -> "Plain", 
+    PrivateFontOptions -> {"FontPostScriptName" -> "Automatic"}], 
+   Cell[
+    StyleData["SubitemNumbered"], FontFamily -> "Candara", FontSize -> 14, 
+    FontWeight -> "Regular", FontSlant -> "Plain", 
+    PrivateFontOptions -> {"FontPostScriptName" -> "Automatic"}]}, Visible -> 
+  False, FrontEndVersion -> "13.3 for Mac OS X ARM (64-bit) (July 24, 2023)", 
+  StyleDefinitions -> "PrivateStylesheetFormatting.nb"],
+ExpressionUUID->"6ee79f02-d53b-4437-9f6b-3ffeea225b27"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 89, 0, 146, "Title",ExpressionUUID->"839c80c1-8ebb-4af3-831f-2944055361fd"],
+Cell[CellGroupData[{
+Cell[694, 26, 121, 0, 81, "Subsection",ExpressionUUID->"bbb5659c-0b27-4d39-9d9a-5e511cb627ac"],
+Cell[818, 28, 839, 21, 139, "Text",ExpressionUUID->"9b86448f-23d1-4a3c-91a4-155c8fd3cf39"],
+Cell[CellGroupData[{
+Cell[1682, 53, 212, 3, 70, "ItemNumbered",ExpressionUUID->"aa2bab74-ceef-4d8d-8f9d-337aa485313c"],
+Cell[1897, 58, 177, 3, 37, "SubitemNumbered",ExpressionUUID->"be550f55-2b21-4504-9df7-5e7015062a01"],
+Cell[2077, 63, 199, 3, 64, "SubitemNumbered",ExpressionUUID->"f9d04854-d388-448a-81d1-f1cafcbfb540"]
+}, Open  ]],
+Cell[2291, 69, 263, 4, 78, "Text",ExpressionUUID->"729242f0-da4f-4801-8c25-022648b64733"],
+Cell[2557, 75, 375, 5, 96, "ItemNumbered",ExpressionUUID->"7170e546-02d9-4cac-a431-1c09bd7e8f19"],
+Cell[2935, 82, 358, 5, 96, "ItemNumbered",ExpressionUUID->"fda297b6-1e67-4fba-a974-bff766b5fbe0"],
+Cell[3296, 89, 211, 3, 78, "Text",ExpressionUUID->"6d106a6f-5797-48ad-bdc9-fc9d98530db6"],
+Cell[3510, 94, 370, 8, 78, "Text",ExpressionUUID->"bd8af859-6d6e-4607-b8c4-c655c011f625"],
+Cell[3883, 104, 291, 4, 78, "Text",ExpressionUUID->"a715955e-bda2-4f02-9b77-bb5d34ff1a4f"],
+Cell[4177, 110, 402, 6, 107, "Text",ExpressionUUID->"f5544617-19f6-4711-bc36-b65e65f58e10"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4616, 121, 84, 0, 101, "Section",ExpressionUUID->"73a1cc1d-e54d-46b4-b6bd-f1d5142d269e"],
+Cell[4703, 123, 798, 24, 137, "Text",ExpressionUUID->"c1e7fc1d-6af9-4db6-9b57-fab52b54799d"],
+Cell[CellGroupData[{
+Cell[5526, 151, 54994, 1165, 5717, "Input",ExpressionUUID->"4a7a2d62-c793-49b7-a68a-a13e8ef485bd"],
+Cell[60523, 1318, 19077, 361, 935, "Output",ExpressionUUID->"147d0887-7857-409a-8903-8b181d0a748d"]
+}, Open  ]],
+Cell[79615, 1682, 81, 0, 46, "Input",ExpressionUUID->"2aded39e-193b-4749-83bb-da6c0133a57e"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

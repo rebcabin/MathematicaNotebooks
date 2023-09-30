@@ -1,0 +1,275 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      9804,        267]
+NotebookOptionsPosition[      9079,        247]
+NotebookOutlinePosition[      9534,        264]
+CellTagsIndexPosition[      9491,        261]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"createToc", "[", 
+    RowBox[{"bookUrl_", ",", "typeList_"}], "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "toc", ",", "book", ",", "createCell", ",", "counter", ",", "cell", ",",
+        "type", ",", "tag"}], "}"}], ",", 
+     RowBox[{"(*", 
+      RowBox[{
+      "create", " ", "TOC", " ", "file", " ", "and", " ", "open", " ", 
+       "book"}], "*)"}], 
+     RowBox[{
+      RowBox[{"toc", "=", 
+       RowBox[{"CreateDocument", "[", "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"book", "=", 
+       RowBox[{"NotebookOpen", "[", "bookUrl", "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"SetOptions", "[", 
+       RowBox[{"book", ",", 
+        RowBox[{"ShowPageBreaks", "\[Rule]", "True"}]}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "helper", " ", "file", " ", "for", " ", "creating", " ", "cell"}], 
+       "*)"}], 
+      RowBox[{
+       RowBox[{"createCell", "[", 
+        RowBox[{"text_", ",", "tag_", ",", "level_"}], "]"}], ":=", 
+       RowBox[{"Cell", "[", 
+        RowBox[{
+         RowBox[{"BoxData", "[", 
+          RowBox[{"TagBox", "[", 
+           RowBox[{
+            RowBox[{"GridBox", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"{", 
+                RowBox[{"\"\<\>\"", ",", "text", ",", 
+                 RowBox[{"CounterBox", "[", 
+                  RowBox[{"\"\<Page\>\"", ",", 
+                   RowBox[{"{", 
+                    RowBox[{"bookUrl", ",", "tag"}], "}"}]}], "]"}]}], "}"}], 
+               "}"}], ",", 
+              RowBox[{"GridBoxAlignment", "\[Rule]", 
+               RowBox[{"{", 
+                RowBox[{"\"\<Columns\>\"", "\[Rule]", 
+                 RowBox[{"{", 
+                  RowBox[{"Left", ",", "Left", ",", "Right"}], "}"}]}], 
+                "}"}]}], ",", 
+              RowBox[{"GridBoxItemSize", "\[Rule]", 
+               RowBox[{"{", 
+                RowBox[{"\"\<Columns\>\"", "\[Rule]", 
+                 RowBox[{"{", 
+                  RowBox[{
+                   RowBox[{
+                    RowBox[{"2", " ", "level"}], "-", "1"}], ",", 
+                   RowBox[{"35", "-", 
+                    RowBox[{"2", " ", "level"}]}], ",", "5"}], "}"}]}], 
+                "}"}]}]}], "]"}], ",", "\"\<Grid\>\""}], "]"}], "]"}], ",", 
+         "\"\<Text\>\""}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "iterate", " ", "over", " ", "cells", " ", "to", " ", "set", " ", 
+        "tags", " ", "and", " ", "write", " ", "lines", " ", "to", " ", 
+        "TOC"}], "*)"}], 
+      RowBox[{"Scan", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"counter", "[", "#", "]"}], "=", "0"}], ")"}], "&"}], ",", 
+        "typeList"}], "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"SelectionMove", "[", 
+       RowBox[{"book", ",", "Before", ",", "Notebook"}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"SelectionMove", "[", 
+       RowBox[{"book", ",", "Next", ",", "Cell"}], "]"}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"While", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"cell", "=", 
+           RowBox[{"NotebookRead", "[", "book", "]"}]}], ")"}], "=!=", 
+         RowBox[{"{", "}"}]}], ",", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Length", "[", "cell", "]"}], "\[GreaterEqual]", "2"}], 
+          ",", 
+          RowBox[{
+           RowBox[{"type", "=", 
+            RowBox[{"cell", "[", 
+             RowBox[{"[", "2", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"MemberQ", "[", 
+              RowBox[{"typeList", ",", "type"}], "]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"counter", "[", "type", "]"}], "+=", "1"}], ";", 
+              "\[IndentingNewLine]", 
+              RowBox[{"tag", "=", 
+               RowBox[{"type", "<>", 
+                RowBox[{"ToString", "[", 
+                 RowBox[{"counter", "[", "type", "]"}], "]"}]}]}], ";", 
+              "\[IndentingNewLine]", 
+              RowBox[{"SetOptions", "[", 
+               RowBox[{
+                RowBox[{"NotebookSelection", "[", "book", "]"}], ",", 
+                RowBox[{"CellTags", "\[Rule]", 
+                 RowBox[{"Union", "[", 
+                  RowBox[{"Flatten", "[", 
+                   RowBox[{"{", 
+                    RowBox[{
+                    RowBox[{
+                    RowBox[{"Options", "[", 
+                    RowBox[{
+                    RowBox[{"NotebookSelection", "[", "book", "]"}], ",", 
+                    "CellTags"}], "]"}], "[", 
+                    RowBox[{"[", 
+                    RowBox[{"1", ",", "2"}], "]"}], "]"}], ",", "tag"}], 
+                    "}"}], "]"}], "]"}]}]}], "]"}], ";", 
+              "\[IndentingNewLine]", 
+              RowBox[{"SelectionMove", "[", 
+               RowBox[{"book", ",", "All", ",", "CellContents"}], "]"}], ";", 
+              "\[IndentingNewLine]", 
+              RowBox[{"NotebookWrite", "[", 
+               RowBox[{"toc", ",", 
+                RowBox[{"createCell", "[", 
+                 RowBox[{
+                  RowBox[{"NotebookRead", "[", "book", "]"}], ",", "tag", ",", 
+                  RowBox[{
+                   RowBox[{"Position", "[", 
+                    RowBox[{"typeList", ",", "type"}], "]"}], "[", 
+                   RowBox[{"[", 
+                    RowBox[{"1", ",", "1"}], "]"}], "]"}]}], "]"}]}], 
+               "]"}]}]}], "]"}], ";", "\[IndentingNewLine]", 
+           RowBox[{"SelectionMove", "[", 
+            RowBox[{"book", ",", "Next", ",", "Cell"}], "]"}]}]}], "]"}]}], 
+       "]"}], ";", "\[IndentingNewLine]", 
+      RowBox[{"SetSelectedNotebook", "[", "toc", "]"}]}]}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.7282192667883043`*^9, 
+  3.72821926678979*^9}},ExpressionUUID->"0d7df878-b617-4c37-b6ea-\
+089e839e79da"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"book", "=", 
+   RowBox[{"CreateDocument", "[", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"NotebookWrite", "[", 
+   RowBox[{"book", ",", 
+    RowBox[{"Cell", "[", 
+     RowBox[{"\"\<This is section 1\>\"", ",", "\"\<Section\>\""}], "]"}]}], 
+   "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"NotebookWrite", "[", 
+   RowBox[{"book", ",", 
+    RowBox[{"Cell", "[", 
+     RowBox[{"\"\<This is a subsection\>\"", ",", "\"\<Subsection\>\""}], 
+     "]"}]}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"NotebookWrite", "[", 
+   RowBox[{"book", ",", 
+    RowBox[{"Cell", "[", 
+     RowBox[{"\"\<This is some text\>\"", ",", "\"\<Text\>\""}], "]"}]}], 
+   "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"NotebookWrite", "[", 
+   RowBox[{"book", ",", 
+    RowBox[{"Cell", "[", 
+     RowBox[{
+     "\"\<Another section which begins on a new page\>\"", ",", 
+      "\"\<Section\>\"", ",", 
+      RowBox[{"PageBreakAbove", "\[Rule]", "True"}]}], "]"}]}], "]"}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"NotebookWrite", "[", 
+   RowBox[{"book", ",", 
+    RowBox[{"Cell", "[", 
+     RowBox[{"\"\<Subsection 2.1\>\"", ",", "\"\<Subsection\>\"", ",", 
+      RowBox[{"PageBreakBelow", "\[Rule]", "True"}]}], "]"}]}], "]"}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"NotebookWrite", "[", 
+   RowBox[{"book", ",", 
+    RowBox[{"Cell", "[", 
+     RowBox[{"\"\<Subsection 2.2\>\"", ",", "\"\<Subsection\>\""}], "]"}]}], 
+   "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"bookUrl", "=", 
+   RowBox[{"ExpandFileName", "[", "\"\<book1.nb\>\"", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"NotebookSave", "[", 
+   RowBox[{"book", ",", "bookUrl"}], "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.728219283834178*^9, 
+  3.728219283835606*^9}},ExpressionUUID->"d1359a23-90f5-4575-81e0-\
+2e833cefa715"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"createToc", "[", 
+  RowBox[{"bookUrl", ",", 
+   RowBox[{"{", 
+    RowBox[{"\"\<Section\>\"", ",", "\"\<Subsection\>\""}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.728219313312683*^9, 
+  3.7282193133140182`*^9}},ExpressionUUID->"f54100ce-c800-4364-a28f-\
+c2a1dcc350e1"],
+
+Cell[BoxData[
+ TemplateBox[{FrontEndObject[
+    LinkObject["hvhgv_shm", 3, 1]],106,
+   "FrontEndObject[LinkObject[\"hvhgv_shm\", 3, 1]]","106","\"Untitled-4\""},
+  "NotebookObjectUnsaved"]], "Output",
+ CellChangeTimes->{
+  3.728219322629569*^9},ExpressionUUID->"15e348bc-2f11-4568-8548-\
+a583f21eab10"]
+}, Open  ]]
+},
+WindowSize->{1146, 851},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+10, 2017)",
+StyleDefinitions->FrontEnd`FileName[{$RootDirectory, "Users", "bbeckman"}, 
+  "DefaultStyles.nb", CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 6086, 149, 441, "Input",ExpressionUUID->"0d7df878-b617-4c37-b6ea-089e839e79da"],
+Cell[6647, 171, 1784, 52, 244, "Input",ExpressionUUID->"d1359a23-90f5-4575-81e0-2e833cefa715"],
+Cell[CellGroupData[{
+Cell[8456, 227, 302, 8, 41, "Input",ExpressionUUID->"f54100ce-c800-4364-a28f-c2a1dcc350e1"],
+Cell[8761, 237, 302, 7, 50, "Output",ExpressionUUID->"15e348bc-2f11-4568-8548-a583f21eab10"]
+}, Open  ]]
+}
+]
+*)
+

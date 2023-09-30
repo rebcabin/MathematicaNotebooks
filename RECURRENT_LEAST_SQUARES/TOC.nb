@@ -1,0 +1,252 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      6854,        244]
+NotebookOptionsPosition[      4785,        204]
+NotebookOutlinePosition[      5149,        220]
+CellTagsIndexPosition[      5106,        217]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["RecurrentLeastSquaresMore Contents", "ContentsTitle"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "\.7fLinear Regression by Folding",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:1"}]], "TOCPage"]
+}], "TOCTitle"],
+
+Cell[TextData[{
+ "Introduction",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:2"}]], "TOCPage"]
+}], "TOCSection"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Motivating Example",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:3"}]], "TOCPage"]
+}], "TOCSection"],
+
+Cell[TextData[{
+ "Ground Truth",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:4"}]], "TOCPage"]
+}], "TOCSubsection"],
+
+Cell[TextData[{
+ "Partials",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:5"}]], "TOCPage"]
+}], "TOCSubsection"],
+
+Cell[TextData[{
+ "Faked Observations \[CapitalZeta]",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:6"}]], "TOCPage"]
+}], "TOCSubsection"],
+
+Cell[TextData[{
+ "Model",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:7"}]], "TOCPage"]
+}], "TOCSubsection"],
+
+Cell[TextData[{
+ "Normal Equations ",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:8"}]], "TOCPage"]
+}], "TOCSubsection"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Recurrence",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:9"}]], "TOCPage"]
+}], "TOCSection"],
+
+Cell[TextData[{
+ "Don\[CloseCurlyQuote]t Invert That Matrix\.7f",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:10"}]], 
+  "TOCPage"]
+}], "TOCSubsection"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "The Dual Problem",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:11"}]], 
+  "TOCPage"]
+}], "TOCSection"],
+
+Cell[TextData[{
+ "Application of the Dual Problem",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:12"}]], 
+  "TOCPage"]
+}], "TOCSubsection"]
+}, Open  ]],
+
+Cell[TextData[{
+ "Regularization By A-Priori: Example",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["1",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:13"}]], 
+  "TOCPage"]
+}], "TOCSection"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Regularization and MAP",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["7",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:14"}]], 
+  "TOCPage"]
+}], "TOCSection"],
+
+Cell[TextData[{
+ "Bishop\[CloseCurlyQuote]s MAP",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["7",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:15"}]], 
+  "TOCPage"]
+}], "TOCSubsection"],
+
+Cell[TextData[{
+ "Reconciling MAP",
+ " ",
+ StyleBox["\t", "Leader"],
+ Cell[TextData[ButtonBox["19",
+  BaseStyle->"PageLink",
+  ButtonData->{
+    FrontEnd`FileName[{}, "RecurrentLeastSquaresMore.nb"], "c:16"}]], 
+  "TOCPage"]
+}], "TOCSubsection"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{808, 751},
+WindowMargins->{{316, Automatic}, {Automatic, 50}},
+FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+10, 2017)",
+StyleDefinitions->"HelpBrowser.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 59, 0, 61, "ContentsTitle",ExpressionUUID->"60b37ff3-5d92-4b1e-88e5-4fbb5a231ffd"],
+Cell[CellGroupData[{
+Cell[642, 24, 252, 8, 22, "TOCTitle",ExpressionUUID->"ef7b80e2-f6aa-41fd-8a1d-dbe2b9357802"],
+Cell[897, 34, 234, 8, 15, "TOCSection",ExpressionUUID->"2b998d97-6298-4dda-a2ee-6d879148a066"],
+Cell[CellGroupData[{
+Cell[1156, 46, 240, 8, 15, "TOCSection",ExpressionUUID->"4f194b16-c59d-48aa-9313-e6b0dc773a30"],
+Cell[1399, 56, 237, 8, 14, "TOCSubsection",ExpressionUUID->"2e6f6cfc-e503-4bf1-9418-181e9dfd6f78"],
+Cell[1639, 66, 233, 8, 14, "TOCSubsection",ExpressionUUID->"6bb378b8-e712-4614-b3cf-c100fef58275"],
+Cell[1875, 76, 258, 8, 14, "TOCSubsection",ExpressionUUID->"b48e190e-ffdc-4355-a4f5-98a5454771f1"],
+Cell[2136, 86, 230, 8, 14, "TOCSubsection",ExpressionUUID->"6dacb3be-64a8-4252-bae3-696b204e9d2f"],
+Cell[2369, 96, 242, 8, 14, "TOCSubsection",ExpressionUUID->"3944bcda-5b94-4a09-921a-beac88e1813f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2648, 109, 232, 8, 15, "TOCSection",ExpressionUUID->"99227144-efd8-4fe7-9611-ab1b21d9968b"],
+Cell[2883, 119, 274, 9, 14, "TOCSubsection",ExpressionUUID->"bbcc5761-eb7f-4513-9238-c0917169be90"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3194, 133, 242, 9, 15, "TOCSection",ExpressionUUID->"16648ac4-8341-45a5-8de8-792d4dce53f9"],
+Cell[3439, 144, 260, 9, 14, "TOCSubsection",ExpressionUUID->"da3eb781-27a4-47bc-bfe8-a7e83f84f4b6"]
+}, Open  ]],
+Cell[3714, 156, 261, 9, 15, "TOCSection",ExpressionUUID->"eb71d7ab-5d3b-426b-b5a7-84ead27c5c2a"],
+Cell[CellGroupData[{
+Cell[4000, 169, 248, 9, 15, "TOCSection",ExpressionUUID->"03cb4a6e-c8ee-4c44-b709-fd14be7f1f13"],
+Cell[4251, 180, 258, 9, 14, "TOCSubsection",ExpressionUUID->"b0462537-31e5-41de-921b-3efc0c15704a"],
+Cell[4512, 191, 245, 9, 14, "TOCSubsection",ExpressionUUID->"4fa6d9ef-079a-4c15-8553-39dcbcc21f1e"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

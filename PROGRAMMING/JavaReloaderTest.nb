@@ -1,0 +1,159 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      4699,        150]
+NotebookOptionsPosition[      3949,        119]
+NotebookOutlinePosition[      4293,        134]
+CellTagsIndexPosition[      4250,        131]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "\"\<JavaReloader.m\>\""}]], "Input",
+ CellChangeTimes->{{3.5478200409856057`*^9, 3.547820071497436*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "jlcsCode", "=", 
+   "\"\<import java.lang.*;\n\n public class LCS{  \n    public static String \
+longestCommonSubstring(String S1, String S2) {\n         int Start = 0;\n     \
+    int Max = 0;\n         for (int i = 0; i < S1.length(); i++){\n           \
+ for (int j = 0; j < S2.length(); j++){\n               int x = 0;\n          \
+     while (S1.charAt(i + x) == S2.charAt(j + x)){\n                  x++;\n  \
+                if (((i + x) >= S1.length()) || ((j + x) >= S2.length())) \n  \
+                   break;\n               }\n               if (x > Max) {\n  \
+                Max = x;\n                  Start = i;\n               }\n    \
+        }\n         }\n         return S1.substring(Start, (Start + Max));\n  \
+  }\n }\>\""}], ";"}]], "Input",
+ CellChangeTimes->{{3.547818573219424*^9, 3.5478185732204237`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"JCompileLoad", "[", "jlcsCode", "]"}]], "Input",
+ CellChangeTimes->{{3.547819706407691*^9, 3.5478197135289435`*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"JavaClass", "[", "LCS", ",", "<>", "]"}],
+  JLink`JavaClass["LCS", 0, {
+    JLink`JVM["vm2"]}, 1, "LCS`", False, True]]], "Output",
+ CellChangeTimes->{3.5478197145350075`*^9, 3.547820003978616*^9, 
+  3.547820079334382*^9, 3.547820186280506*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"LCS`longestCommonSubstring", "[", 
+  RowBox[{"\"\<AAABBBBCCCCC\>\"", ",", "\"\<CCCBBBAAABABA\>\""}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.5478200172041693`*^9, 3.5478200172051697`*^9}}],
+
+Cell[BoxData["\<\"AAAB\"\>"], "Output",
+ CellChangeTimes->{3.547820018393759*^9, 3.5478200815769625`*^9, 
+  3.547820186445506*^9}]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"s", "=", 
+   RowBox[{"StringJoin", "@", 
+    RowBox[{"RandomChoice", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "\"\<A\>\"", ",", "\"\<C\>\"", ",", "\"\<T\>\"", ",", "\"\<G\>\""}], 
+       "}"}], ",", "10000"}], "]"}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"t", "=", 
+   RowBox[{"StringJoin", "@", 
+    RowBox[{"RandomChoice", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "\"\<A\>\"", ",", "\"\<C\>\"", ",", "\"\<T\>\"", ",", "\"\<G\>\""}], 
+       "}"}], ",", "10000"}], "]"}]}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.5478201097133064`*^9, 3.5478201097143064`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LongestCommonSubsequence", "[", 
+   RowBox[{"s", ",", "t"}], "]"}], "//", "AbsoluteTiming"}]], "Input",
+ CellChangeTimes->{{3.5478201360077066`*^9, 3.547820136008706*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"0.3432`6.9870922726726405", ",", "\<\"CTGCATCGTTTAGCCA\"\>"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.5478201376783066`*^9, 3.5478201868667064`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"LCS`longestCommonSubstring", "[", 
+   RowBox[{"s", ",", "t"}], "]"}], "//", "AbsoluteTiming"}]], "Input",
+ CellChangeTimes->{{3.5478201421995063`*^9, 3.5478201421995063`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"1.0544`7.4745503907459065", ",", "\<\"CTGCATCGTTTAGCCA\"\>"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.547820144437106*^9, 3.5478201879523067`*^9}]
+}, Open  ]]
+},
+WindowSize->{961, 811},
+WindowMargins->{{Automatic, 106}, {Automatic, 35}},
+FrontEndVersion->"8.0 for Microsoft Windows (64-bit) (October 6, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 134, 2, 31, "Input"],
+Cell[694, 24, 875, 14, 472, "Input"],
+Cell[CellGroupData[{
+Cell[1594, 42, 140, 2, 31, "Input"],
+Cell[1737, 46, 289, 6, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2063, 57, 214, 4, 31, "Input"],
+Cell[2280, 63, 130, 2, 30, "Output"]
+}, Open  ]],
+Cell[2425, 68, 644, 19, 52, "Input"],
+Cell[CellGroupData[{
+Cell[3094, 91, 206, 4, 31, "Input"],
+Cell[3303, 97, 191, 4, 30, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3531, 106, 210, 4, 31, "Input"],
+Cell[3744, 112, 189, 4, 30, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
