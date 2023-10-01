@@ -1,0 +1,1239 @@
+Efficient Bayesian Regularization by Kalman Folding
+Brian Beckman
+17 Mar 2019
+Abstract
+Maximum a-posteriori (MAP) is the go-to method for Bayesian linear regression. It regularizes (avoids over-fitting) by incorporating a-priori beliefs. Our contribution is to propose functional Kalman folding (KAL) and renormalized recurrent least squares (RRLS) as robust, scalable, and flexible alternatives to MAP. Robust because KAL and RRLS avoid matrix inversion, unlike MAP. Scalable because KAL and RRLS process data one observation at a time, avoiding MAP's storage of whole data sets. Flexible because KAL and RRLS apply to lazy and asynchronous streams without modification, unlike MAP. 
+KAL and RRLS are equally Bayesian to MAP because they are recurrent and must be bootstrapped with a-priori beliefs. This fact is not often noticed because KAL and RRLS are Bayesian by construction.
+We show, by numerical examples, that KAL produces the same results as RRLS and as MAP for appropriate choices of a-priori covariances. MAP's estimates, though not covariances, are invariant when MAP's hyperparameters are swapped and inverted. After that transformation, the MAP equations strongly resemble the equations of Kalman filtering, suggesting a conjecture that, in general, the recurrent, thus flexible, form of MAP is just KAL and RRLS.
+We close with another example: recurrent KAL and RRLS for a non-linear model: Padé approximants. A transformation to linear form opens them to Kalman filtering. 
+Introduction
+Linear systems appear everywhere. Linear approximations for non-linear systems abound because non-linear systems are often intractable. Examples comprise machine learning, control, dynamics, and robotics. 
+
+Linear regression is the standard technique for estimating coefficients or parameters of a linear model from given data. Over-fitting is a hazard. Linear models, as their order (number of parameters) nears or exceeds the number of data points, follow data too well, limiting smoothness and extrapolation. Models that over-fit wiggle too much and generalize poorly.
+
+Regularization is the usual fix for over-fitting. In the Bayesian maximum a-posteriori (MAP) method, a-priori belief hyperparameters \[Alpha] and \[Beta] effect regularization; \[Alpha]=1/Subsuperscript[\[Sigma], \[Xi], 2] and \[Beta]=1/Subsuperscript[\[Sigma], \[Zeta], 2] are, respectively, the reciprocal variances of an a-priori estimate \[Xi] of the unknown model parameters and of the predicted observations \[Zeta]. In the jargon of Kalman filtering, these variances are, respectively, process noise and observation noise. 
+
+We show here, numerically, that MAP produces the same estimate \[Xi] when \[Alpha] and \[Beta] are swapped and inverted. After that transformation, the MAP equations strongly resemble the equations of Kalman filtering. These variances are concrete and we can estimate or learn them directly from experiment. In post-processing, we must produce covariances of the estimates and of the predicted observations from nominal \[Alpha]=1/Subsuperscript[\[Sigma], \[Xi], 2] and \[Beta]=1/Subsuperscript[\[Sigma], \[Zeta], 2] as specified in the original formulation of MAP. 
+
+KAL and recurrent least squared (RLS) scale better than MAP and MLE (maximum-likelihood estimation). KAL and RLS do not require all data to be present in memory, whereas MAP and MLE do so require. KAL and RLS process data one observation at a time. They are overtly recurrent, thus independent of the manner of data delivery, asynchronous or not. They avoid storage and multiplication of large matrices. KAL and RLS have natural expressions as functional folds, finding easy expression in contemporary programming languages. 
+Motivating Review
+First, we exhibit maximum-likelihood estimation (MLE) for a problem of order two: estimating the slope and intercept of a best-fit line to noisy data. We generalize to higher order below. MLE operates over all the data at once, requiring full matrices of data to be stored, multiplied, and inverted. KAL and RLS are more efficient in memory and time, as we show below.
+
+We compute MLE in four independent but equivalent ways: 
+with Wolfram built-in functions
+directly through the classic normal equations
+using the Moore-Penrose left pseudoinverse
+sidestepping inverse by solving a linear system
+These methods of MLE yield exactly and numerically the same results for this example. It is easy to make them diverge numerically by adding more parameters, that is, with models of larger order. 
+Problem Statement
+Find best-fitting parameters m (slope) and b (intercept), where z=m x+b, given known, noisy data (Subscript[z, 1],Subscript[z, 2],\[Ellipsis],Subscript[z, k]) and (Subscript[x, 1],Subscript[x, 2],\[Ellipsis],Subscript[x, k]). Best-fitting means by minimizing mean squared error.
+
+Write this system as a matrix equation and remember the following symbols, which denote matrices:
+\[CapitalZeta] (observations; known, concrete, numerical)
+A (partials, Jacobian of the observation model z=m x+b with respect to the parameters m and b; known, concrete, numerical)
+\[CapitalXi]=(m, b)\[Transpose] (model, state; unknown abstract, symbolic parameters to be estimated). 
+Rows of data \[CapitalZeta] and rows of partials A come in N matched pairs.
+Subscript[\[CapitalZeta], \[ThinSpace]\[CapitalNu]*1]  =  (Subscript[z, 1]
+Subscript[z, 2]
+\[VerticalEllipsis]
+Subscript[z, \[CapitalNu]]
+
+)   =   (Subscript[x, 1]	1
+Subscript[x, 2]	1
+\[VerticalEllipsis]	\[VerticalEllipsis]
+Subscript[x, \[CapitalNu]]	1
+
+)  \[CenterDot]  (Subscript[m, unknown]
+Subscript[b, unknown]
+
+)   +  noise   
+=  Subscript[A, \[ThinSpace]\[CapitalNu]*2]\[CenterDot]Subscript[\[CapitalXi], \[ThinSpace]2*1]  +  samples of NormalDistribution[0,Subscript[\[Sigma], \[CapitalZeta]]]
+Ground Truth
+Fake some data by (1) sampling a line specified by ground truth Subscript[m, GT] and Subscript[b, GT], then (2) adding Gaussian noise. Run the faked data through the four estimation procedures and see how close the estimated Subscript[m, estimated] and Subscript[b, estimated] come to ground truth. The model is of order M, and M=2 in this first example. There are N observed scalar data, thus \[CapitalZeta] is a column vector of order N, and N=119 in this first example.
+In real-world applications, we rarely have ground truth. Its purpose here is to baseline or calibrate the four methods. Note and remember the ground-truth values Subscript[m, GT]=0.5, Subscript[b, GT]=-1/3. Define the global variables m and b:
+In[1]:= ClearAll[groundTruth,m,b];
+groundTruth={m,b}={0.5,-1./3.};
+Partials
+The partials A are an order-\[CapitalNu], column vector of covectors, which are order-\[CapitalMu], row vectors, i.e., linear transformations of vectors. Each covector row is the Jacobian gradient 1-form (partial derivative) of A\[CenterDot]\[CapitalXi] with respect to \[CapitalXi], evaluated at specific values of \[CapitalXi] from the data. Gradients are best viewed as 1-forms, always covectors. 
+In[3]:= ClearAll[nData,min,max];
+nData=119;min=-1.;max=3.;
+ClearAll[partials];
+partials=Array[{#,1.0}&,nData,{min,max}];
+Short[partials,3]
+Out[7]//Short= {{-1.,1.},{-0.966102,1.},<<115>>,{2.9661,1.},{3.,1.}}
+Faked Observations \[CapitalZeta]
+Here we define a global variable, data, to appear in later derivations and demonstrations. Begin by assuming that the observations have Gaussian white noise of zero mean (unbiased) and variance Subscript[\[Sigma], \[CapitalZeta]]=0.65.
+Define a faking function:
+In[8]:= ClearAll[fake];
+fake[n_,\[Sigma]_,A_,{m_,b_}]:=
+Table[
+RandomVariate[NormalDistribution[0,\[Sigma]]]+A[[i]].{m,b},
+{i,n}];
+Call it to generate some fakes:
+In[10]:= ClearAll[data,noise\[Sigma]];
+noise\[Sigma]=0.65;
+data=fake[nData,noise\[Sigma],partials,groundTruth];
+Short[data,3]
+Out[13]//Short= {-1.38008,-0.582493,<<115>>,0.97711,0.270567}
+Wolfram Built-In
+The Wolfram built-in LinearModelFit computes an MLE (maximum-likelihood estimate) for \[CapitalXi]=(m
+b
+
+). The estimated Subscript[m, estimated] and Subscript[b, estimated] are reasonably close to the ground truth (m
+b
+
+)=(0.5
+-1/3
+
+). Compute the model and store it in the variable model:
+In[14]:= ClearAll[model];
+model=LinearModelFit[{partials[[All,1]],data}\[Transpose],x,x];
+Normal[model]
+Out[16]= -0.391572+0.514474 x
+Un-comment the following line to see everything Wolfram has to say about this MLE (it's a lot of data).
+In[17]:= (*Association[(#\[Rule]model[#])&/@model["Properties"]]*)
+For purposes below, the most important attribute of the model is its covariance matrix. We come back to it below.
+In[18]:= model["CovarianceMatrix"]//MatrixForm
+Out[18]//MatrixForm= (0.00556626	-0.00236266
+-0.00236266	0.00236266
+
+)
+The plot shows that Wolfram does a pragmatically acceptable job of estimating the parameters m and b. We have 119 data and two parameters to estimate, so over-fitting will not be an issue in this early example because the number of data greatly exceeds the number of parameters. The blue line is ground-truth; the golden line is the estimated line:
+In[19]:= Show[ListPlot[{partials[[All,1]],data}\[Transpose]],
+Plot[{m x+b,model[x]},{x,min,max}]]
+Out[19]= 
+Normal Equations 
+Solve equation 1 for a value of \[CapitalXi] that minimizes sum-squared error J(\[CapitalXi])Overscript[=, def](\[CapitalZeta]-A\[CenterDot]\[CapitalXi])\[Transpose]\[CenterDot](\[CapitalZeta]-A\[CenterDot]\[CapitalXi]). That is the same as maximizing the likelihood p\[ThinSpace](\[ThinSpace]Z\[VerticalSeparator]\[CapitalXi]\[ThinSpace]) of the data Z given the parameters \[CapitalXi]. Because the noise \[ScriptCapitalN](0,\[Sigma]) has zero mean, the solution turns out to be exactly what one would get from naive algebra:  A\[Transpose]\[CenterDot]A is square; when it is invertible (has non-zero determinant):
+(A\[Transpose]\[CenterDot]A)^-1\[CenterDot]A\[Transpose]\[CenterDot]Z  =  \[CapitalXi]
+That gives numerically the same answer as Wolfram's built-in:
+In[20]:= Inverse[partials\[Transpose].partials].partials\[Transpose].data
+Out[20]= {0.514474,-0.391572}
+Moore-Penrose PseudoInverse
+The matrix (A\[Transpose]\[CenterDot]A)^-1\[CenterDot]A\[Transpose] is the Moore-Penrose left pseudoinverse. Wolfram has a built-in for it. We get exactly the same answer as above:
+In[21]:= PseudoInverse[partials].data
+Out[21]= {0.514474,-0.391572}
+Avoiding Inversion
+Avoid the inverse via LinearSolve.
+In[22]:= LinearSolve[partials\[Transpose].partials,partials\[Transpose]].data
+Out[22]= {0.514474,-0.391572}
+Do Not Use the Normal Equations
+(A\[Transpose]\[CenterDot]A)^-1\[CenterDot]A\[Transpose]\[CenterDot]\[CapitalZeta] is a nasty computation: in memory usage (big matrices), in time (matrix multiplication), and in numerical risk (inverse). How to avoid these hazards? Find a recurrence relation.
+Recurrence
+Derive, illustrate, and check a recurrent form of parameter estimation.
+Fold this recurrence over \[CapitalZeta] and A:
+\[Xi]\[LeftArrow](\[CapitalLambda]+[a\[Transpose]\[CenterDot]a])^-1\[CenterDot]([a\[Transpose]\[CenterDot]\[Zeta]]+[\[CapitalLambda]\[CenterDot]\[Xi]])
+\[CapitalLambda]\[LeftArrow](\[CapitalLambda]+[a\[Transpose]\[CenterDot]a])
+where
+\[Xi] is the current estimate of \[CapitalXi]
+a and \[Zeta] are matched rows of A and \[CapitalZeta]
+\[CapitalLambda] accumulates A\[Transpose]\[CenterDot]A
+Derivation Sketch
+Derive the recurrence as follows: Treat the estimate-so-far, 
+Subscript[\[Xi], so-far]Overscript[=, def](A\[Transpose]\[CenterDot]A)^-1\[CenterDot]A\[Transpose]\[CenterDot]Subscript[\[CapitalZeta], so-far]
+as just one more observation, with information matrix 
+\[CapitalLambda]=Subscript[A, so-far]\[Transpose]\[CenterDot]Subscript[A, so-far]
+The scalar performance or squared error of the known estimate, Subscript[\[Xi], so-far], is
+J(\[Xi])  =  (Subscript[\[CapitalZeta], so-far]-Subscript[A, so-far]\[CenterDot]\[Xi])\[Transpose]\[CenterDot](Subscript[\[CapitalZeta], so-far]-Subscript[A, so-far]\[CenterDot]\[Xi])  =  (\[Xi]-Subscript[\[Xi], so-far])\[Transpose]\[CenterDot]\[CapitalLambda]\[CenterDot](\[Xi]-Subscript[\[Xi], so-far])
+where \[Xi] is the unknown true parameter vector, Subscript[\[CapitalZeta], so-far] is the (known, concrete) column vector of all observations so-far, and \[CapitalLambda]=Subscript[A, so-far]\[Transpose]\[CenterDot]Subscript[A, so-far]. Adding a new observation, \[Zeta] and its corresponding partial row covector a, increases the error J(\[Xi]) by (\[Zeta]-a\[CenterDot]\[Xi])\[Transpose]\[CenterDot](\[Zeta]-a\[CenterDot]\[Xi]). Minimize the new total error with respect to \[Xi] to find the recurrence (set the derivative of J with respect to \[Xi] to zero and solve the resulting system). \[FilledSquare]
+
+RLS introduces an a-priori estimate Subscript[\[Xi], 0] and its covariance, the inverse of the information matrix Subscript[\[CapitalLambda], 0]. RLS is therefore Bayesian by construction. When renormalized with an a-priori covariance for the observations \[Zeta], the recurrence relation in equation 3 is equivalent to KAL and empirically, numerically equivalent to MAP. Proof of theoretical equivalence to MAP awaits future work.
+Numerical Demonstration
+Bootstrap the recurrence with ad-hoc, a-priori values Subscript[\[Xi], 0]=(0	0)\[Transpose] and Subscript[\[CapitalLambda], 0]=((10^-6	0)(0	10^-6)). 
+In[23]:= ClearAll[update];
+update[{\[Xi]_,\[CapitalLambda]_},{\[Zeta]_,a_}]:=
+With[{\[CapitalPi]=(\[CapitalLambda]+a\[Transpose].a)},
+{Inverse[\[CapitalPi]].(a\[Transpose].\[Zeta]+ \[CapitalLambda].\[Xi]),\[CapitalPi]}];
+
+MatrixForm/@
+({(mBar
+bBar
+
+),\[CapitalPi]}=
+Fold[update,{(0
+0
+
+),(1.0*^-6	0
+0	1.0*^-6
+
+)},
+{List/@data,List/@partials}\[Transpose]])
+Out[25]= {(0.514474
+-0.391572
+
+),(280.356	119.
+119.	119.
+
+)}
+The estimates mBar and bBar are, numerically, the same as we got from Wolfram's built-in. For this example, the choice of Subscript[\[Xi], 0]=0 and Subscript[\[CapitalLambda], 0]=10^-6 had negligible effect. 
+Structural Notes
+The highlighted mappings of List over the data and partials convert them into column vectors. Wolfram built-ins and the normal equations, implicitly, treat one-dimensional lists as columns or rows as needed, then compute inner (dot) products as if the distinction did not matter. 
+Memory and Time Efficiency
+The required memory for the recurrence is O(\[CapitalMu]), where \[CapitalMu] is the order of the model = the number of parameters to estimate = the length of \[CapitalXi] = the length of each row of A. There is no dependency at all on the number \[CapitalNu] of data items. The recurrence accumulates data one observation at a time, and is thus O(\[CapitalNu]) in time. Contrast with the normal equations, which multiply at ~O(\[CapitalNu]^\[ThinSpace]3) and invert at ~O(\[CapitalMu]^\[ThinSpace]3), i.e., at much greater time cost.
+Check the A-Priori
+The final value of \[CapitalLambda] (called \[CapitalPi] in the code, a returned value), is Subscript[A, full]\[Transpose]\[CenterDot]Subscript[A, full]+Subscript[\[CapitalLambda], 0]. To check the code, check that the difference between \[CapitalPi] and Subscript[A, full]\[Transpose]\[CenterDot]Subscript[A, full] is Subscript[\[CapitalLambda], 0]; that difference should equal the a-priori covariance:
+In[26]:= \[CapitalPi]-partials\[Transpose].partials
+Out[26]= {{1.*10^-6,0.},{0.,1.*10^-6}}
+Covariance of the Estimate
+The covariance of this estimate \[CapitalXi] is ((n-1)/(n-2))*Variance\[ThinSpace][\[ThinSpace]\[CapitalZeta]-A\[CenterDot]\[CapitalXi]\[ThinSpace]]*\[CapitalLambda]^-1 except for a small contribution from the a-priori information Subscript[\[CapitalLambda], 0]. The correction factor ((n-1)/(n-2)) is a generalization of Bessel's correction. The 2 in (n-2) in the denominator of Bessel's correction is the number of parameters estimated, also called degrees of freedom (see VAN DE GEER, Least Squares Estimation, Volume 2, pp. 1041\[Dash]1045, in Encyclopedia of Statistics in Behavioral Science, Eds. Brian S. Everitt & David C. Howell, Wiley, 2005). The denominator of the correction, in general, is n-p, where n is the number of data and p is the number of parameters being estimated.
+In[27]:= Inverse[partials\[Transpose].partials]*(nData-1)/(nData-2)*Variance[data-partials.{mBar,bBar}]//MatrixForm
+Out[27]//MatrixForm= (0.00236266	-0.00236266
+-0.00236266	0.00556626
+
+)
+In[28]:= (cov$=Inverse[\[CapitalPi]]*(nData-1)/(nData-2)*Variance[data-partials.{mBar,bBar}])//MatrixForm
+Out[28]//MatrixForm= (0.00236266	-0.00236266
+-0.00236266	0.00556626
+
+)
+(Naming convention: suffixed dollar signs for undisciplined, ad-hoc, global variables like cov$. Such variables may be assigned and reassigned without care, but are not for permanent definitions because they may have different values in different places in the notebook. They are for intermediate calculations.)
+This is the same covariance matrix that Wolfram's LinearModel reports. This second check of our recurrence succeeds!
+In[29]:= Reverse@(Reverse/@model["CovarianceMatrix"])//MatrixForm
+Out[29]//MatrixForm= (0.00227921	-0.00227921
+-0.00227921	0.00536965
+
+)
+Covariance of the Prediction
+If the two parameters, m and b, are viewed as random variables, then the predicted value z at every input point x is a linear combination of those random variables, and thus, a random variable with variance x^2 Subsuperscript[\[Sigma], m, 2]+Subsuperscript[\[Sigma], b, 2]+E[(b-E[b])(m x-E[m x])], when z is a scalar. The following shows the one-sigma band around the model in blue, ground truth in green. MAP adds an a-priori covariance of the observations, and we renormalize the recurrent form to match covariance of the predictions to MAP exactly. We explain such renormalization below.
+In[29]:= Module[{row,diagonalTerm,offDiagonalTerm,\[CapitalSigma]},
+row[x_]:={{x,1.}};
+diagonalTerm[x_]:=Map[Dot[Diagonal[cov$],#]&,#^2&/@row[x]];
+offDiagonalTerm[x_]:=MapThread[Dot,{row[x].cov$,row[x]}];
+\[CapitalSigma][x_]:=Sqrt[(row[x].cov$.row[x]\[Transpose])[[1,1]]];
+With[{points={partials[[All,1]],data}\[Transpose]},
+Show[ListPlot[{points}],
+Plot[{m x+b,
+model[x],
+model[x]+\[CapitalSigma][x],
+model[x]-\[CapitalSigma][x]},{x,min,max},
+PlotStyle->{
+Green,Blue,
+{Thin,{Opacity[0],Blue}},
+{Thin,{Opacity[0],Blue}}},
+Filling->{2->{3},2->{4}}]]]]
+Out[29]= 
+Don't Invert That Matrix
+See https://www.johndcook.com/blog/2010/01/19/dont-invert-that-matrix/ 
+
+In general, replace any occurrence of A^-1\[CenterDot]B or Inverse[A].B with LinearSolve[A,B] for arbitrary square matrix A and arbitrary matrix B. Almost all programming languages and toolkits support an efficient and robust analogue to Wolfram's LinearSolve.
+In[30]:= ClearAll[update];
+update[{\[Xi]_,\[CapitalLambda]_},{\[Zeta]_,a_}]:=
+With[{\[CapitalPi]=(\[CapitalLambda]+a\[Transpose].a)},
+{LinearSolve[\[CapitalPi],(a\[Transpose].\[Zeta]+\[CapitalLambda].\[Xi])],\[CapitalPi]}];
+
+MatrixForm/@({(mBar
+bBar
+
+),\[CapitalPi]}=
+Fold[update,{(0
+0
+
+),(1.0*^-6	0
+0	1.0*^-6
+
+)},
+{List/@data,List/@partials}\[Transpose]])
+Out[32]= {(0.514474
+-0.391572
+
+),(280.356	119.
+119.	119.
+
+)}
+Because this example is small, Inverse has no obvious numerical issues. In general, matrices in linear regression are ill-conditioned, and one will spend a lot of time and storage inverting them, only to get useless results.
+Speed Under Stress
+Our fold is slower than solving the normal equations for this tiny example. When the number of parameters M becomes large, the O(M^3) nature of the matrix inversion and matrix products will eventually overwhelm the overhead of the fold. 
+In[33]:= ClearAll[experiment];
+experiment[n_]:=
+With[{min=-1,max=3,noise\[Sigma]=1.0},
+Module[{A,zs,time={0,0},zc,Ac,stream},
+A=Array[{#,1.0}&,n,{min,max}];
+zs=fake[n,noise\[Sigma],A,groundTruth];
+zc=List/@zs;
+Ac=List/@A;
+stream={zc,Ac}\[Transpose];
+time[[1]]=AbsoluteTiming[Inverse[A\[Transpose].A].A\[Transpose].zs];
+time[[2]]=AbsoluteTiming[
+Fold[
+update,{(0
+0
+
+),(1.0*^-6	0
+0	1.0*^-6
+
+)},
+stream]];
+time   ]];
+In[35]:= experiment[10000]//MatrixForm
+Out[35]//MatrixForm= (0.004578	{0.501207,-0.316584}
+0.069431	{{{0.501207},{-0.316584}},{{23336.,10000.},{10000.,10000.}}}
+
+)
+Interim Conclusions
+We have eliminated memory bloat by processing updates one observation at a time, each with its paired partial. We reduce computation time and numerical risk by solving a linear system instead of inverting a matrix. We avoid multiplication of O(\[CapitalNu]) matrices, which is of approximately O(\[CapitalNu]^3) time. We still have work to do with observation covariances. 
+Sidebar: Estimating 1-Forms (Gradients)
+In linear algebra, vectors are columns, i.e., n*1 matrices, and covectors are rows, i.e., 1*n matrices (see Vector Calculus, Linear Algebra, and Differential Forms, A Unified Approach by John H. Hubbard and Barbara Burke Hubbard).
+When the model \[LongDash] the thing we are estimating \[LongDash] is a covector (row-vector), e.g., a 1-form, we have the dual (co-, transposed) problem to the one above. This situation arises in reinforcement learning by policy gradient. In that case, the observations \[CapitalOmega] and the model \[CapitalGamma] are covectors with elements \[Omega] and \[Gamma] instead of vectors with elements \[Zeta] and \[Xi]. The co-partials \[CapitalTheta] (replacing A) are now a covector of column vectors \[Theta]. The observation equation is \[CapitalOmega]=\[CapitalGamma]\[CenterDot]\[CapitalTheta] and the error-so-far is (x-\[Gamma])\[CenterDot]\[CapitalLambda]\[CenterDot](x-\[Gamma])\[Transpose], where \[CapitalLambda]=Subscript[\[CapitalTheta], so-far]\[CenterDot]Subscript[\[CapitalTheta], so-far]\[Transpose]. We don't change the name of \[CapitalLambda] because it is symmetric, equal to its dual (transpose). Adding a new observation \[Omega] introduces new error (\[Omega]-x\[CenterDot]\[Theta])\[CenterDot](\[Omega]-x\[CenterDot]\[Theta])\[Transpose]. Minimizing the total error yields
+\[Gamma]\[LeftArrow]([\[Gamma]\[CenterDot]\[CapitalLambda]]+[\[Omega]\[CenterDot]\[Theta]\[ThinSpace]\[Transpose]]).(\[CapitalLambda]+[\[Theta]\[CenterDot]\[Theta]\[ThinSpace]\[Transpose]]\[ThinSpace])^-1
+\[CapitalLambda]\[LeftArrow](\[CapitalLambda]+[\[Theta]\[CenterDot]\[Theta]\[ThinSpace]\[Transpose]]\[ThinSpace])
+straight transposes of equation 3. LinearSolve operates on the transposed right-hand side of the recurrence, and we transpose the solution to get the recurrence. We apply this dual model to the transpose of the original data:
+In[36]:= ClearAll[coUpdate];
+coUpdate[{\[Gamma]_,\[CapitalLambda]_},{\[Omega]_,\[Theta]_}]:=
+With[{\[CapitalPi]=(\[CapitalLambda]+\[Theta].\[Theta]\[Transpose])},
+{LinearSolve[\[CapitalPi],\[CapitalLambda].\[Gamma]\[Transpose]+\[Theta].\[Omega]\[Transpose]]\[Transpose],\[CapitalPi]}];
+In[38]:= MatrixForm/@Fold[coUpdate,
+{(0	0),(1.0*^-6	0
+0	1.0*^-6
+
+)},
+{List/@List/@data,Transpose/@List/@partials}\[Transpose]]
+Out[38]= {(0.514474	-0.391572),(280.356	119.
+119.	119.
+
+)}
+This also awaits renormalization, however, the new equations will be obvious.
+Application of the Dual Problem
+The finite-difference method of policy-gradient machine learning is an example of this dual problem (see http://www.scholarpedia.org/article/Policy_gradient_methods). 
+
+Imagine a scalar function J(\[Theta]) of a column K-vector Subscript[\[Theta], K*1]. Estimate its gradient covector \!\(
+\*SubscriptBox[\(\[Del]\), \(\[Theta]\)]\[ThinSpace]J\), given a batch of \[ScriptCapitalI] random increments Subscript[\[CapitalDelta]\[CapitalTheta], K*\[ScriptCapitalI]], from the system \!\(
+\*SubscriptBox[\(\[Del]\), \(\[Theta]\)]\[ThinSpace]J\)\[CenterDot]\[CapitalDelta]\[CapitalTheta]=\[CapitalDelta]\[ThinSpace]J, now viewed as an observation model; \!\(
+\*SubscriptBox[\(\[Del]\), \(\[Theta]\)]\[ThinSpace]J\) takes the role of the model whose state parameters \[CapitalGamma] we want to estimate; \[CapitalDelta]\[CapitalTheta] takes the role of the partials of the model w.r.t. those parameters; and \[CapitalDelta]\[ThinSpace]J takes the role of measured data. Let \[CapitalDelta]\[ThinSpace]Subscript[J, \[ScriptCapitalI]*1] be a batch of observed increments to J and let Subscript[\[CapitalDelta]\[CapitalTheta], K*\[ScriptCapitalI]] be a matrix of \[ScriptCapitalI] corresponding column-vector random increments to the input vectors Subscript[\[Theta], K*1]. The Moore-Penrose right pseudoinverse RPIOverscript[=, def]\!\(
+\*SubsuperscriptBox[\(\[CapitalDelta]\[CapitalTheta]\), \(K*\[ScriptCapitalI]\), \(\[Transpose]\)]\(\[CenterDot]\)
+\*SuperscriptBox[\((
+\*SubscriptBox[\(\[CapitalDelta]\[CapitalTheta]\), \(K*\[ScriptCapitalI]\)]\[CenterDot]
+\*SubsuperscriptBox[\(\[CapitalDelta]\[CapitalTheta]\), \(K*\[ScriptCapitalI]\), \(\[Transpose]\)])\), \(-1\)]\(\ \)\) solves \!\(
+\*SubscriptBox[\(\[Del]\), \(\[Theta]\)]\[ThinSpace]
+\*SubscriptBox[\(J\), \(\[ScriptCapitalI]*1\)]\)\[CenterDot]Subscript[\[CapitalDelta]\[CapitalTheta], K*\[ScriptCapitalI]]=\[CapitalDelta]\[ThinSpace]Subscript[J, \[ScriptCapitalI]*1] to yield \[Del]\[ThinSpace]Subscript[J, \[ScriptCapitalI]*1]\[TildeTilde]\[CapitalDelta]\[ThinSpace]Subscript[J, \[ScriptCapitalI]*1]\[CenterDot]RPI. 
+
+Instead of the pseudoinverse, which is large, slow, and risky, use the co-update recurrence of equation 7, or its later renormalization, for this problem.
+Regularization By A-Priori
+Chris Bishop's Pattern Recognition and Machine Learning has an extended example fitting higher-order polynomials, linear in their coefficients, starting in section 1.1. The higher the order of the polynomial, the more MLE over-fits. Bishop presents MAP regularization as a cure for this over-fitting. KAL and RLS already regularize, by construction. In this section, we relate their regularization to MAP's.
+
+To bootstrap recurrences, KAL and RLS each require an a-priori estimate of the unknown parameters and an a-priori uncertainty of that estimate. RLS takes the uncertainty as an information matrix. KAL takes the uncertainty as a covariance matrix, inverse of the information matrix. Bishop also computes the information matrix as S^-1, though he does not name it so. KAL additionally requires an estimate of observation noise, which arises in real problems and is estimated out-of-band. We show that RLS can and should be renormalized with observation noise to produce results equivalent to KAL and MAP.
+Reproducing Bishop's Example
+Bishop's Training Set
+First, create a sequence of \[CapitalNu]=10 inputs \[LongDash] for a training set, equally spaced in [0..1]. 
+In[39]:= ClearAll[bishopTrainingSetX];
+bishopTrainingSetX[\[CapitalNu]_]:=Array[Identity,\[CapitalNu],{0.,1.}];
+ListPlot[bishopTrainingSetX[10]]
+Out[41]= 
+Bishop's ground truth is a single cycle of a sine wave. Add noise to a sample taken at the inputs of the training set above. Bishop doesn't state his observation noise, but I guessed Subscript[\[Sigma], z]=Subscript[\[Sigma], t]=0.30 to create a fake data set that resembles Bishop's qualitatively.
+
+Wolfram's built-in NormalDistribution takes the standard deviation as its second argument, not the variance. Bishop's notation for normal distribution takes variance as second argument, so beware. 
+In[42]:= ClearAll[bishopTrainingSetY,bishopGroundTruthY];
+bishopGroundTruthY[xs_]:=Sin[2.\[Pi] #]&/@xs;
+bishopTrainingSetY[xs_,\[Sigma]_]:=
+With[{n=Length@xs},
+bishopGroundTruthY[xs]
++RandomVariate[NormalDistribution[0.,\[Sigma]],n]];
+Take a sample of the outputs and assign it the names bts for bishopTrainingSet. It is not his actual training set, which I did not find in print, just my simulation.
+In[45]:= ClearAll[bishopTrainingSet,bts,bishopFake,bishopFakeSigma];
+bishopFake[n_,\[Sigma]_]:=
+With[{xs=bishopTrainingSetX[n]},
+With[{ys=bishopTrainingSetY[xs,\[Sigma]]},
+{xs,ys}]];
+bishopFakeSigma=0.30;
+bishopTrainingSet=bts=bishopFake[10,bishopFakeSigma];
+Make a plot like Bishop's figure 1.7 (page 10).
+In[49]:= With[{lp=ListPlot[bts\[Transpose],
+PlotMarkers->{Graphics@{Blue,Circle[{0,0},1]},.05}]},
+Show[{lp,(* once to set the scale *)
+Plot[Sin[2.\[Pi] x],{x,0.,1.},PlotStyle->{Thick,Green}],
+lp (* again to overdraw the plot *)},
+Frame->True,
+FrameLabel->{"x","t"}]]
+Out[49]= 
+Partials: Gradients of the Unknown Parameters
+Write a function for partials. Quietly map the indeterminate 0^0 to 1. Test it symbolically.
+In[50]:= ClearAll[partialsFn];
+partialsFn[order_,xs_]:=
+Transpose@Quiet@Table[#^(i-1)/.{Indeterminate->1},{i,order+1}]&@xs;
+MatrixForm@partialsFn[6,{Subscript[x, 1],Subscript[x, 2],Subscript[x, \[CapitalMu]]}]
+Out[52]//MatrixForm= (1	Subscript[x, 1]	Subsuperscript[x, 1, 2]	Subsuperscript[x, 1, 3]	Subsuperscript[x, 1, 4]	Subsuperscript[x, 1, 5]	Subsuperscript[x, 1, 6]
+1	Subscript[x, 2]	Subsuperscript[x, 2, 2]	Subsuperscript[x, 2, 3]	Subsuperscript[x, 2, 4]	Subsuperscript[x, 2, 5]	Subsuperscript[x, 2, 6]
+1	Subscript[x, \[CapitalMu]]	Subsuperscript[x, \[CapitalMu], 2]	Subsuperscript[x, \[CapitalMu], 3]	Subsuperscript[x, \[CapitalMu], 4]	Subsuperscript[x, \[CapitalMu], 5]	Subsuperscript[x, \[CapitalMu], 6]
+
+)
+The Observation Equations
+Confer Bishop's equation 3.3, page 138, where he writes the parameters to estimate as w and the observation equation as
+y(x, w)=\!\(
+\*UnderoverscriptBox[\(\[Sum]\), \(j = 0\), \(\[CapitalMu]\)]\(\*
+SubscriptBox[
+StyleBox["w",
+FontWeight->"Plain"], "j"] \(
+\*SubscriptBox[\(\[Phi]\), \(\(\[ThinSpace]\)\(j\)\)]\[ThinSpace](\*
+StyleBox["x",
+FontWeight->"Bold"])\)\)\)
+(bias incorporated as coefficient Subscript[w, 0] of the 0^th basis function). This is predictive: you give me concrete inputs x, parameters w, and I'll give you a predicted observation y in terms of \[CapitalMu]+1 basis functions \[Phi] corresponding to the \[CapitalMu]+1 unknown parameters. For polynomial basis functions, the number of parameters is one more than the order \[CapitalMu] of the polynomials. The basis functions can be anything, however: wavelets, Fourier components, Chebyshev polynomials, etc.
+
+Bishop converts w into a covector (without explanation) and writes
+y(x, w)=w\[Transpose]\[Phi]\[ThinSpace](x)
+where \[Phi]\[ThinSpace](x) is an (\[CapitalMu]+1)-dimensional column vector of basis functions, the transpose of one row of our partials matrix A. We claim it is better always to think of partials or gradients as differential forms, thus covectors (row vectors or covariant vectors, see https://en.wikipedia.org/wiki/Covariance_and_contravariance _of _vectors, https://math.stackexchange.com/questions/1172022, and https://math.stackexchange.com/questions/54355). 
+
+To find best-fit values for w, rows of the partials matrix A are the covector gradients of y with respect to w. We prefer to write
+observations as height-N column-vector Subscript[\[CapitalZeta],  \[CapitalNu]] with elements Subscript[\[Zeta],  j\[ThinSpace]\[Element]\[ThinSpace][\[ThinSpace]1\[ThinSpace]..\[CapitalNu]\[ThinSpace]]]
+the model or unknown parameters, an (\[CapitalMu]+1)-dimensional column-vector Subscript[\[CapitalXi], \[ThinSpace](\[CapitalMu]+1)*1] with elements Subscript[\[Xi], \[ThinSpace]i\[ThinSpace]\[Element]\[ThinSpace][\[ThinSpace]0\[ThinSpace]..\[CapitalMu]\[ThinSpace]]]
+partials matrix as Subscript[A, N*(\[CapitalMu]+1)]
+Bishop calls our partials matrix the design matrix in his equation 3.16, page 142, consisting of values of the basis functions at the concrete inputs Subscript[x, n\[ThinSpace]\[Element]\[ThinSpace][1..N]]. Bishop must work in the dual of our formulation. 
+
+We prefer to write as follows: the covector rows of the design matrix as polynomial basis functions evaluated at the input points Subscript[x, n\[ThinSpace]\[Element]\[ThinSpace][1..\[CapitalNu]]]:
+Z  =  A\[CenterDot]\[CapitalXi]  =  (Subscript[\[Zeta], 0]
+Subscript[\[Zeta], 1]
+\[VerticalEllipsis]
+Subscript[\[Zeta], \[CapitalNu]]
+
+)  =   (1=Subsuperscript[x, 1, 0]	Subscript[x, 1]	Subsuperscript[x, 1, 2]	\[CenterEllipsis]	Subsuperscript[x, 1, M]
+1=Subsuperscript[x, 2, 0]	Subscript[x, 2]	Subsuperscript[x, 2, 2]	\[CenterEllipsis]	Subsuperscript[x, 2, M]
+\[VerticalEllipsis]	\[VerticalEllipsis]	 	\[DescendingEllipsis]	\[VerticalEllipsis]
+1=Subsuperscript[x, N, 0]	Subscript[x, N]	Subsuperscript[x, N, 2]	\[CenterEllipsis]	Subsuperscript[x, N, M]
+
+)  \[CenterDot]  (Subscript[\[Xi], 0]
+Subscript[\[Xi], 1]
+\[VerticalEllipsis]
+Subscript[\[Xi], \[CapitalMu]]
+
+)  +  noise
+then packed up into rows of the A matrix. 
+Z  =  A\[CenterDot]\[CapitalXi]  =  (Subscript[\[Zeta], 0]
+Subscript[\[Zeta], 1]
+\[VerticalEllipsis]
+Subscript[\[Zeta], \[CapitalNu]]
+
+)  =   Subscript[(Subscript[A\[ThinSpace], 1*(\[CapitalMu]+1)](Subscript[x, 1])
+Subscript[A\[ThinSpace], 1*(\[CapitalMu]+1)](Subscript[x, 2])
+\[VerticalEllipsis]
+Subscript[A\[ThinSpace], 1*(\[CapitalMu]+1)](Subscript[x, \[CapitalNu]])
+
+), \[CapitalNu]*(\[CapitalMu]+1)]  \[CenterDot]  (Subscript[\[Xi], 0]
+Subscript[\[Xi], 1]
+\[VerticalEllipsis]
+Subscript[\[Xi], \[CapitalMu]]
+
+)  +  noise
+MLE: The Normal Equations
+Mechanize the normal equations for comparison purposes; we expect them to over-fit.
+In[53]:= ClearAll[mleFit];
+mleFit[\[CapitalMu]_,trainingSet_]:=
+With[{xs=trainingSet[[1]],ys=trainingSet[[2]]},
+PseudoInverse[partialsFn[\[CapitalMu],xs]].ys];
+mleFit[3,bts]
+Out[55]= {0.0632699,12.6247,-37.1406,24.2818}
+A convenience function:
+In[56]:= ClearAll[symbolicPowers];
+symbolicPowers[variable_,order_]:=
+partialsFn[order,{variable}][[1]];
+The normal equations as a symbolic polynomial follows. Notice we can increase the order beyond the number of data, creating an underdetermined system. This is not typical in real-world data processing. Usually the number of data exceed the order and the system is overdetermined. The pseudoinverse is agnostic to the distinction.
+In[58]:= ClearAll[x];
+Manipulate[
+symbolicPowers[x,\[CapitalMu]].mleFit[\[CapitalMu],bts],
+{{\[CapitalMu],3,"polynomial order \[CapitalMu]"},0,16,1,Appearance->{"Labeled"}}]
+Out[59]= Manipulate[symbolicPowers[x, \[CapitalMu]] . mleFit[\[CapitalMu], bts], 
+  {{\[CapitalMu], 4, "polynomial order \[CapitalMu]"}, 0, 16, 1, Appearance -> {"Labeled"}}]
+RLS: Recurrent Least Squares
+RLS is regularized by its a-priori estimate of the unknown parameters and by its a-priori information matrix. Use the slider below to see the fact that, once the minimum info becomes too large, the \[CapitalLambda] matrix becomes ill-conditioned: pink warning message appear from the Wolfram kernel, and the solution is numerically suspect. In the rest of this paper, we eliminate these error message by applying Wolfram's Quiet because we notice, empirically, that ill-conditioning of the information matrix does not seem to be harmful in this example. However, such ill-conditioning is a serious problem in practice and must be managed with methods out-of-scope in this paper.
+In[60]:= ClearAll[rlsFit];
+rlsFit[\[Sigma]2\[CapitalLambda]_][\[CapitalMu]_,trainingSet_]:=
+With[{xs=trainingSet[[1]],ys=trainingSet[[2]]},
+With[{\[Xi]0=List/@ConstantArray[0,\[CapitalMu]+1],
+\[CapitalLambda]0=\[Sigma]2\[CapitalLambda]*IdentityMatrix[\[CapitalMu]+1]},
+Fold[update,{\[Xi]0,\[CapitalLambda]0},
+{List/@ys,List/@partialsFn[\[CapitalMu],xs]}\[Transpose]]]];
+
+Manipulate[
+rlsFit[10^-log\[Sigma]2\[CapitalLambda]][3,bts][[1]]//MatrixForm,
+{{log\[Sigma]2\[CapitalLambda],9.034},0,16,Appearance->"Labeled"}]
+Out[62]= Manipulate[MatrixForm[rlsFit[10^(-log\[Sigma]2\[CapitalLambda])][3, bts][[1]]], 
+  {{log\[Sigma]2\[CapitalLambda], 8.58}, 0, 16, Appearance -> "Labeled"}]
+KAL: Foldable Kalman Filter
+The foldable Kalman filter (KAL) follows below. This version has only the update phase of a typical Kalman filter because the parameters-to-estimate are constant and there is no predict phase.
+
+Note the Subscript[P, \[CapitalZeta]] parameter, the first in the definition of kalmanUpdate. This is the covariance matrix of the observation noise. It is a constant throughout the folding run of the filter. We lambda-lift Subscript[P, \[CapitalZeta]] it into its own function slot; kalmanUpdate, called with some concrete value of Subscript[P, \[CapitalZeta]], yields a function that can be folded over an a-priori estimate Subscript[\[Xi], 0] and covariance Subscript[P, 0] and a sequence of observation-and-partial-covector pairs {\[Zeta],a}. The utility of Fold for Bayesian methods, which require an a-priori, abstract zero of the monoid (https://github.com/rebcabin/DontFear/blob/master/Decoding.pdf) is notable and remarkable.
+In[63]:= ClearAll[kalmanUpdate,kalFit];
+kalmanUpdate[P\[CapitalZeta]_][{\[Xi]_,P_},{\[Zeta]_,a_}]:=
+Module[{D,KT,K,L},
+D=P\[CapitalZeta]+a.P.a\[Transpose];
+KT=LinearSolve[D,a.P];K=KT\[Transpose];
+L=IdentityMatrix[Length[P]]-K.a;
+{\[Xi]+K.(\[Zeta]-a.\[Xi]),L.P}];
+
+kalFit[\[Sigma]\[Zeta]2_,\[Sigma]\[Xi]2_][order_,trainingSet_]:=
+With[{xs=trainingSet[[1]],ys=trainingSet[[2]]},
+With[{\[Xi]0=List/@ConstantArray[0,order+1],
+P0=\[Sigma]\[Xi]2*IdentityMatrix[order+1]},
+Fold[kalmanUpdate[\[Sigma]\[Zeta]2*IdentityMatrix[1]],
+{\[Xi]0,P0},
+{List/@ys,List/@partialsFn[order,xs]}\[Transpose]]]];
+See All Three
+The following interactive demonstration shows mleFit (normal equations), rlsFit (recurrent least squares), and kalFit (Kalman folding) on Bishop's training set.
+
+When the a-priori information matrix in RLS is 10^-6, and when the a-priori covariance of the a-priori estimate in KAL is 10^6, both KAL and RLS produce regularized fits. In contrast, the MLE over-fits a 9^th-order polynomial by interpolating (going through) every data point because a 9^th-order polynomial fits ten data points exactly: the normal equations are neither overdetermined nor underdetermined at order nine, but accidentally constitute an exactly solvable linear system.
+
+Increasing -log\[CapitalLambda] decreases the (magnitude of the) a-priori information matrix in RLS, meaning that we have less Bayesian belief in the a-priori estimate of the unknown parameters. Increasing log\[Sigma]\[Xi]2 increases the a-priori covariance of the estimate in KAL and similarly decreases belief in the a-priori estimate. They eventually both over-fit the data completely and align with MLE. Later, we show that MAP similarly over-fits. Run the polynomial order up to nine, then -log\[CapitalLambda] and log\[Sigma]\[Xi]2 all the way to the right, to their maximum values. 
+In[66]:= Manipulate[
+Module[{x},(* gensym: fresh variable name *)
+With[{
+terms=symbolicPowers[x,\[CapitalMu]],
+cs=\[Phi][\[CapitalMu]]/@List/@bts[[1]]},
+With[{
+recurrent=Quiet@rlsFit[10^-log\[CapitalLambda]0][\[CapitalMu],bts],
+normal=mleFit[\[CapitalMu],bts],
+kalman=kalFit[bishopFakeSigma^2,10^log\[Sigma]\[Xi]2][\[CapitalMu],bts]},
+With[{
+rlsFn={terms}.recurrent[[1]],
+mleFn=terms.normal,
+kalFn={terms}.kalman[[1]]},
+With[{lp=ListPlot[bts\[Transpose],
+PlotMarkers->{Graphics@{Blue,Circle[{0,0},1]},.05}]},
+Module[{showlist={lp,Plot[Sin[2.\[Pi] x],{x,0.,1.},PlotStyle->{Thick,Green}]}},
+If[rlsQ,AppendTo[showlist,Plot[rlsFn,{x,0,1},PlotStyle->{Purple}]]];
+If[mleQ,AppendTo[showlist,Plot[mleFn,{x,0,1},PlotStyle->{Orange}]]];
+If[kalQ,AppendTo[showlist,Plot[kalFn,{x,0,1},PlotStyle->{Cyan}]]];
+Quiet@Show[showlist,Frame->True,FrameLabel->{"x","t"}]]]]]]],
+Grid[{
+{Grid[{{
+Button["RESET",(\[CapitalMu]=9;log\[CapitalLambda]0=3;log\[Sigma]\[Xi]2=3)&],
+Control[{{rlsQ,True,"RLS"},{True,False}}],
+Control[{{kalQ,True,"KAL"},{True,False}}],
+Control[{{mleQ,True,"MLE"},{True,False}}]}}]},{Control[{{\[CapitalMu],9,"polynomial order"},0,16,1,Appearance->{"Labeled"}}]},{Control[{{log\[CapitalLambda]0,3,"-log a-priori info (RLS)"},0,16,Appearance->"Labeled"}]},{Control[{{log\[Sigma]\[Xi]2,3,"log a-priori cov (KAL)"},0,16,Appearance->"Labeled"}]}}]]
+Out[66]= Manipulate[Module[{x$}, With[{terms$ = symbolicPowers[x$, \[CapitalMu]], 
+     cs$ = \[Phi][\[CapitalMu]] /@ List /@ bts[[1]]}, 
+    With[{recurrent$ = Quiet[rlsFit[10^(-log\[CapitalLambda]0)][\[CapitalMu], bts]], 
+      normal$ = mleFit[\[CapitalMu], bts], kalman$ = kalFit[bishopFakeSigma^2, 
+         10^log\[Sigma]\[Xi]2][\[CapitalMu], bts]}, With[{rlsFn$ = {terms$} . recurrent$[[1]], 
+       mleFn$ = terms$ . normal$, kalFn$ = {terms$} . kalman$[[1]]}, 
+      With[{lp$ = ListPlot[Transpose[bts], PlotMarkers -> 
+           {Graphics[{Blue, Circle[{0, 0}, 1]}], 0.05}]}, 
+       Module[{showlist$ = {lp$, Plot[Sin[2.*Pi*x$], {x$, 0., 1.}, 
+            PlotStyle -> {Thick, Green}]}}, 
+        If[rlsQ, AppendTo[showlist$, Plot[rlsFn$, {x$, 0, 1}, 
+            PlotStyle -> {Purple}]]]; If[mleQ, AppendTo[showlist$, 
+           Plot[mleFn$, {x$, 0, 1}, PlotStyle -> {Orange}]]]; 
+         If[kalQ, AppendTo[showlist$, Plot[kalFn$, {x$, 0, 1}, 
+            PlotStyle -> {Cyan}]]]; Quiet[Show[showlist$, Frame -> True, 
+           FrameLabel -> {"x", "t"}]]]]]]]], {{rlsQ, True, "RLS"}, 
+   {True, False}, ControlPlacement -> 1}, {{kalQ, True, "KAL"}, 
+   {True, False}, ControlPlacement -> 2}, {{mleQ, True, "MLE"}, 
+   {True, False}, ControlPlacement -> 3}, {{\[CapitalMu], 9, "polynomial order"}, 0, 
+   16, 1, Appearance -> {"Labeled"}, ControlPlacement -> 4}, 
+  {{log\[CapitalLambda]0, 3, "-log a-priori info (RLS)"}, 0, 16, 
+   Appearance -> "Labeled", ControlPlacement -> 5}, 
+  {{log\[Sigma]\[Xi]2, 3, "log a-priori cov (KAL)"}, 0, 16, 
+   Appearance -> "Labeled", ControlPlacement -> 6}, 
+  Grid[{{Grid[{{Button["RESET", (\[CapitalMu] = 9; log\[CapitalLambda]0 = 3; log\[Sigma]\[Xi]2 = 3) & ], 
+        Manipulate`Place[1], Manipulate`Place[2], Manipulate`Place[3]}}]}, 
+    {Manipulate`Place[4]}, {Manipulate`Place[5]}, {Manipulate`Place[6]}}]]
+Renormalizing RLS
+When the observation noise \[CapitalZeta] is unity, KAL coincides with RLS. In the demonstration below, a-priori information \[CapitalLambda] in RLS is set always to be the inverse of KAL's a-priori estimate covariance P; KAL and RLS will have the same belief in the a-priori estimate of the unknown parameters. Vary the observation noise independently in the demonstration below to see KAL and RLS coincide when the observation noise is unity (its log is zero).
+
+As observation noise decreases, the solutions believe the observations more and RLS over-fits. As a-priori covariance decreases, RLS believes the a-priori estimates more and the solution regularizes.
+In[67]:= Manipulate[Module[{x},
+With[{terms=symbolicPowers[x,\[CapitalMu]],
+cs=\[Phi][\[CapitalMu]]/@List/@bts[[1]]},
+With[{rls=Quiet@rlsFit[10^(-2log\[Sigma]\[Xi])][\[CapitalMu],bts],
+kalman=kalFit[10^(2log\[Sigma]\[Zeta]),10^(2log\[Sigma]\[Xi])][\[CapitalMu],bts]},
+With[{rlsFn={terms}.rls[[1]],
+kalFn={terms}.kalman[[1]]},
+With[{lp=ListPlot[bts\[Transpose],
+PlotMarkers->{Graphics@{Blue,Circle[{0,0},1]},.05}]},
+Module[{showlist={lp,Plot[Sin[2.\[Pi] x],{x,0.,1.},PlotStyle->{Thick,Green}]}},
+If[rlsQ,AppendTo[showlist,Plot[rlsFn,{x,0,1},PlotStyle->{Purple}]]];
+If[kalQ,AppendTo[showlist,Plot[kalFn,{x,0,1},PlotStyle->{Cyan}]]];
+Quiet@Show[showlist,Frame->True,FrameLabel->{"x","t"}]]]]]]],
+Grid[{{Grid[{{Button["RESET",(log\[Sigma]\[Zeta]=0.0;log\[Sigma]\[Xi]=1.5;\[CapitalMu]=9)&],
+Control[{{rlsQ,True,"RLS"},{True,False}}],
+Control[{{kalQ,True,"KAL"},{True,False}}]}}],""},{Control[{{\[CapitalMu],9,"polynomial order"},0,16,1,Appearance->{"Labeled"}}],""},{Control[{{log\[Sigma]\[Xi],1.5,"log Sqrt[P] (KAL) = (-log Sqrt[\[CapitalLambda]]) (RLS) "},-3,8,Appearance->"Labeled"}]},{Control[{{log\[Sigma]\[Zeta],0.0,"log Sqrt[\[CapitalZeta]] (KAL)"},-6,3,Appearance->"Labeled"}]}}]]
+Out[67]= Manipulate[Module[{x$}, With[{terms$ = symbolicPowers[x$, \[CapitalMu]], 
+     cs$ = \[Phi][\[CapitalMu]] /@ List /@ bts[[1]]}, 
+    With[{rls$ = Quiet[rlsFit[10^(-2*log\[Sigma]\[Xi])][\[CapitalMu], bts]], 
+      kalman$ = kalFit[10^(2*log\[Sigma]\[Zeta]), 10^(2*log\[Sigma]\[Xi])][\[CapitalMu], bts]}, 
+     With[{rlsFn$ = {terms$} . rls$[[1]], kalFn$ = {terms$} . kalman$[[1]]}, 
+      With[{lp$ = ListPlot[Transpose[bts], PlotMarkers -> 
+           {Graphics[{Blue, Circle[{0, 0}, 1]}], 0.05}]}, 
+       Module[{showlist$ = {lp$, Plot[Sin[2.*Pi*x$], {x$, 0., 1.}, 
+            PlotStyle -> {Thick, Green}]}}, 
+        If[rlsQ, AppendTo[showlist$, Plot[rlsFn$, {x$, 0, 1}, 
+            PlotStyle -> {Purple}]]]; If[kalQ, AppendTo[showlist$, 
+           Plot[kalFn$, {x$, 0, 1}, PlotStyle -> {Cyan}]]]; 
+         Quiet[Show[showlist$, Frame -> True, FrameLabel -> 
+            {"x", "t"}]]]]]]]], {{rlsQ, True, "RLS"}, {True, False}, 
+   ControlPlacement -> 1}, {{kalQ, True, "KAL"}, {True, False}, 
+   ControlPlacement -> 2}, {{\[CapitalMu], 9, "polynomial order"}, 0, 16, 1, 
+   Appearance -> {"Labeled"}, ControlPlacement -> 3}, 
+  {{log\[Sigma]\[Xi], 1.5, 
+    "log \!\(\*SqrtBox[\(P\)]\) (KAL) = (-log \!\(\*SqrtBox[\(\[CapitalLambda]\)]\)) (RLS) "\
+}, -3, 8, Appearance -> "Labeled", ControlPlacement -> 4}, 
+  {{log\[Sigma]\[Zeta], 0., "log \!\(\*SqrtBox[\(\[CapitalZeta]\)]\) (KAL)"}, -6, 3, 
+   Appearance -> "Labeled", ControlPlacement -> 5}, 
+  Grid[{{Grid[{{Button["RESET", (log\[Sigma]\[Zeta] = 0.; log\[Sigma]\[Xi] = 1.5; \[CapitalMu] = 9) & ], 
+        Manipulate`Place[1], Manipulate`Place[2]}}], ""}, 
+    {Manipulate`Place[3], ""}, {Manipulate`Place[4]}, {Manipulate`Place[5]}}]]
+Add Observation Noise to RLS
+RLS, so far, is normalized to unit observation noise. How to modify RLS to account for non-normalized observation noise? 
+Scale (each row of) the partials by the inverse of the observation standard deviation, represented below by a matrix square root of the observation covariance Subscript[P, \[CapitalZeta]]. Finally, rescale the final estimate (not the final covariance) by a matrix built from the inverse observation standard deviation, because the recurrent normal equations, which incrementally build (\!\(
+\*SubsuperscriptBox[\(P\), \(\[CapitalZeta]\), \(-1\)]\[CenterDot]\(A\[Transpose] \)\[CenterDot]A\[CenterDot]
+\*SubsuperscriptBox[\(P\), \(\[CapitalZeta]\), \(-T\)]\))^-1\[CenterDot]Subsuperscript[P, \[CapitalZeta], -1]\[CenterDot]A\[Transpose]\[CenterDot]\[CapitalZeta], have one too many factors of Subscript[P, \[CapitalZeta]].
+In[68]:= ClearAll[rlsUpdate];
+rlsUpdate[sqrtP\[CapitalZeta]_][{\[Xi]_,\[CapitalLambda]_},{\[Zeta]_,a_}]:=
+With[{sP\[CapitalZeta]ia=LinearSolve[sqrtP\[CapitalZeta],a]},
+With[{\[CapitalPi]=(\[CapitalLambda]+sP\[CapitalZeta]ia\[Transpose].sP\[CapitalZeta]ia)},
+{LinearSolve[\[CapitalPi],(sP\[CapitalZeta]ia\[Transpose].\[Zeta]+\[CapitalLambda].\[Xi])],\[CapitalPi]}]];
+
+Manipulate[
+With[{\[Xi]0=(0
+0
+
+),\[CapitalLambda]0=(1.0*^-6	0
+0	1.0*^-6
+
+),m=MatrixForm,
+inputs={List/@data[[1;;n]],List/@partials[[1;;n]]}\[Transpose]},
+Module[{\[Xi]rr,\[Xi]r,\[Xi]k,\[CapitalPi]rr,\[CapitalPi]r,\[CapitalPi]k},
+({\[Xi]rr,\[CapitalPi]rr}=Fold[rlsUpdate[\[Sigma] IdentityMatrix[1]],
+{\[Xi]0,\[CapitalLambda]0},inputs]);
+({\[Xi]r,\[CapitalPi]r}=Fold[update,{\[Xi]0,\[CapitalLambda]0},inputs]);
+({\[Xi]k,\[CapitalPi]k}=Fold[kalmanUpdate[\[Sigma]^2],{\[Xi]0,Inverse@\[CapitalLambda]0},inputs]);
+Grid[{
+{"","Renormalized RLS","RLS","KAL"},
+{"Estimate",m[(IdentityMatrix[2]/\[Sigma]).\[Xi]rr],m@\[Xi]r,m@\[Xi]k},
+{"Info Mat",m@\[CapitalPi]rr,m[\[CapitalPi]r/\[Sigma]^2],m[Inverse@\[CapitalPi]k]},
+{"Mat Diffs",
+m@Chop[Abs[\[CapitalPi]rr-\[CapitalPi]r/\[Sigma]^2],10^-9],
+m@Chop[Abs[Inverse@\[CapitalPi]k-\[CapitalPi]r/\[Sigma]^2],10^-9],
+m@Chop[Abs[Inverse@\[CapitalPi]k-\[CapitalPi]rr],10^-9]}},Frame->{All,{True,True,None}}]]],
+{{n,3},3,nData,1,Appearance->"Labeled"},
+{{\[Sigma],10},-100,100,Appearance->"Labeled"}]
+Out[70]= Manipulate[With[{\[Xi]0$ = {{0}, {0}}, \[CapitalLambda]0$ = {{1.*^-6, 0}, {0, 1.*^-6}}, 
+    m$ = MatrixForm, inputs$ = Transpose[{List /@ data[[1 ;; n]], 
+       List /@ partials[[1 ;; n]]}]}, Module[{\[Xi]rr$, \[Xi]r$, \[Xi]k$, \[CapitalPi]rr$, \[CapitalPi]r$, 
+     \[CapitalPi]k$}, {\[Xi]rr$, \[CapitalPi]rr$} = Fold[rlsUpdate[\[Sigma]*IdentityMatrix[1]], 
+       {\[Xi]0$, \[CapitalLambda]0$}, inputs$]; {\[Xi]r$, \[CapitalPi]r$} = Fold[update, {\[Xi]0$, \[CapitalLambda]0$}, 
+       inputs$]; {\[Xi]k$, \[CapitalPi]k$} = Fold[kalmanUpdate[\[Sigma]^2], 
+       {\[Xi]0$, Inverse[\[CapitalLambda]0$]}, inputs$]; 
+     Grid[{{"", "Renormalized RLS", "RLS", "KAL"}, 
+       {"Estimate", m$[(IdentityMatrix[2]/\[Sigma]) . \[Xi]rr$], m$[\[Xi]r$], m$[\[Xi]k$]}, 
+       {"Info Mat", m$[\[CapitalPi]rr$], m$[\[CapitalPi]r$/\[Sigma]^2], m$[Inverse[\[CapitalPi]k$]]}, 
+       {"Mat Diffs", m$[Chop[Abs[\[CapitalPi]rr$ - \[CapitalPi]r$/\[Sigma]^2], 10^(-9)]], 
+        m$[Chop[Abs[Inverse[\[CapitalPi]k$] - \[CapitalPi]r$/\[Sigma]^2], 10^(-9)]], 
+        m$[Chop[Abs[Inverse[\[CapitalPi]k$] - \[CapitalPi]rr$], 10^(-9)]]}}, 
+      Frame -> {All, {True, True, None}}]]], {{n, 3}, 3, 119, 1, 
+   Appearance -> "Labeled"}, {{\[Sigma], 10}, -100, 100, Appearance -> "Labeled"}]
+RLS beats KAL
+KAL and renormalized RLS are mathematically equivalent. Operationally, KAL uses subtraction to recur covariance of the estimates, so is exposed to catastrophic cancelation. RLS only adds to the information matrix, so is exposed only to ill-conditioning, which is empirically less severe. We show this below.
+Regularization and MAP
+Bishop reports \[Beta]=11.111\[Ellipsis] and \[Alpha]=0.005 in his figure 1.17 (page 32) and in equations 1.70 through 1.72 (page 31), which look suspiciously like the equations for Kalman filtering. Bishop's matrix S looks like D^\[ThinSpace]-1 in kalmanUpdate above. Let's reproduce MAP via KAL and RLS.
+Bishop's MAP
+The MAP Equations
+Bishop's equations 1.70 through 1.72 are reproduced here. The dimensions of the identity matrix in S is \[CapitalMu]+1, where \[CapitalMu] is the order of the polynomial model, S is one more than \[CapitalMu] to account for the leading bias term. It turns out that Bishop's S^-1 is exactly the information matrix of RLS, as we see in the section on Covariance of the Prediction, below. 
+m(x)  =  \[Beta] \[Phi]\[ThinSpace](x)\[Transpose]\[CenterDot]S\[CenterDot]\!\(
+\*UnderoverscriptBox[\(\[Sum]\), \(n = 1\), \(N\)]\(\(\[Phi]\[ThinSpace](
+\*SubscriptBox[\(x\), \(n\)])\) 
+\*SubscriptBox[\(t\), \(n\)]\)\)
+s^2(x)  =  \[Beta]^\[ThinSpace]-1+\[Phi]\[ThinSpace](x)\[Transpose]\[CenterDot]S\[CenterDot]\[Phi]\[ThinSpace](x)
+S^\[ThinSpace]-1  Overscript[=, def]  \[Alpha] Subscript[I, \[CapitalMu]+1]+\[Beta] \!\(
+\*UnderoverscriptBox[\(\[Sum]\), \(n = 1\), \(N\)]\(\(\[Phi]\[ThinSpace](
+\*SubscriptBox[\(x\), \(n\)])\)\[CenterDot]\(\[Phi]\[ThinSpace](
+\*SubscriptBox[\(x\), \(n\)])\)\[Transpose] \)\)
+Here are some links between Bishop's formulation and ours, without derivation. 
+\!\(
+\*UnderoverscriptBox[\(\[Sum]\), \(n = 1\), \(N\)]\(\(\[Phi]\[ThinSpace](
+\*SubscriptBox[\(x\), \(n\)])\) 
+\*SubscriptBox[\(t\), \(n\)]\)\)=A\[Transpose]\[CenterDot]\[CapitalZeta]
+Underscript[lim, \[Alpha]->0](\[ThinSpace]\[Beta]^\[ThinSpace]-1 S^\[ThinSpace]-1)=A\[Transpose]\[CenterDot]A
+\[CapitalPhi] Vectors
+Bishop's \[Phi]\[ThinSpace](Subscript[x, n]) is an (\[CapitalMu]+1)-dimensional column vector of the powers of the n^th input Subscript[x, n]. These powers are the basis functions of a polynomial model for the curve. \[Phi]\[ThinSpace](Subscript[x, n]) is the dual (transpose) of one row of our partials matrix A. 
+
+As written, Bishop's equations are non-recurrent, requiring all data Subscript[t, n] and \[Phi]\[ThinSpace](Subscript[x, n]) in memory. Plus, as written, they require inverting matrix S. They thus suffer from the operational ills of the normal equations. 
+In[71]:= ClearAll[\[Phi]];
+\[Phi][\[CapitalMu]_][xn_]:=Quiet@Table[xn^i,{i,0,\[CapitalMu]}]/.{Indeterminate->1};
+MatrixForm/@\[Phi][3]/@List/@bts[[1]]
+Out[73]= {(1
+0.
+0.
+0.
+
+),(1.
+0.111111
+0.0123457
+0.00137174
+
+),(1.
+0.222222
+0.0493827
+0.0109739
+
+),(1.
+0.333333
+0.111111
+0.037037
+
+),(1.
+0.444444
+0.197531
+0.0877915
+
+),(1.
+0.555556
+0.308642
+0.171468
+
+),(1.
+0.666667
+0.444444
+0.296296
+
+),(1.
+0.777778
+0.604938
+0.470508
+
+),(1.
+0.888889
+0.790123
+0.702332
+
+),(1.
+1.
+1.
+1.
+
+)}
+S Inverse
+Bishop's equation 1.72.
+In[74]:= ClearAll[sInv,\[Alpha],\[Beta]];
+sInv[\[Alpha]_,\[Beta]_,cs_,\[CapitalMu]_]:=
+With[{\[CapitalNu]=Length[cs]},
+\[Alpha] IdentityMatrix[\[CapitalMu]+1]+\[Beta] Sum[cs[[i]].cs[[i]]\[Transpose],{i,\[CapitalNu]}]];
+MAP Mean
+Bishop's equation 1.70.
+In[76]:= ClearAll[mapMean];
+mapMean[\[Alpha]_,\[Beta]_,x_,cs_,ts_,\[CapitalMu]_]:=
+With[{\[CapitalNu]=Length@cs},
+{\[Beta]*\[Phi][\[CapitalMu]][x]}.(* row of partials *)
+LinearSolve[(* vector of coefficients *)
+sInv[\[Alpha],\[Beta],cs,\[CapitalMu]],
+ts.cs]][[1,1]];
+a-priori Variances \[Alpha] and \[Beta]
+Bishop defines \[Beta]=1/Subsuperscript[\[Sigma], \[Zeta], 2], where Subscript[\[Sigma], \[Zeta]] is the standard deviation, from the model, of the prediction \[Zeta]. The prediction \[Zeta] is the value of the model on an arbitrary input \[Xi]. Similarly, Bishop defines \[Alpha]=1/Subsuperscript[\[Sigma], \[Xi], 2], where Subscript[\[Sigma], \[Xi]] is the standard deviation of the a-priori distribution of the unknown parameter estimate \[Xi]. 
+Mean Is Invariant Under "Swap and Invert"
+We observe, numerically, that Bishop's equations for the estimate (mean) match KAL and RLS when \[Beta] is Subsuperscript[\[Sigma], \[Xi], 2] and when \[Alpha]=Subsuperscript[\[Sigma], \[Zeta], 2], that is, the covariances are swapped and inverted. In the demonstration below, expect Subscript[m, 1] to equal Subscript[m, 2]. We present the other quantities to support future analysis. We leave non-empirical proof to future work. Semi-numerically, the proposition that Subscript[m, 1]=Subscript[m, 2] is true (above order 4, The following becomes taxing for Mathematica). 
+In[78]:= ClearAll[x,\[Alpha],\[Beta],chopQ];
+DynamicModule[{chopQ=False},
+Manipulate[With[{cs=\[Phi][\[CapitalMu]]/@List/@bts[[1]],ts=bts[[2]],
+pf=If[chopQ,Chop,Identity]@*FullSimplify},
+With[{m1=mapMean[\[Alpha],\[Beta],x,cs,ts,\[CapitalMu]],
+m2=mapMean[1/\[Beta],1/\[Alpha],x,cs,ts,\[CapitalMu]],
+si1=sInv[\[Alpha],\[Beta],cs,\[CapitalMu]],
+si2=sInv[1/\[Beta],1/\[Alpha],cs,\[CapitalMu]]},
+Grid[("m1"	pf@m1
+"m2"	pf@m2
+"m1-m2"	pf[m1-m2]
+"si1"	pf@si1
+"si2"	pf@si2
+"si1-si2"	pf[si1-si2]
+
+),Frame->All]]],
+Column[{Row[{Button["UN-CHOP",chopQ=False],"        ",
+Button["CHOP",chopQ=True]}],
+Control[{{\[CapitalMu],2,"order \[CapitalMu]"},0,4,1,Appearance->{"Open","Labeled"}}]}]]]
+Out[79]= Manipulate[With[{cs$ = \[Phi][\[CapitalMu]] /@ List /@ bts[[1]], ts$ = bts[[2]], 
+    pf$ = If[chopQ$$, Chop, Identity] @* FullSimplify}, 
+   With[{m1$ = mapMean[\[Alpha], \[Beta], x, cs$, ts$, \[CapitalMu]], 
+     m2$ = mapMean[1/\[Beta], 1/\[Alpha], x, cs$, ts$, \[CapitalMu]], 
+     si1$ = sInv[\[Alpha], \[Beta], cs$, \[CapitalMu]], si2$ = sInv[1/\[Beta], 1/\[Alpha], cs$, \[CapitalMu]]}, 
+    Grid[{{"m1", pf$[m1$]}, {"m2", pf$[m2$]}, {"m1-m2", pf$[m1$ - m2$]}, 
+      {"si1", pf$[si1$]}, {"si2", pf$[si2$]}, {"si1-si2", pf$[si1$ - si2$]}}, 
+     Frame -> All]]], {{\[CapitalMu], 2, "order \[CapitalMu]"}, 0, 4, 1, 
+   Appearance -> {"Open", "Labeled"}, ControlPlacement -> 1}, 
+  Column[{Row[{Button["UN-CHOP", chopQ$$ = False], "        ", 
+      Button["CHOP", chopQ$$ = True]}], Manipulate`Place[1]}]]
+The other two combinations, where \[Beta]=1/Subsuperscript[\[Sigma], \[Zeta], 2] \[Wedge] \[Alpha]=Subsuperscript[\[Sigma], \[Zeta], 2] or \[Beta]=\!\(
+\*SubsuperscriptBox[\(\[Sigma]\), \(\[Xi]\), \(2\)]\ \[Wedge]\ \[Alpha]\)=1/Subsuperscript[\[Sigma], \[Xi], 2] are not correct. Intuitively, these two combinations do not contain full information about the a-priori beliefs in both \[Zeta] and \[Xi], so we do not expect them to be correct. This fact can be demonstrated numerically.
+In the following demonstration, the numerical evidence for equality of the estimates (not the covariances) produced by the two applications of MAP becomes overwhelming. MAP, RLS, and KAL match for all settings of Subsuperscript[\[Sigma], \[Xi], 2], Subsuperscript[\[Sigma], \[Zeta], 2], \[CapitalMu] (order of the model), and assignments of \[Alpha] and \[Beta]. The one deviation from perfect match concerns KAL. Explore the case where the order is around \[CapitalMu]=4. For high Subsuperscript[\[Sigma], \[Xi], 2] (we do not believe the a-priori estimate of \[Xi]) and low Subsuperscript[\[Sigma], \[Zeta]z, 2] (we do believe the observational data), KAL fluctuates wildly. Why? The Kalman denominator D=Subscript[P, \[Zeta]]+a\[Transpose] Subscript[P, \[Xi]]a becomes nearly a\[Transpose] Subscript[P, \[Xi]]a. The Kalman gain, K=Subscript[P, \[Xi]] a\[Transpose] D^-1 is nearly a^-1. The covariance update, (I-K a)\[CenterDot]P, becomes ill-conditioned, if not negative, because K a is near unity. 
+
+Renormalized RLS (RRLS) does not suffer from these ills because it never subtracts. RRLS is still exposed to ill-conditioning of the information matrix, but that seems numerically to be less harmful to the final result in this example. Wrap RRLS in Quiet to suppress warnings. There is no free lunch; MAP also shows ill-conditioning and is similarly wrapped.
+In[80]:= ClearAll[rrlsFit];
+rrlsFit[\[Sigma]2\[Zeta]_,\[Sigma]2\[Xi]_][\[CapitalMu]_,trainingSet_]:=
+With[{xs=trainingSet[[1]],ys=trainingSet[[2]]},
+With[{\[Xi]0=List/@ConstantArray[0,\[CapitalMu]+1],
+\[CapitalLambda]0=\[Sigma]2\[Xi]^-1*IdentityMatrix[\[CapitalMu]+1]},
+Module[{\[Xi],\[CapitalLambda]},
+{\[Xi],\[CapitalLambda]}=Fold[
+rlsUpdate[Sqrt[\[Sigma]2\[Zeta]] IdentityMatrix[1]],
+{\[Xi]0,\[CapitalLambda]0},
+{List/@ys,List/@partialsFn[\[CapitalMu],xs]}\[Transpose]];
+{\[Xi]/Sqrt[\[Sigma]2\[Zeta]],\[CapitalLambda]}]]];
+In[82]:= DynamicModule[{\[Alpha]\[Beta]Bishop=True},
+Manipulate[Module[{x},
+With[{terms=symbolicPowers[x,\[CapitalMu]],cs=\[Phi][\[CapitalMu]]/@List/@bts[[1]],ts=bts[[2]],\[Sigma]\[Zeta]2=10.^(2log\[Sigma]\[Zeta]),\[Sigma]\[Xi]2=10.^(2log\[Sigma]\[Xi])},
+With[{normal=mleFit[\[CapitalMu],bts],
+kalman=kalFit[\[Sigma]\[Zeta]2,\[Sigma]\[Xi]2][\[CapitalMu],bts],
+rrls=Quiet@rrlsFit[\[Sigma]\[Zeta]2,\[Sigma]\[Xi]2][\[CapitalMu],bts]},
+With[{\[Alpha]=If[\[Alpha]\[Beta]Bishop,1/\[Sigma]\[Xi]2,\[Sigma]\[Zeta]2],\[Beta]=If[\[Alpha]\[Beta]Bishop,1/\[Sigma]\[Zeta]2,\[Sigma]\[Xi]2]},
+With[{mleFn=terms.normal,
+kalFn={terms}.kalman[[1]],
+mapFn=Quiet@mapMean[\[Alpha],\[Beta],x,cs,ts,\[CapitalMu]],
+rlsFn={terms}.rrls[[1]]},
+With[{lp=ListPlot[bts\[Transpose],
+PlotMarkers->{Graphics@{Blue,Circle[{0,0},1]},.05}]},
+Module[{showlist={lp,Plot[Sin[2.\[Pi] x],{x,0.,1.},PlotStyle->{Thick,Green}]}},
+If[mleQ,AppendTo[showlist,Plot[mleFn,{x,0,1},PlotStyle->{Orange}]]];
+If[rlsQ,AppendTo[showlist,Plot[rlsFn,{x,0,1},PlotStyle->{Purple}]]];If[kalQ,AppendTo[showlist,Plot[kalFn,{x,0,1},PlotStyle->{Cyan}]]];
+If[mapQ,AppendTo[showlist,Plot[mapFn,{x,0,1},PlotStyle->{Magenta}]]];
+Quiet@Show[showlist,Frame->True,ImageSize->Medium,FrameLabel->{{"\[Zeta]",""},{"\[Xi]",Grid[{{"\[Alpha]: ",\[Alpha],"\[Beta]:",\[Beta]}}]
+}}]]]]]]]],
+Column[{SetterBar[Dynamic[\[Alpha]\[Beta]Bishop],{True->"\[Alpha] = 1/Subsuperscript[\[Sigma], \[Xi], 2], \[Beta] = 1/Subsuperscript[\[Sigma], \[Xi], 2]",False->"\[Alpha] = Subsuperscript[\[Sigma], \[Zeta], 2], \[Beta] = Subsuperscript[\[Sigma], \[Xi], 2]"}],
+Row[{Button["RESET",(\[CapitalMu]=4;log\[Sigma]\[Xi]=.5;log\[Sigma]\[Zeta]=-1.5)&],
+Control[{{kalQ,True,"        KAL"},{True,False}}],
+Control[{{rlsQ,True,"        RLS"},{True,False}}],
+Control[{{mleQ,False,"        MLE"},{True,False}}],
+Control[{{mapQ,True,"        MAP"},{True,False}}]},Frame->All],
+Control[{{\[CapitalMu],4,"order \[CapitalMu]"},0,16,1,Appearance->{"Labeled"}}],Control[{{log\[Sigma]\[Xi],.5,"log \[Sigma]\[Xi] (KAL)"},-3, 5,Appearance->"Labeled"}],
+Control[{{log\[Sigma]\[Zeta],-1.5,"log \[Sigma]\[Zeta] (KAL)"},-7,3,Appearance->"Labeled"}]}]]]
+Out[82]= Manipulate[Module[{x$}, With[{terms$ = symbolicPowers[x$, \[CapitalMu]], 
+     cs$ = \[Phi][\[CapitalMu]] /@ List /@ bts[[1]], ts$ = bts[[2]], 
+     \[Sigma]\[Zeta]2$ = 10.^(2*log\[Sigma]\[Zeta]), \[Sigma]\[Xi]2$ = 10.^(2*log\[Sigma]\[Xi])}, 
+    With[{normal$ = mleFit[\[CapitalMu], bts], kalman$ = kalFit[\[Sigma]\[Zeta]2$, \[Sigma]\[Xi]2$][\[CapitalMu], 
+        bts], rrls$ = Quiet[rrlsFit[\[Sigma]\[Zeta]2$, \[Sigma]\[Xi]2$][\[CapitalMu], bts]]}, 
+     With[{\[Alpha]$ = If[\[Alpha]\[Beta]Bishop$$, 1/\[Sigma]\[Xi]2$, \[Sigma]\[Zeta]2$], 
+       \[Beta]$ = If[\[Alpha]\[Beta]Bishop$$, 1/\[Sigma]\[Zeta]2$, \[Sigma]\[Xi]2$]}, 
+      With[{mleFn$ = terms$ . normal$, kalFn$ = {terms$} . kalman$[[1]], 
+        mapFn$ = Quiet[mapMean[\[Alpha]$, \[Beta]$, x$, cs$, ts$, \[CapitalMu]]], 
+        rlsFn$ = {terms$} . rrls$[[1]]}, 
+       With[{lp$ = ListPlot[Transpose[bts], PlotMarkers -> 
+            {Graphics[{Blue, Circle[{0, 0}, 1]}], 0.05}]}, 
+        Module[{showlist$ = {lp$, Plot[Sin[2.*Pi*x$], {x$, 0., 1.}, 
+             PlotStyle -> {Thick, Green}]}}, 
+         If[mleQ, AppendTo[showlist$, Plot[mleFn$, {x$, 0, 1}, 
+             PlotStyle -> {Orange}]]]; If[rlsQ, AppendTo[showlist$, 
+            Plot[rlsFn$, {x$, 0, 1}, PlotStyle -> {Purple}]]]; 
+          If[kalQ, AppendTo[showlist$, Plot[kalFn$, {x$, 0, 1}, 
+             PlotStyle -> {Cyan}]]]; If[mapQ, AppendTo[showlist$, 
+            Plot[mapFn$, {x$, 0, 1}, PlotStyle -> {Magenta}]]]; 
+          Quiet[Show[showlist$, Frame -> True, ImageSize -> Medium, 
+            FrameLabel -> {{"\[Zeta]", ""}, {"\[Xi]", Grid[{{"\[Alpha]: ", \[Alpha]$, "\[Beta]:", 
+                  \[Beta]$}}]}}]]]]]]]]], {{kalQ, True, "        KAL"}, 
+   {True, False}, ControlPlacement -> 1}, {{rlsQ, True, "        RLS"}, 
+   {True, False}, ControlPlacement -> 2}, {{mleQ, False, "        MLE"}, 
+   {True, False}, ControlPlacement -> 3}, {{mapQ, True, "        MAP"}, 
+   {True, False}, ControlPlacement -> 4}, {{\[CapitalMu], 4, "order \[CapitalMu]"}, 0, 16, 1, 
+   Appearance -> {"Labeled"}, ControlPlacement -> 5}, 
+  {{log\[Sigma]\[Xi], 0.5, "log \[Sigma]\[Xi] (KAL)"}, -3, 5, Appearance -> "Labeled", 
+   ControlPlacement -> 6}, {{log\[Sigma]\[Zeta], -1.5, "log \[Sigma]\[Zeta] (KAL)"}, -7, 3, 
+   Appearance -> "Labeled", ControlPlacement -> 7}, 
+  Column[{SetterBar[Dynamic[\[Alpha]\[Beta]Bishop$$], 
+     {True -> "\[Alpha] = \!\(\*FractionBox[\(1\), SubsuperscriptBox[\(\[Sigma]\), \(\[Xi]\), \
+\(2\)]]\), \[Beta] = \!\(\*FractionBox[\(1\), SubsuperscriptBox[\(\[Sigma]\), \(\[Xi]\), \
+\(2\)]]\)", False -> "\[Alpha] = \!\(\*SubsuperscriptBox[\(\[Sigma]\), \(\[Zeta]\), \(2\)]\), \[Beta] = \
+\!\(\*SubsuperscriptBox[\(\[Sigma]\), \(\[Xi]\), \(2\)]\)"}], 
+    Row[{Button["RESET", (\[CapitalMu] = 4; log\[Sigma]\[Xi] = 0.5; log\[Sigma]\[Zeta] = -1.5) & ], 
+      Manipulate`Place[1], Manipulate`Place[2], Manipulate`Place[3], 
+      Manipulate`Place[4]}, Frame -> All], Manipulate`Place[5], 
+    Manipulate`Place[6], Manipulate`Place[7]}]]
+Covariance and Information Matrices
+Notice that Bishop' s Information matrix, S^-1, is different when \[Alpha] and \[Beta] are swapped and inverted; it can only be used as an information matrix when \[Alpha] and \[Beta] have their original assignments as 1/Subsuperscript[\[Sigma], \[Xi], 2] and 1/Subsuperscript[\[Sigma], \[Zeta], 2], respectively. The meaning of S^-1 under the swapped and inverted assignments of \[Alpha] and \[Beta] has not been explored.
+In[83]:= DynamicModule[{\[Alpha]\[Beta]Bishop=True},
+Manipulate[Module[{x},
+With[{cs=\[Phi][\[CapitalMu]]/@List/@bts[[1]],ts=bts[[2]],\[Sigma]\[Zeta]2=10.^(2log\[Sigma]\[Zeta]),\[Sigma]\[Xi]2=10.^(2log\[Sigma]\[Xi])},
+With[{kalman=kalFit[\[Sigma]\[Zeta]2,\[Sigma]\[Xi]2][\[CapitalMu],bts],
+rrls=Quiet@rrlsFit[\[Sigma]\[Zeta]2,\[Sigma]\[Xi]2][\[CapitalMu],bts]},
+With[{\[Alpha]=If[\[Alpha]\[Beta]Bishop,1/\[Sigma]\[Xi]2,\[Sigma]\[Zeta]2],\[Beta]=If[\[Alpha]\[Beta]Bishop,1/\[Sigma]\[Zeta]2,\[Sigma]\[Xi]2]},
+Grid[("inverse\nKAL P"	MatrixForm[Inverse[kalman[[2]]]]
+"rrls \[CapitalLambda]"	MatrixForm[rrls[[2]]]
+"Bishop S^-1"	MatrixForm[sInv[\[Alpha],\[Beta],cs,\[CapitalMu]]]
+
+)]   ]]]],
+Column[{SetterBar[Dynamic[\[Alpha]\[Beta]Bishop],{True->"\[Alpha] = 1/Subsuperscript[\[Sigma], \[Xi], 2], \[Beta] = 1/Subsuperscript[\[Sigma], \[Xi], 2]",False->"\[Alpha] = Subsuperscript[\[Sigma], \[Zeta], 2], \[Beta] = Subsuperscript[\[Sigma], \[Xi], 2]"}],
+Row[{Button["RESET",(\[CapitalMu]=4;log\[Sigma]\[Xi]=.5;log\[Sigma]\[Zeta]=-1.5)&]},Frame->All],
+Control[{{\[CapitalMu],4,"order \[CapitalMu]"},0,16,1,Appearance->{"Labeled"}}],Control[{{log\[Sigma]\[Xi],.5,"log \[Sigma]\[Xi] (KAL)"},-3, 5,Appearance->"Labeled"}],
+Control[{{log\[Sigma]\[Zeta],-1.5,"log \[Sigma]\[Zeta] (KAL)"},-7,3,Appearance->"Labeled"}]}]]]
+Out[83]= Manipulate[Module[{x$}, With[{cs$ = \[Phi][\[CapitalMu]] /@ List /@ bts[[1]], 
+     ts$ = bts[[2]], \[Sigma]\[Zeta]2$ = 10.^(2*log\[Sigma]\[Zeta]), \[Sigma]\[Xi]2$ = 10.^(2*log\[Sigma]\[Xi])}, 
+    With[{kalman$ = kalFit[\[Sigma]\[Zeta]2$, \[Sigma]\[Xi]2$][\[CapitalMu], bts], 
+      rrls$ = Quiet[rrlsFit[\[Sigma]\[Zeta]2$, \[Sigma]\[Xi]2$][\[CapitalMu], bts]]}, 
+     With[{\[Alpha]$ = If[\[Alpha]\[Beta]Bishop$$, 1/\[Sigma]\[Xi]2$, \[Sigma]\[Zeta]2$], 
+       \[Beta]$ = If[\[Alpha]\[Beta]Bishop$$, 1/\[Sigma]\[Zeta]2$, \[Sigma]\[Xi]2$]}, 
+      Grid[{{"inverse\nKAL P", MatrixForm[Inverse[kalman$[[2]]]]}, 
+        {"rrls \[CapitalLambda]", MatrixForm[rrls$[[2]]]}, 
+        {"Bishop \!\(\*SuperscriptBox[\(S\), \(-1\)]\)", 
+         MatrixForm[sInv[\[Alpha]$, \[Beta]$, cs$, \[CapitalMu]]]}}]]]]], 
+  {{\[CapitalMu], 4, "order \[CapitalMu]"}, 0, 16, 1, Appearance -> {"Labeled"}, 
+   ControlPlacement -> 1}, {{log\[Sigma]\[Xi], 0.5, "log \[Sigma]\[Xi] (KAL)"}, -3, 5, 
+   Appearance -> "Labeled", ControlPlacement -> 2}, 
+  {{log\[Sigma]\[Zeta], -1.5, "log \[Sigma]\[Zeta] (KAL)"}, -7, 3, Appearance -> "Labeled", 
+   ControlPlacement -> 3}, Column[{SetterBar[Dynamic[\[Alpha]\[Beta]Bishop$$], 
+     {True -> "\[Alpha] = \!\(\*FractionBox[\(1\), SubsuperscriptBox[\(\[Sigma]\), \(\[Xi]\), \
+\(2\)]]\), \[Beta] = \!\(\*FractionBox[\(1\), SubsuperscriptBox[\(\[Sigma]\), \(\[Xi]\), \
+\(2\)]]\)", False -> "\[Alpha] = \!\(\*SubsuperscriptBox[\(\[Sigma]\), \(\[Zeta]\), \(2\)]\), \[Beta] = \
+\!\(\*SubsuperscriptBox[\(\[Sigma]\), \(\[Xi]\), \(2\)]\)"}], 
+    Row[{Button["RESET", (\[CapitalMu] = 4; log\[Sigma]\[Xi] = 0.5; log\[Sigma]\[Zeta] = -1.5) & ]}, 
+     Frame -> All], Manipulate`Place[1], Manipulate`Place[2], 
+    Manipulate`Place[3]}]]
+Covariance of the Prediction
+The following shows estimated coefficients with their error bars. To translate from covariance of the estimate to covariance of the prediction, note that the prediction is a linear combination of the estimates and follows https://stats.stackexchange.com/questions/160230, the covariance of the prediction at each input x is a(x)\[CenterDot]P\[CenterDot]a(x)\[Transpose]. Bishop adds the fixed observation covariance Subsuperscript[\[Sigma], \[Zeta], 2] to the covariance of the prediction.
+In[84]:= <<ErrorBarPlots`
+During evaluation of In[84]:= General::obspkg: ErrorBarPlots` is now obsolete. The legacy version being loaded may conflict with current functionality. See the Compatibility Guide for updating information.
+In[85]:= Manipulate[Module[{x},
+With[{terms=symbolicPowers[x,\[CapitalMu]],
+\[Sigma]\[Zeta]2=10.^(2log\[Sigma]\[Zeta]),\[Sigma]\[Xi]2=10.^(2log\[Sigma]\[Xi])},
+With[{k=kalFit[\[Sigma]\[Zeta]2,\[Sigma]\[Xi]2][\[CapitalMu],bts]},
+With[{\[Delta]\[Xi]=Sqrt@Diagonal[k[[2]]],
+\[Xi]=Flatten@k[[1]]},
+With[{eds={\[Xi],\[Delta]\[Xi]}\[Transpose]},
+Show[{ErrorListPlot[eds,Joined->True]}]]]]]],
+Column[{
+Row[{Button["RESET",(\[CapitalMu]=9;log\[Sigma]\[Xi]=.5;log\[Sigma]\[Zeta]=-1.5)&],
+Control[{{\[CapitalMu],9,"order \[CapitalMu]"},0,16,1,Appearance->{"Labeled"}}]}],Control[{{log\[Sigma]\[Xi],.5,"log \[Sigma]\[Xi] (KAL)"},-3, 5,Appearance->"Labeled"}],
+Control[{{log\[Sigma]\[Zeta],-1.5,"log \[Sigma]\[Zeta] (KAL)"},-7,3,Appearance->"Labeled"}]}]]
+Out[85]= Manipulate[Module[{x$}, With[{terms$ = symbolicPowers[x$, \[CapitalMu]], 
+     \[Sigma]\[Zeta]2$ = 10.^(2*log\[Sigma]\[Zeta]), \[Sigma]\[Xi]2$ = 10.^(2*log\[Sigma]\[Xi])}, 
+    With[{k = kalFit[\[Sigma]\[Zeta]2$, \[Sigma]\[Xi]2$][\[CapitalMu], bts]}, 
+     With[{\[Delta]\[Xi] = Sqrt[Diagonal[k[[2]]]], \[Xi] = Flatten[k[[1]]]}, 
+      With[{eds = Transpose[{\[Xi], \[Delta]\[Xi]}]}, 
+       Show[{ErrorBarPlots`ErrorListPlot[eds, Joined -> True]}]]]]]], 
+  {{\[CapitalMu], 9, "order \[CapitalMu]"}, 0, 16, 1, Appearance -> {"Labeled"}, 
+   ControlPlacement -> 1}, {{log\[Sigma]\[Xi], 0.5, "log \[Sigma]\[Xi] (KAL)"}, -3, 5, 
+   Appearance -> "Labeled", ControlPlacement -> 2}, 
+  {{log\[Sigma]\[Zeta], -1.5, "log \[Sigma]\[Zeta] (KAL)"}, -7, 3, Appearance -> "Labeled", 
+   ControlPlacement -> 3}, 
+  Column[{Row[{Button["RESET", (\[CapitalMu] = 9; log\[Sigma]\[Xi] = 0.5; log\[Sigma]\[Zeta] = -1.5) & ], 
+      Manipulate`Place[1]}], Manipulate`Place[2], Manipulate`Place[3]}]]
+Consider Bishop' s equation 1.71 s^2(x)=\[Beta]^\[ThinSpace]-1+\[Phi]\[ThinSpace](x)\[Transpose]\[CenterDot]S\[CenterDot]\[Phi]\[ThinSpace](x), which does not depend on the output data Subscript[t, n], just as with KAL and RLS.
+In[86]:= ClearAll[mapsSquared];
+mapsSquared[\[Alpha]_,\[Beta]_,x_,cs_,\[CapitalMu]_]:=
+With[{a=\[Phi][\[CapitalMu]][x]},
+\[Beta]^-1+{a}.LinearSolve[sInv[\[Alpha],\[Beta],cs,\[CapitalMu]],List/@a]];
+Bishop kindly supplies the sigma-bars for his mean. He cites \[Alpha]=0.005 and \[Beta]=11.1, which correspond to Subscript[\[Sigma], \[Zeta]]=0.07071 and Subscript[\[Sigma], \[Xi]]=3.333, and Subscript[log, 10] Subscript[\[Sigma], \[Zeta]]=-1.15051 and Subscript[log, 10] Subscript[\[Sigma], \[Xi]]=0.5229. These values reproduce Bishop's figure 1.17 well. Bishop's equation 1.71 equals \!\(
+\*SubsuperscriptBox[\(\[Sigma]\), \(\[Zeta]\), \(2\)] + \(\(
+\*SubscriptBox[\(a\), \(row\)](x)\)\[CenterDot]P\[CenterDot]\(
+\*SubscriptBox[\(a\), \(row\)](x)\)\[Transpose] \)\).
+In[88]:= Manipulate[Module[{x,\[CapitalSigma]2Fn},
+With[{terms=symbolicPowers[x,\[CapitalMu]],
+cs=\[Phi][\[CapitalMu]]/@List/@bts[[1]],ts=bts[[2]],\[Sigma]2\[Xi]=10^(2log\[Sigma]\[Xi]),\[Sigma]2\[Zeta]=10^(2log\[Sigma]\[Zeta])},
+With[{kalman=kalFit[\[Sigma]2\[Zeta],\[Sigma]2\[Xi]][\[CapitalMu],bts]},
+With[{kalFn={terms}.kalman[[1]],
+bs2=mapsSquared[1/\[Sigma]2\[Xi],1/\[Sigma]2\[Zeta],x,cs,\[CapitalMu]],
+mapFn=Quiet@mapMean[\[Sigma]2\[Zeta],\[Sigma]2\[Xi],x,cs,ts,\[CapitalMu]]},
+\[CapitalSigma]2Fn=\[Sigma]2\[Zeta]+({terms}.kalman[[2]].{terms}\[Transpose])[[1]];
+With[{lp=ListPlot[bts\[Transpose],PlotMarkers->{Graphics@{Blue,Circle[{0,0},1]},.05}]},
+Module[{showlist={lp,
+Plot[Sin[2.\[Pi] x],{x,0.,1.},PlotStyle->{Thick,Green}]}},
+If[kalQ,AppendTo[showlist,
+Plot[{kalFn,kalFn+Sqrt[\[CapitalSigma]2Fn],kalFn-Sqrt[\[CapitalSigma]2Fn]},{x,0,1},
+PlotStyle->{Cyan,{Thin,{Opacity[0],Cyan}},{Thin,{Opacity[0],Cyan}}},Filling->{1->{2},1->{3}}]]];
+If[mapQ,AppendTo[showlist,
+Plot[{mapFn,mapFn+Sqrt[bs2],mapFn-Sqrt[bs2]},{x,0,1},
+PlotStyle->{Magenta,{Thin,{Opacity[0],Magenta}},{Thin,{Opacity[0],Magenta}}},
+Filling->{1->{2},1->{3}}]]];
+Quiet@Show[showlist,Frame->True,FrameLabel->{"x","t"}]]]]]]],
+Grid[{{Grid[{{Button["RESET",(\[CapitalMu]=9;log\[Sigma]\[Xi]=Log10[Sqrt[1/0.09]];log\[Sigma]\[Zeta]=Log10[Sqrt[0.005]])&],
+Control[{{kalQ,True,"KAL"},{True,False}}],
+Control[{{mapQ,True,"MAP"},{True,False}}]}}]},{Control[{{\[CapitalMu],9,"order \[CapitalMu]"},0,16,1,Appearance->{"Labeled"}}]},{Control[{{log\[Sigma]\[Xi],Log10[Sqrt[1/0.09]],"log \[Sigma]\[Xi] (KAL)"},-3, 5,Appearance->"Labeled"}]},
+{Control[{{log\[Sigma]\[Zeta],Log10[Sqrt[0.005]],"log \[Sigma]\[Zeta] (KAL)"},-5,3,Appearance->"Labeled"}]}}]]
+Out[88]= Manipulate[Module[{x$, \[CapitalSigma]2Fn$}, With[{terms$ = symbolicPowers[x$, \[CapitalMu]], 
+     cs$ = \[Phi][\[CapitalMu]] /@ List /@ bts[[1]], ts$ = bts[[2]], 
+     \[Sigma]2\[Xi]$ = 10^(2*log\[Sigma]\[Xi]), \[Sigma]2\[Zeta]$ = 10^(2*log\[Sigma]\[Zeta])}, 
+    With[{kalman$ = kalFit[\[Sigma]2\[Zeta]$, \[Sigma]2\[Xi]$][\[CapitalMu], bts]}, 
+     With[{kalFn$ = {terms$} . kalman$[[1]], 
+       bs2$ = mapsSquared[1/\[Sigma]2\[Xi]$, 1/\[Sigma]2\[Zeta]$, x$, cs$, \[CapitalMu]], 
+       mapFn$ = Quiet[mapMean[\[Sigma]2\[Zeta]$, \[Sigma]2\[Xi]$, x$, cs$, ts$, \[CapitalMu]]]}, 
+      \[CapitalSigma]2Fn$ = \[Sigma]2\[Zeta]$ + ({terms$} . kalman$[[2]] . Transpose[{terms$}])[[1]]; 
+       With[{lp$ = ListPlot[Transpose[bts], PlotMarkers -> 
+            {Graphics[{Blue, Circle[{0, 0}, 1]}], 0.05}]}, 
+        Module[{showlist$ = {lp$, Plot[Sin[2.*Pi*x$], {x$, 0., 1.}, 
+             PlotStyle -> {Thick, Green}]}}, 
+         If[kalQ, AppendTo[showlist$, Plot[{kalFn$, kalFn$ + Sqrt[\[CapitalSigma]2Fn$], 
+              kalFn$ - Sqrt[\[CapitalSigma]2Fn$]}, {x$, 0, 1}, PlotStyle -> 
+              {Cyan, {Thin, {Opacity[0], Cyan}}, {Thin, {Opacity[0], Cyan}}}, 
+             Filling -> {1 -> {2}, 1 -> {3}}]]]; If[mapQ, AppendTo[showlist$, 
+            Plot[{mapFn$, mapFn$ + Sqrt[bs2$], mapFn$ - Sqrt[bs2$]}, 
+             {x$, 0, 1}, PlotStyle -> {Magenta, {Thin, {Opacity[0], 
+                 Magenta}}, {Thin, {Opacity[0], Magenta}}}, 
+             Filling -> {1 -> {2}, 1 -> {3}}]]]; 
+          Quiet[Show[showlist$, Frame -> True, FrameLabel -> 
+             {"x", "t"}]]]]]]]], {{kalQ, True, "KAL"}, {True, False}, 
+   ControlPlacement -> 1}, {{mapQ, True, "MAP"}, {True, False}, 
+   ControlPlacement -> 2}, {{\[CapitalMu], 9, "order \[CapitalMu]"}, 0, 16, 1, 
+   Appearance -> {"Labeled"}, ControlPlacement -> 3}, 
+  {{log\[Sigma]\[Xi], 0.5228787452803376, "log \[Sigma]\[Xi] (KAL)"}, -3, 5, 
+   Appearance -> "Labeled", ControlPlacement -> 4}, 
+  {{log\[Sigma]\[Zeta], -1.1505149978319906, "log \[Sigma]\[Zeta] (KAL)"}, -5, 3, 
+   Appearance -> "Labeled", ControlPlacement -> 5}, 
+  Grid[{{Grid[{{Button["RESET", (\[CapitalMu] = 9; log\[Sigma]\[Xi] = Log10[Sqrt[1/0.09]]; 
+           log\[Sigma]\[Zeta] = Log10[Sqrt[0.005]]) & ], Manipulate`Place[1], 
+        Manipulate`Place[2]}}]}, {Manipulate`Place[3]}, 
+    {Manipulate`Place[4]}, {Manipulate`Place[5]}}]]
+Padé Approximant: Example from NIST
+A Padé approximant is a ratio of two polynomials, where the bias term in the denominator is unity to discourage division by zero. Quoting from Srini Kumar and Bob Horton https://blog.revolutionanalytics.com/2017/04/fitting-rational-functions-with-lm.html:
+R(x)==\!\(\*
+UnderoverscriptBox["\[Sum]", 
+RowBox[{
+StyleBox["j", "TI"], "=", "0"}], 
+StyleBox["m", "TI"],
+LimitsPositioning->True]\(\*
+SubscriptBox[
+StyleBox["a", "TI"], 
+StyleBox["j", "TI"]] \*
+SuperscriptBox[
+StyleBox["x", "TI"], 
+StyleBox["j", "TI"]]\)\)/(1+\!\(\*
+UnderoverscriptBox["\[Sum]", 
+RowBox[{
+StyleBox["k", "TI"], "=", "1"}], 
+StyleBox["n", "TI"],
+LimitsPositioning->True]\(\*
+SubscriptBox[
+StyleBox["b", "TI"], 
+StyleBox["k", "TI"]] \*
+SuperscriptBox[
+StyleBox["x", "TI"], 
+StyleBox["k", "TI"]]\)\))==(Subscript[a, 0]+Subscript[a, 1]x+Subscript[a, 2] x^2+\[CenterEllipsis]+Subscript[a, m] x^m)/(1+Subscript[b, 1]x+Subscript[b, 2] x^2+\[CenterEllipsis]+Subscript[b, n] x^n)
+The following example from NIST (https://www.itl.nist.gov/div898/strd/nls/data/LINKS/DATA/Thurber.dat, edited to remove some blank lines) lets us illustrate:
+NIST/ITL StRD
+Dataset Name:  Thurber           (Thurber.dat)
+
+File Format:   ASCII
+               Starting Values   (lines 41 to 47)
+               Certified Values  (lines 41 to 52)
+               Data              (lines 61 to 97)
+
+Procedure:     Nonlinear Least Squares Regression
+
+Description:   These data are the result of a NIST study involving
+               semiconductor electron mobility.  The response 
+               variable is a measure of electron mobility, and the 
+               predictor variable is the natural log of the density.
+
+Reference:     Thurber, R., NIST (197?).  
+               Semiconductor electron mobility modeling.
+
+Data:          1 Response Variable  (y = electron mobility)
+               1 Predictor Variable (x = log[density])
+               37 Observations
+               Higher Level of Difficulty
+               Observed Data
+
+Model:         Rational Class (cubic/cubic)
+               7 Parameters (b1 to b7)
+
+               y = (b1 + b2*x + b3*x**2 + b4*x**3) / 
+                   (1 + b5*x + b6*x**2 + b7*x**3)  +  e
+
+          Starting Values                  Certified Values
+
+        Start 1     Start 2           Parameter     Standard Deviation
+  b1 =   1000        1300          1.2881396800E+03  4.6647963344E+00
+  b2 =   1000        1500          1.4910792535E+03  3.9571156086E+01
+  b3 =    400         500          5.8323836877E+02  2.8698696102E+01
+  b4 =     40          75          7.5416644291E+01  5.5675370270E+00
+  b5 =      0.7         1          9.6629502864E-01  3.1333340687E-02
+  b6 =      0.3         0.4        3.9797285797E-01  1.4984928198E-02
+  b7 =      0.03        0.05       4.9727297349E-02  6.5842344623E-03
+
+Residual Sum of Squares:                    5.6427082397E+03
+Residual Standard Deviation:                1.3714600784E+01
+Degrees of Freedom:                                30
+Number of Observations:                            37
+
+Data:   y             x
+      80.574E0      -3.067E0
+      84.248E0      -2.981E0
+      87.264E0      -2.921E0
+      87.195E0      -2.912E0
+      89.076E0      -2.840E0
+      89.608E0      -2.797E0
+      89.868E0      -2.702E0
+      90.101E0      -2.699E0
+      92.405E0      -2.633E0
+      95.854E0      -2.481E0
+     100.696E0      -2.363E0
+     101.060E0      -2.322E0
+     401.672E0      -1.501E0
+     390.724E0      -1.460E0
+     567.534E0      -1.274E0
+     635.316E0      -1.212E0
+     733.054E0      -1.100E0
+     759.087E0      -1.046E0
+     894.206E0      -0.915E0
+     990.785E0      -0.714E0
+    1090.109E0      -0.566E0
+    1080.914E0      -0.545E0
+    1122.643E0      -0.400E0
+    1178.351E0      -0.309E0
+    1260.531E0      -0.109E0
+    1273.514E0      -0.103E0
+    1288.339E0       0.010E0
+    1327.543E0       0.119E0
+    1353.863E0       0.377E0
+    1414.509E0       0.790E0
+    1425.208E0       0.963E0
+    1421.384E0       1.006E0
+    1442.962E0       1.115E0
+    1464.350E0       1.572E0
+    1468.705E0       1.841E0
+    1447.894E0       2.047E0
+    1457.628E0       2.200E0
+As a reminder, identifiers ending in a dollar sign denote ad-hoc convenience variables, that is, global variables that we set to anything anywhere, accepting the risk of arbitrary overwriting. With other variables, we are more careful to encapsulate them in Modules, With, or Block forms, or to ClearAll them before defining values and patterns.
+In[89]:= nistData$=
+"    80.574E0      -3.067E0
+      84.248E0      -2.981E0
+      87.264E0      -2.921E0
+      87.195E0      -2.912E0
+      89.076E0      -2.840E0
+      89.608E0      -2.797E0
+      89.868E0      -2.702E0
+      90.101E0      -2.699E0
+      92.405E0      -2.633E0
+      95.854E0      -2.481E0
+     100.696E0      -2.363E0
+     101.060E0      -2.322E0
+     401.672E0      -1.501E0
+     390.724E0      -1.460E0
+     567.534E0      -1.274E0
+     635.316E0      -1.212E0
+     733.054E0      -1.100E0
+     759.087E0      -1.046E0
+     894.206E0      -0.915E0
+     990.785E0      -0.714E0
+    1090.109E0      -0.566E0
+    1080.914E0      -0.545E0
+    1122.643E0      -0.400E0
+    1178.351E0      -0.309E0
+    1260.531E0      -0.109E0
+    1273.514E0      -0.103E0
+    1288.339E0       0.010E0
+    1327.543E0       0.119E0
+    1353.863E0       0.377E0
+    1414.509E0       0.790E0
+    1425.208E0       0.963E0
+    1421.384E0       1.006E0
+    1442.962E0       1.115E0
+    1464.350E0       1.572E0
+    1468.705E0       1.841E0
+    1447.894E0       2.047E0
+    1457.628E0       2.200E0";
+In[90]:= (nistTrainingSet$=Transpose[
+nistDataPoints$=Reverse/@ReadList[
+StringToStream[nistData$],
+{Number,Number}]])//MatrixForm
+Out[90]//MatrixForm= (-3.067	-2.981	-2.921	-2.912	-2.84	-2.797	-2.702	-2.699	-2.633	-2.481	-2.363	-2.322	-1.501	-1.46	-1.274	-1.212	-1.1	-1.046	-0.915	-0.714	-0.566	-0.545	-0.4	-0.309	-0.109	-0.103	0.01	0.119	0.377	0.79	0.963	1.006	1.115	1.572	1.841	2.047	2.2
+80.574	84.248	87.264	87.195	89.076	89.608	89.868	90.101	92.405	95.854	100.696	101.06	401.672	390.724	567.534	635.316	733.054	759.087	894.206	990.785	1090.11	1080.91	1122.64	1178.35	1260.53	1273.51	1288.34	1327.54	1353.86	1414.51	1425.21	1421.38	1442.96	1464.35	1468.71	1447.89	1457.63
+
+)
+Using the notation of the NIST example, rather than that of Kumar and Horton:
+In[91]:= ClearAll[x,y]
+In[92]:= nistModelPre$=ReadList[StringToStream[StringReplace["y = (b1 + b2*x + b3*x**2 + b4*x**3) / 
+                   (1 + b5*x + b6*x**2 + b7*x**3)","**"->"^"]]][[1]]
+Out[92]= (b1+b2 x+b3 x^2+b4 x^3)/(1+b5 x+b6 x^2+b7 x^3)
+In[93]:= nistDenominator$=nistModelPre$[[2,1]]
+Out[93]= 1+b5 x+b6 x^2+b7 x^3
+In[94]:= nistNumerator$=nistModelPre$*nistModelPre$[[2,1]]
+Out[94]= b1+b2 x+b3 x^2+b4 x^3
+In[95]:= ClearAll[e,y]
+In[96]:= nistModel$=nistNumerator$-nistDenominator$*y
+Out[96]= b1+b2 x+b3 x^2+b4 x^3-(1+b5 x+b6 x^2+b7 x^3) y
+In[97]:= A$[{x_,y_}]=(1	x	x^2	x^3	-x y	-x^2y	-x^3y)
+Out[97]= {{1,x,x^2,x^3,-x y,-x^2 y,-x^3 y}}
+In[98]:= ClearAll[\[Xi],\[Xi]01,\[Xi]02,\[CapitalLambda]01,\[CapitalLambda]02,P01,P02,certified\[Xi],certifiedSqrtP]
+In[99]:= nistAPrioris$=ReadList[StringToStream["1000        1300          1.2881396800E+03  4.6647963344E+00
+1000        1500          1.4910792535E+03  3.9571156086E+01
+400         500          5.8323836877E+02  2.8698696102E+01
+40          75          7.5416644291E+01  5.5675370270E+00
+0.7         1          9.6629502864E-01  3.1333340687E-02
+0.3         0.4        3.9797285797E-01  1.4984928198E-02
+0.03        0.05       4.9727297349E-02  6.5842344623E-03"],{Number,Number,Number,Number}]\[Transpose]
+Out[99]= {{1000,1000,400,40,0.7,0.3,0.03},{1300,1500,500,75,1,0.4,0.05},{1288.14,1491.08,583.238,75.4166,0.966295,0.397973,0.0497273},{4.6648,39.5712,28.6987,5.56754,0.0313333,0.0149849,0.00658423}}
+In[100]:= \[Xi]01=List/@nistAPrioris$[[1]]
+certified\[Xi]=List/@nistAPrioris$[[3]]
+Out[100]= {{1000},{1000},{400},{40},{0.7},{0.3},{0.03}}
+Out[101]= {{1288.14},{1491.08},{583.238},{75.4166},{0.966295},{0.397973},{0.0497273}}
+In[102]:= \[Xi]02=List/@nistAPrioris$[[2]]
+(certifiedSqrtP=DiagonalMatrix@nistAPrioris$[[4]])//MatrixForm
+Out[102]= {{1300},{1500},{500},{75},{1},{0.4},{0.05}}
+Out[103]//MatrixForm= (4.6648	0.	0.	0.	0.	0.	0.
+0.	39.5712	0.	0.	0.	0.	0.
+0.	0.	28.6987	0.	0.	0.	0.
+0.	0.	0.	5.56754	0.	0.	0.
+0.	0.	0.	0.	0.0313333	0.	0.
+0.	0.	0.	0.	0.	0.0149849	0.
+0.	0.	0.	0.	0.	0.	0.00658423
+
+)
+In[104]:= nistDataAndPartialsStream$={#[[2]],A$[#]}&/@nistDataPoints$;
+In[105]:= \[Xi]=(b1
+b2
+b3
+b4
+b5
+b6
+b7
+
+);
+P01=IdentityMatrix[7];
+\[CapitalLambda]01=Inverse[P01];
+P02=IdentityMatrix[7];\[CapitalLambda]02=Inverse[P02];
+In[109]:= ClearAll[\[Xi]rules];
+\[Xi]rules[numerical\[Xi]_]:=Map[Apply[Rule,#]&,MapThread[Join,{\[Xi],numerical\[Xi]}]]
+TODO: Fix RRLS so it can handle this scenario
+In[111]:= ClearAll[rlsUpdate];
+rlsUpdate[sqrtP\[CapitalZeta]_][{\[Xi]_,\[CapitalLambda]_},{\[Zeta]_,a_}]:=
+With[{sP\[CapitalZeta]ia=LinearSolve[sqrtP\[CapitalZeta],a]},
+With[{\[CapitalPi]=(\[CapitalLambda]+sP\[CapitalZeta]ia\[Transpose].sP\[CapitalZeta]ia)},
+(*Print["a"];Print[MatrixForm[a]];
+Print["\[Zeta]"];Print[MatrixForm[\[Zeta]]];
+Print["sP\[CapitalZeta]ia"];Print[MatrixForm[sP\[CapitalZeta]ia]];
+Print["sP\[CapitalZeta]ia\[Transpose].sP\[CapitalZeta]ia"];Print[MatrixForm[sP\[CapitalZeta]ia\[Transpose].sP\[CapitalZeta]ia]];
+Print["\[CapitalLambda].\[Xi]"];Print[MatrixForm[\[CapitalLambda].\[Xi]]];
+Print["sP\[CapitalZeta]ia\[Transpose].\[Zeta]"];Print[MatrixForm[sP\[CapitalZeta]ia\[Transpose].\[Zeta]]];
+Print["sP\[CapitalZeta]ia\[Transpose].\[Zeta]+\[CapitalLambda].\[Xi]"];Print[MatrixForm[sP\[CapitalZeta]ia\[Transpose].\[Zeta]+\[CapitalLambda].\[Xi]]];*)
+{LinearSolve[\[CapitalPi],(sP\[CapitalZeta]ia\[Transpose].\[Zeta]+\[CapitalLambda].\[Xi])],\[CapitalPi]}]];
+In[113]:= rlsUpdate[{{1.0}}][{\[Xi]01,Inverse[P01]},nistDataAndPartialsStream$[[1]]]
+Out[113]= {{{0.999703 (1000.3 +1. {{1.},{-3.067},{9.40649},{-28.8497},{247.12},{-757.918},{2324.54}}.80.574)},{1.00091 (999.091 +1. {{1.},{-3.067},{9.40649},{-28.8497},{247.12},{-757.918},{2324.54}}.80.574)},{0.997209 (401.119 +1. {{1.},{-3.067},{9.40649},{-28.8497},{247.12},{-757.918},{2324.54}}.80.574)},{1.00856 (39.6631 +1. {{1.},{-3.067},{9.40649},{-28.8497},{247.12},{-757.918},{2324.54}}.80.574)},{0.926672 (0.730801 +1. {{1.},{-3.067},{9.40649},{-28.8497},{247.12},{-757.918},{2324.54}}.80.574)},{1.2249 (0.301976 +1. {{1.},{-3.067},{9.40649},{-28.8497},{247.12},{-757.918},{2324.54}}.80.574)},{0.310238 (-0.594222+1. {{1.},{-3.067},{9.40649},{-28.8497},{247.12},{-757.918},{2324.54}}.80.574)}},{{2.,-3.067,9.40649,-28.8497,247.12,-757.918,2324.54},{-3.067,10.4065,-28.8497,88.482,-757.918,2324.54,-7129.35},{9.40649,-28.8497,89.482,-271.374,2324.54,-7129.35,21865.7},{-28.8497,88.482,-271.374,833.305,-7129.35,21865.7,-67062.2},{247.12,-757.918,2324.54,-7129.35,61069.5,-187297.,574440.},{-757.918,2324.54,-7129.35,21865.7,-187297.,574441.,-1.76181*10^6},{2324.54,-7129.35,21865.7,-67062.2,574440.,-1.76181*10^6,5.40347*10^6}}}
+In[114]:= Manipulate[
+Module[{\[Xi]1,P1,\[Xi]2,P2,\[Xi]r1,\[CapitalLambda]1},
+{\[Xi]1,P1}=
+Fold[kalmanUpdate[{{10^(2log\[Sigma]\[Zeta])}}],
+{\[Xi]01,10^(2log\[Sigma]\[Xi]) P01},
+nistDataAndPartialsStream$];
+{\[Xi]2,P2}=
+Fold[kalmanUpdate[{{10^(2log\[Sigma]\[Zeta])}}],
+{\[Xi]01,10^(2log\[Sigma]\[Xi]) P01},
+nistDataAndPartialsStream$];
+Show[{ListPlot[nistDataPoints$],
+Plot[{nistModelPre$/.\[Xi]rules@certified\[Xi],
+nistModelPre$/.\[Xi]rules@\[Xi]01,
+nistModelPre$/.\[Xi]rules@\[Xi]02,
+nistModelPre$/.\[Xi]rules@\[Xi]1,
+nistModelPre$/.\[Xi]rules@\[Xi]2},
+{x,-3.1,2.3}]}]],
+Grid[{
+{Row[{Button["RESET",
+(log\[Sigma]\[Xi]=3.0;log\[Sigma]\[Zeta]=0.0)&],
+Button["MAGIC",
+(log\[Sigma]\[Xi]=4.16;log\[Sigma]\[Zeta]=0.0)&]}]},
+{Control[{{log\[Sigma]\[Xi],3.0,"Subscript[log, 10] Sqrt[P]"},-3,8,Appearance->"Labeled"}]},
+{Control[{{log\[Sigma]\[Zeta],0.0,"Subscript[log, 10] Sqrt[\[CapitalZeta]]"},-6,3,Appearance->"Labeled"}]}
+}]]
+Out[114]= Manipulate[Module[{\[Xi]1$, P1$, \[Xi]2$, P2$, \[Xi]r1$, \[CapitalLambda]1$}, 
+   {\[Xi]1$, P1$} = Fold[kalmanUpdate[{{10^(2*log\[Sigma]\[Zeta])}}], 
+      {\[Xi]01, 10^(2*log\[Sigma]\[Xi])*P01}, nistDataAndPartialsStream$]; 
+    {\[Xi]2$, P2$} = Fold[kalmanUpdate[{{10^(2*log\[Sigma]\[Zeta])}}], 
+      {\[Xi]01, 10^(2*log\[Sigma]\[Xi])*P01}, nistDataAndPartialsStream$]; 
+    Show[{ListPlot[nistDataPoints$], 
+      Plot[{nistModelPre$ /. \[Xi]rules[certified\[Xi]], nistModelPre$ /. 
+         \[Xi]rules[\[Xi]01], nistModelPre$ /. \[Xi]rules[\[Xi]02], 
+        nistModelPre$ /. \[Xi]rules[\[Xi]1$], nistModelPre$ /. \[Xi]rules[\[Xi]2$]}, 
+       {x, -3.1, 2.3}]}]], 
+  {{log\[Sigma]\[Xi], 3., 
+    "\!\(\*SubscriptBox[\(log\), \(10\)]\) \!\(\*SqrtBox[\(P\)]\)"}, -3, 8, 
+   Appearance -> "Labeled", ControlPlacement -> 1}, 
+  {{log\[Sigma]\[Zeta], 0., 
+    "\!\(\*SubscriptBox[\(log\), \(10\)]\) \!\(\*SqrtBox[\(\[CapitalZeta]\)]\)"}, -6, 3, 
+   Appearance -> "Labeled", ControlPlacement -> 2}, 
+  Grid[{{Row[{Button["RESET", (log\[Sigma]\[Xi] = 3.; log\[Sigma]\[Zeta] = 0.) & ], 
+       Button["MAGIC", (log\[Sigma]\[Xi] = 4.16; log\[Sigma]\[Zeta] = 0.) & ]}]}, 
+    {Manipulate`Place[1]}, {Manipulate`Place[2]}}]]
+We leave detailed examination of the covariances of this solution to future work.
+Conclusion
+Kalman folding (KAL) produces the same results as renormalized recurrent least squares (RRLS) and as maximum a-posteriori (MAP) for appropriate choices of covariances, i.e., regularization hyperparameters. We have further shown (numerically) that MAP produces the same estimates, though not covariances, when its hyperparameters are swapped and inverted. 
+
+KAL and RLS offer significant advantages in space-time efficiency by avoiding storage and multiplication of large matrices. In all cases, we avoid matrix inverses by solving linear systems internally.

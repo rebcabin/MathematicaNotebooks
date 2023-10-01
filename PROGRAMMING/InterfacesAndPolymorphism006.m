@@ -6,7 +6,7 @@
 
 (* ::Subtitle:: *)
 (*Brian Beckman*)
-(*Version of 26 December 2013*)
+(*Version of 30 September 2023*)
 
 
 (* ::Section:: *)
@@ -14,7 +14,7 @@
 
 
 (* ::Text:: *)
-(*Imagine the classic C# Enumerable API, leaving out Reset, and implement it for Mathematica Lists and Mathematica hash tables, which are lists of replacement rules subject to Dispatch. This serves as an illustration of a way to implement polymorphic interfaces, that is, interfaces implemented differently by different concrete providers.*)
+(*Imagine the classic C# Enumerable API, leaving out Reset, and implement it for Mathematica Lists and Mathematica hash tables, which are lists of replacement rules subject to Dispatch. This illustrates a polymorphic interface, that is, an interface implemented differently by different concrete providers.*)
 
 
 (* ::Text:: *)
@@ -54,11 +54,11 @@
 
 
 (* ::Text:: *)
-(*Represent oop's objects as explicit lists of rules that transform patterns into expressions. When an object goes out of scope, its list of rules is garbage-collected. This representation avoids stocking Mathematica's global symbol table with rules, avoiding in-the-offing explicit memory management for those rules. *)
+(*Represent oop's objects as lists of rules that transform patterns into expressions. When an object goes out of scope, its list of rules is garbage-collected. This representation avoids stocking Mathematica's global symbol table with rules, avoiding in-the-offing explicit memory management for those rules. *)
 
 
 (* ::Text:: *)
-(*Every object-as-instance-of-a-class must have a rule for every class member. Likewise, an object-as-implementor-of-interfaces must have a rule for every member of every interface that the object implements. *)
+(*Every object-as-instance-of-a-class must have a rule for every class member. Likewise, an object-as-implementer-of-interfaces must have a rule for every member of every interface that the object implements. *)
 
 
 (* ::Text:: *)
@@ -82,7 +82,6 @@ ClearAll[RuleQ,PatternQ,ObjectQ];
 RuleQ[this_]:=With[{k=Head@this},k===Rule||k===RuleDelayed];
 
 PatternQ[pattern_]:=True;
-(* Is this even well founded question, since any expression may appear in a pattern position *)
 
 ObjectQ[this_]:=
 Switch[Head@this,
@@ -107,10 +106,7 @@ _,False]
 (*TODO: recurse ProvidesTypeQ on parameter types.*)
 
 
-ClearAll[ProvidesTypeQ,SubsetQ,GetRules,GetPatterns,GetReplacements,StripName];
-
-SubsetQ[A_List,B_List]:=Complement[A,B]==={};
-SubsetQ[else___]:=Throw["IllegalArgumentsException: "<>ToString@{else}]
+ClearAll[ProvidesTypeQ,GetRules,GetPatterns,GetReplacements,StripName];
 
 StripName[
 Verbatim[Pattern][nym_,typeSpec:Verbatim[Blank][type___]]]:=typeSpec;
@@ -139,7 +135,7 @@ ProvidesTypeQ[else___]:=Throw["IllegalArgumentsException: "<>ToString@{else}]
 (*This does not handle generics, type-wildcards, subtyping, and co- and contra-variance. We leave those developments for another time and place. *)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Unit Tests*)
 
 
@@ -147,6 +143,12 @@ ProvidesTypeQ[{f[x_Integer,y_Real]:>x+y},{f[_Integer,_Real]}]
 
 
 ProvidesTypeQ[{f[x_Integer,y_Real]:>x+y},{f[p_Integer,q_Real]}]
+
+
+foo$={f[x_Integer,y_Real]:>x+y}//Dispatch
+
+
+foo$[[1]]
 
 
 ProvidesTypeQ[{f[x_Integer,y_Real]:>x+y}//Dispatch,{f[_Integer,_Real]}]
@@ -229,7 +231,7 @@ WriteRule[else___]:=Throw["IllegalArgumentsException: "<>ToString@{else}]
 {id->Unique[]}
 
 
-{id->Unique[]}.id
+{id->Unique[]} . id
 
 
 HasPattern[{id->Unique[]},jd]
@@ -468,7 +470,7 @@ Protect[Dot];
 
 
 (* ::Input:: *)
-(*{m->{n->{p->42}}}.m.n.p*)
+(*{m->{n->{p->42}}} . m . n . p*)
 
 
 (* ::Text:: *)
@@ -478,10 +480,10 @@ Protect[Dot];
 (* ::Input:: *)
 (*ClearAll[forEach];*)
 (*forEach[enumerable_?(ProvidesTypeQ[#,IEnumerableType]&),someFunction_]:=*)
-(*With[{enumerator=enumerable.GetEnumerator[]},*)
+(*With[{enumerator=enumerable . GetEnumerator[]},*)
 (*While[*)
-(*enumerator.MoveNext[],*)
-(*someFunction[enumerator.Current]*)
+(*enumerator . MoveNext[],*)
+(*someFunction[enumerator . Current]*)
 (*]]*)
 
 
@@ -582,13 +584,13 @@ ISubject[this_?ObjectQ]:=
 Module[{subscriptions={}},
 {DebugReport[]:>subscriptions,
 OnNext[obn_]:>
-Scan[#.OnNext[obn]&,GetReplacements@subscriptions],
-OnError[exc_]:>(Scan[#.OnError[exc]&,GetReplacements@subscriptions];subscriptions=Null),
-OnCompleted[]:>(Scan[#.OnCompleted[]&,GetReplacements@subscriptions];subscriptions=Null),
+Scan[# . OnNext[obn]&,GetReplacements@subscriptions],
+OnError[exc_]:>(Scan[# . OnError[exc]&,GetReplacements@subscriptions];subscriptions=Null),
+OnCompleted[]:>(Scan[# . OnCompleted[]&,GetReplacements@subscriptions];subscriptions=Null),
 Subscribe[that_?(ProvidesTypeQ[#,IObserverType]&)]:>
 Module[{id,subscription},
 id=If[HasPattern[that,SubscriptionId],
-that.SubscriptionId,
+that . SubscriptionId,
 Unique[]];
 subscription=(id->that);
 AppendTo[subscriptions,subscription];
@@ -611,27 +613,27 @@ unsubscribe]]
 
 
 (* ::Input:: *)
-(*unsubscribeFirstObserver=$myObl.Subscribe[$obr[Unique[]]]*)
+(*unsubscribeFirstObserver=$myObl . Subscribe[$obr[Unique[]]]*)
 
 
 (* ::Input:: *)
-(*$myObl.DebugReport[]*)
+(*$myObl . DebugReport[]*)
 
 
 (* ::Input:: *)
-(*$myObl.OnNext[42]*)
+(*$myObl . OnNext[42]*)
 
 
 (* ::Input:: *)
-(*unsubscribeSecondObserver=$myObl.Subscribe[$obr[Unique[]]]*)
+(*unsubscribeSecondObserver=$myObl . Subscribe[$obr[Unique[]]]*)
 
 
 (* ::Input:: *)
-(*$myObl.DebugReport[]*)
+(*$myObl . DebugReport[]*)
 
 
 (* ::Input:: *)
-(*$myObl.OnNext[42]*)
+(*$myObl . OnNext[42]*)
 
 
 (* ::Input:: *)
@@ -639,7 +641,7 @@ unsubscribe]]
 
 
 (* ::Input:: *)
-(*$myObl.OnNext[42]*)
+(*$myObl . OnNext[42]*)
 
 
 (* ::Subsubsection:: *)
@@ -654,19 +656,19 @@ unsubscribe]]
 
 
 (* ::Input:: *)
-(*unsubscribeThirdObserver=$myObl.Subscribe[$obr[]]*)
+(*unsubscribeThirdObserver=$myObl . Subscribe[$obr[]]*)
 
 
 (* ::Input:: *)
-(*$myObl.DebugReport[]*)
+(*$myObl . DebugReport[]*)
 
 
 (* ::Input:: *)
-(*unsubscribeFourthObserver=$myObl.Subscribe[$obr[]]*)
+(*unsubscribeFourthObserver=$myObl . Subscribe[$obr[]]*)
 
 
 (* ::Input:: *)
-(*$myObl.OnNext[42]*)
+(*$myObl . OnNext[42]*)
 
 
 (* ::Input:: *)
@@ -674,15 +676,15 @@ unsubscribe]]
 
 
 (* ::Input:: *)
-(*$myObl.OnNext[42]*)
+(*$myObl . OnNext[42]*)
 
 
 (* ::Input:: *)
-(*$myObl.OnCompleted[]*)
+(*$myObl . OnCompleted[]*)
 
 
 (* ::Input:: *)
-(*$myObl.OnNext[42]*)
+(*$myObl . OnNext[42]*)
 
 
 (* ::Subsection:: *)
@@ -718,11 +720,11 @@ getTask[]:=task;
 getCleanUpTask[]:=cleanUpTask;
 createCleanUpTask[]:=cleanUpTask=CreateScheduledTask[
 RemoveScheduledTask@getTask[];
-obr.OnCompleted[];
+obr . OnCompleted[];
 RemoveScheduledTask@getCleanUpTask[],
 {timeSelector@state}];
 task=RunScheduledTask[
-obr.OnNext[resultSelector@state];
+obr . OnNext[resultSelector@state];
 state=iterate@state;
 If[condition@state,
 StartScheduledTask@getTask[],
@@ -735,7 +737,7 @@ StartScheduledTask@createCleanUpTask[]],
 (*$foo=-1;*)
 (*RemoveScheduledTask@ScheduledTasks[];*)
 (*Force[*)
-(*GenerateWithTime[0,#<5&,#&,(0.25)&,#+1&].Subscribe[$foobr[Unique[]]]];*)
+(*GenerateWithTime[0,#<5&,#&,(0.25)&,#+1&] . Subscribe[$foobr[Unique[]]]];*)
 
 
 (* ::Input:: *)
