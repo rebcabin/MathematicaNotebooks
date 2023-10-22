@@ -7,5 +7,5 @@
   soon. For now, I hope they're readable.
 
 - The Mathematica notebooks are my scratch spaces for work-in-progress. I design
-  my Belex code in Mathematica. They're also completely free for you to use
-  however you like.
+  my Belex code in Mathematica. All the notebooks in this entire repository are
+  completely free (under MIT license) for you to use however you like.
