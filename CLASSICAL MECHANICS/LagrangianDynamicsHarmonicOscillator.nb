@@ -1,0 +1,1366 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     62303,       1358]
+NotebookOptionsPosition[     55579,       1183]
+NotebookOutlinePosition[     57721,       1250]
+CellTagsIndexPosition[     57393,       1238]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Lagrangian Dynamics", "DemoTitle",
+ CellChangeTimes->{{3.7134431005411873`*^9, 
+  3.713443125834587*^9}},ExpressionUUID->"4e65d0d8-99fb-4b83-880f-\
+96aa2d8543de"],
+
+Cell["", "InitializationSection",ExpressionUUID->"a7ffef75-6f95-4774-970c-0cb6a5076473"],
+
+Cell[CellGroupData[{
+
+Cell["", "ManipulateSection",ExpressionUUID->"5165bd6c-1b1a-4611-82cd-b48f2099b8bf"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+      "x1", ",", "\[Tau]", ",", "m1", ",", "k1", ",", "\[Nu]1", ",", "l10", 
+       ",", "\[IndentingNewLine]", "coordinates", ",", "velocities", ",", 
+       "nonConservativeForces", ",", "\[IndentingNewLine]", "L", ",", 
+       "equations", ",", "initialConditions", ",", "toSI", ",", 
+       "\[IndentingNewLine]", "realizer", ",", "numericalEquations", ",", 
+       "numericalInitialConditions", ",", "soln"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"toSI", "[", 
+        RowBox[{"magn_", ",", "unit_"}], "]"}], ":=", 
+       RowBox[{
+        RowBox[{"UnitConvert", "[", 
+         RowBox[{"Quantity", "[", 
+          RowBox[{"magn", ",", "unit"}], "]"}], "]"}], "//", 
+        "QuantityMagnitude"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"coordinates", "=", 
+       RowBox[{"{", 
+        RowBox[{"x1", "[", "\[Tau]", "]"}], "}"}]}], ";", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+        RowBox[{"Here", "'"}], "s", " ", "the", " ", "beef"}], " ", "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"velocities", "=", 
+       RowBox[{"D", "[", 
+        RowBox[{"coordinates", ",", "\[Tau]"}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"L", "=", 
+       RowBox[{
+        RowBox[{
+         FractionBox["1", "2"], 
+         RowBox[{"(", 
+          RowBox[{"m1", " ", 
+           SuperscriptBox[
+            RowBox[{
+             RowBox[{"x1", "'"}], "[", "\[Tau]", "]"}], "2"]}], ")"}]}], "-", 
+        
+        RowBox[{
+         FractionBox["1", "2"], "k1", 
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"x1", "[", "\[Tau]", "]"}], "-", "l10"}], ")"}], 
+          "2"]}]}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"nonConservativeForces", "=", 
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{"{", "\[Nu]1", "}"}]}], "*", "velocities"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"equations", "=", 
+       RowBox[{"MapThread", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"q", ",", "v", ",", "h"}], "}"}], "\[Function]", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"D", "[", 
+             RowBox[{
+              RowBox[{"D", "[", 
+               RowBox[{"L", ",", "v"}], "]"}], ",", "\[Tau]"}], "]"}], "-", 
+            RowBox[{"D", "[", 
+             RowBox[{"L", ",", "q"}], "]"}]}], "\[Equal]", "h"}]}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{"{", 
+          RowBox[{
+          "coordinates", ",", "velocities", ",", "nonConservativeForces"}], 
+          "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"initialConditions", "=", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"x1", "[", "0", "]"}], "\[Equal]", 
+          RowBox[{"initialSpringExtensionFactor", "*", "l10"}]}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"x1", "'"}], "[", "0", "]"}], "\[Equal]", "0."}]}], 
+        "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"realizer", "=", 
+       RowBox[{
+        RowBox[{"{", "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"m1", "\[Rule]", 
+           RowBox[{"toSI", "[", 
+            RowBox[{"m1Ounce", ",", "\"\<ounce\>\""}], "]"}]}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"l10", "\[Rule]", 
+           RowBox[{"toSI", "[", 
+            RowBox[{"l10Inch", ",", "\"\<inch\>\""}], "]"}]}], ",", 
+          "\[IndentingNewLine]", 
+          RowBox[{"k1", "\[Rule]", 
+           RowBox[{"toSI", "[", 
+            RowBox[{"k1PoundPerInch", ",", "\"\<pound/inch\>\""}], "]"}]}], 
+          ",", "\[IndentingNewLine]", 
+          RowBox[{"\[Nu]1", "\[Rule]", 
+           RowBox[{"toSI", "[", 
+            RowBox[{"\[Nu]1PoundPerIPS", ",", "\"\<pound/(inch/sec)\>\""}], 
+            "]"}]}]}], "}"}], "//", "N"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"numericalEquations", "=", 
+       RowBox[{"equations", "/.", "realizer"}]}], ";", "\[IndentingNewLine]", 
+      
+      RowBox[{"numericalInitialConditions", "=", 
+       RowBox[{"initialConditions", "/.", "realizer"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"soln", "=", 
+       RowBox[{"NDSolve", "[", 
+        RowBox[{
+         RowBox[{"Join", "[", 
+          RowBox[{"numericalEquations", ",", "numericalInitialConditions"}], 
+          "]"}], ",", "\[IndentingNewLine]", "coordinates", ",", 
+         RowBox[{"{", 
+          RowBox[{"\[Tau]", ",", "0", ",", "1"}], "}"}], ",", 
+         RowBox[{"SolveDelayed", "\[Rule]", "True"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"Plot", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"x1", "[", "\[Tau]", "]"}], "/.", 
+         RowBox[{
+         "soln", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+        ",", 
+        RowBox[{"{", 
+         RowBox[{"\[Tau]", ",", "0", ",", "tlim"}], "}"}], ",", 
+        RowBox[{"Frame", "\[Rule]", "True"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"FrameLabel", "\[Rule]", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"\"\<x[meter]\>\"", ",", "\"\<\>\""}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"\"\<t[sec]\>\"", ",", 
+             RowBox[{"\"\<Damped Harmonic Oscillator; Period = \>\"", "<>", 
+              RowBox[{"ToString", "[", 
+               RowBox[{
+                RowBox[{"2", "\[Pi]", " ", 
+                 RowBox[{"Sqrt", "[", 
+                  RowBox[{"m1", "/", "k1"}], "]"}]}], "/.", "realizer"}], 
+               "]"}]}]}], "}"}]}], "}"}]}], ",", "\[IndentingNewLine]", 
+        RowBox[{"LabelStyle", "\[Rule]", 
+         RowBox[{"Directive", "[", 
+          RowBox[{"Bold", ",", " ", "Medium"}], "]"}]}], ",", 
+        RowBox[{"ImageSize", "\[Rule]", "Medium"}]}], "]"}]}]}], "   ", "]"}],
+    ",", "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"tlim", ",", "0.1"}], "}"}], ",", "0.01", ",", "1.0", ",", 
+     RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"m1Ounce", ",", "10"}], "}"}], ",", "0", ",", "100.", ",", 
+     RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"k1PoundPerInch", ",", "0.1"}], "}"}], ",", "$MachineEpsilon", 
+     ",", "1.", ",", 
+     RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\[Nu]1PoundPerIPS", ",", "0.5"}], "}"}], ",", "0.", ",", "10.",
+      ",", 
+     RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"l10Inch", ",", "8"}], "}"}], ",", "0", ",", "36.0", ",", 
+     RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}], ",", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"initialSpringExtensionFactor", ",", "1.20"}], "}"}], ",", 
+     RowBox[{"-", "1.5"}], ",", "1.5", ",", 
+     RowBox[{"Appearance", "\[Rule]", "\"\<Labeled\>\""}]}], "}"}]}], "   ", 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.7134404257256107`*^9, 3.713440443240077*^9}, {
+   3.713440542612195*^9, 3.71344055744237*^9}, {3.713440611136519*^9, 
+   3.7134406121048517`*^9}, 3.7134406514168463`*^9, {3.713443287547595*^9, 
+   3.713443299134156*^9}, {3.713443461960137*^9, 
+   3.713443468277166*^9}},ExpressionUUID->"5672ff92-e4fe-48f9-81df-\
+7018239a5aec"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`initialSpringExtensionFactor$$ = 
+    1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+    8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+    0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0.5, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`tlim$$], 0.1}, 0.01, 1.}, {{
+       Hold[$CellContext`m1Ounce$$], 10}, 0, 100.}, {{
+       Hold[$CellContext`k1PoundPerInch$$], 0.1}, 2.220446049250313*^-16, 
+      1.}, {{
+       Hold[$CellContext`\[Nu]1PoundPerIPS$$], 0.5}, 0., 10.}, {{
+       Hold[$CellContext`l10Inch$$], 8}, 0, 36.}, {{
+       Hold[$CellContext`initialSpringExtensionFactor$$], 1.2}, -1.5, 1.5}}, 
+    Typeset`size$$ = {360., {117., 121.}}, Typeset`update$$ = 0, 
+    Typeset`initDone$$, Typeset`skipInitDone$$ = 
+    True, $CellContext`tlim$404742$$ = 0, $CellContext`m1Ounce$404743$$ = 
+    0, $CellContext`k1PoundPerInch$404744$$ = 
+    0, $CellContext`\[Nu]1PoundPerIPS$404745$$ = 
+    0, $CellContext`l10Inch$404746$$ = 
+    0, $CellContext`initialSpringExtensionFactor$404747$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`initialSpringExtensionFactor$$ = 
+        1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+        8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+        0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0.5}, "ControllerVariables" :> {
+        Hold[$CellContext`tlim$$, $CellContext`tlim$404742$$, 0], 
+        Hold[$CellContext`m1Ounce$$, $CellContext`m1Ounce$404743$$, 0], 
+        Hold[$CellContext`k1PoundPerInch$$, \
+$CellContext`k1PoundPerInch$404744$$, 0], 
+        Hold[$CellContext`\[Nu]1PoundPerIPS$$, \
+$CellContext`\[Nu]1PoundPerIPS$404745$$, 0], 
+        Hold[$CellContext`l10Inch$$, $CellContext`l10Inch$404746$$, 0], 
+        Hold[$CellContext`initialSpringExtensionFactor$$, \
+$CellContext`initialSpringExtensionFactor$404747$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Module[{$CellContext`x1$, $CellContext`\[Tau]$, $CellContext`m1$, \
+$CellContext`k1$, $CellContext`\[Nu]1$, $CellContext`l10$, \
+$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$, $CellContext`L$, \
+$CellContext`equations$, $CellContext`initialConditions$, $CellContext`toSI$, \
+$CellContext`realizer$, $CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$, $CellContext`soln$}, \
+$CellContext`toSI$[
+           Pattern[$CellContext`magn, 
+            Blank[]], 
+           Pattern[$CellContext`unit, 
+            Blank[]]] := QuantityMagnitude[
+           UnitConvert[
+            
+            Quantity[$CellContext`magn, $CellContext`unit]]]; \
+$CellContext`coordinates$ = {
+           $CellContext`x1$[$CellContext`\[Tau]$]}; $CellContext`velocities$ = 
+         D[$CellContext`coordinates$, $CellContext`\[Tau]$]; $CellContext`L$ = \
+(1/2) ($CellContext`m1$ 
+            Derivative[1][$CellContext`x1$][$CellContext`\[Tau]$]^2) - (1/
+           2) $CellContext`k1$ ($CellContext`x1$[$CellContext`\[Tau]$] - \
+$CellContext`l10$)^2; $CellContext`nonConservativeForces$ = (-{$CellContext`\
+\[Nu]1$}) $CellContext`velocities$; $CellContext`equations$ = MapThread[
+           Function[{$CellContext`q$, $CellContext`v$, $CellContext`h$}, D[
+               D[$CellContext`L$, $CellContext`v$], $CellContext`\[Tau]$] - 
+             D[$CellContext`L$, $CellContext`q$] == $CellContext`h$], \
+{$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$}]; $CellContext`initialConditions$ = \
+{$CellContext`x1$[
+            0] == $CellContext`initialSpringExtensionFactor$$ \
+$CellContext`l10$, Derivative[1][$CellContext`x1$][0] == 
+           0.}; $CellContext`realizer$ = 
+         N[{$CellContext`m1$ -> $CellContext`toSI$[$CellContext`m1Ounce$$, 
+              "ounce"], $CellContext`l10$ -> \
+$CellContext`toSI$[$CellContext`l10Inch$$, 
+              "inch"], $CellContext`k1$ -> \
+$CellContext`toSI$[$CellContext`k1PoundPerInch$$, 
+              "pound/inch"], $CellContext`\[Nu]1$ -> \
+$CellContext`toSI$[$CellContext`\[Nu]1PoundPerIPS$$, 
+              "pound/(inch/sec)"]}]; $CellContext`numericalEquations$ = 
+         ReplaceAll[$CellContext`equations$, $CellContext`realizer$]; \
+$CellContext`numericalInitialConditions$ = 
+         ReplaceAll[$CellContext`initialConditions$, $CellContext`realizer$]; \
+$CellContext`soln$ = NDSolve[
+           
+           Join[$CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$], $CellContext`coordinates$, \
+{$CellContext`\[Tau]$, 0, 1}, SolveDelayed -> True]; Plot[
+          ReplaceAll[
+           $CellContext`x1$[$CellContext`\[Tau]$], 
+           Part[$CellContext`soln$, 1]], {$CellContext`\[Tau]$, 
+           0, $CellContext`tlim$$}, Frame -> True, 
+          FrameLabel -> {{"x[meter]", ""}, {"t[sec]", 
+             StringJoin["Damped Harmonic Oscillator; Period = ", 
+              ToString[
+               ReplaceAll[
+               2 Pi Sqrt[$CellContext`m1$/$CellContext`k1$], \
+$CellContext`realizer$]]]}}, LabelStyle -> Directive[Bold, Medium], ImageSize -> 
+          Medium]], 
+      "Specifications" :> {{{$CellContext`tlim$$, 0.1}, 0.01, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`m1Ounce$$, 10}, 0, 100., Appearance -> 
+         "Labeled"}, {{$CellContext`k1PoundPerInch$$, 0.1}, 
+         2.220446049250313*^-16, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`\[Nu]1PoundPerIPS$$, 0.5}, 0., 10., 
+         Appearance -> "Labeled"}, {{$CellContext`l10Inch$$, 8}, 0, 36., 
+         Appearance -> 
+         "Labeled"}, {{$CellContext`initialSpringExtensionFactor$$, 
+          1.2}, -1.5, 1.5, Appearance -> "Labeled"}}, "Options" :> {}, 
+      "DefaultOptions" :> {ControllerLinking -> True}],
+     ImageSizeCache->{403., {231., 237.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.7134406156807623`*^9, 3.713440654577003*^9, 3.713440714759232*^9, 
+   3.713440900714649*^9, 3.713443301548362*^9, 3.7134434756547813`*^9, {
+   3.713443512255248*^9, 3.713443523548428*^9}, {3.7134436704361887`*^9, 
+   3.71344368767249*^9}, 3.71344412167852*^9},
+ CellID->133405003,ExpressionUUID->"216399ff-abc4-4cbd-8d10-7f33d4a6e602"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "ManipulateCaptionSection",ExpressionUUID->"3f7d587c-4953-4da7-a287-779d41cce169"],
+
+Cell["\<\
+A Lagrangian is set up, symbolically differentiated, and the results \
+numerically solved. The example is a textbook damped harmonic oscillator so \
+that the solution may be verified by inspection. The primary interest, here, \
+is in the code: it is very general. To solve another problem, just set up new \
+generalized coordinates, a new Lagrangian, corresponding initial conditions \
+and controls in the Manipulate expression. The generalized velocities and the \
+Euler-Lagrange equations are constructed and solved automatically.\
+\>", "ManipulateCaption",
+ CellChangeTimes->{{3.713440740494606*^9, 3.7134407868277884`*^9}, {
+  3.7134409159649267`*^9, 3.7134411452029343`*^9}, {3.7134431591930656`*^9, 
+  3.713443206638012*^9}, {3.7134441632806883`*^9, 3.713444219550362*^9}, {
+  3.7134447514548264`*^9, 
+  3.713444753052788*^9}},ExpressionUUID->"3052507c-5c15-451d-9175-\
+1ca3a0d6278c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "ThumbnailSection",ExpressionUUID->"136149f8-d1ad-4e61-a5da-71e791f8dab7"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`initialSpringExtensionFactor$$ = 
+    1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+    8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+    0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0.5, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`tlim$$], 0.1}, 0.01, 1.}, {{
+       Hold[$CellContext`m1Ounce$$], 10}, 0, 100.}, {{
+       Hold[$CellContext`k1PoundPerInch$$], 0.1}, 2.220446049250313*^-16, 
+      1.}, {{
+       Hold[$CellContext`\[Nu]1PoundPerIPS$$], 0.5}, 0., 10.}, {{
+       Hold[$CellContext`l10Inch$$], 8}, 0, 36.}, {{
+       Hold[$CellContext`initialSpringExtensionFactor$$], 1.2}, -1.5, 1.5}}, 
+    Typeset`size$$ = {360., {117., 121.}}, Typeset`update$$ = 0, 
+    Typeset`initDone$$, Typeset`skipInitDone$$ = 
+    True, $CellContext`tlim$383390$$ = 0, $CellContext`m1Ounce$383391$$ = 
+    0, $CellContext`k1PoundPerInch$383392$$ = 
+    0, $CellContext`\[Nu]1PoundPerIPS$383393$$ = 
+    0, $CellContext`l10Inch$383394$$ = 
+    0, $CellContext`initialSpringExtensionFactor$383395$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`initialSpringExtensionFactor$$ = 
+        1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+        8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+        0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0.5}, "ControllerVariables" :> {
+        Hold[$CellContext`tlim$$, $CellContext`tlim$383390$$, 0], 
+        Hold[$CellContext`m1Ounce$$, $CellContext`m1Ounce$383391$$, 0], 
+        Hold[$CellContext`k1PoundPerInch$$, \
+$CellContext`k1PoundPerInch$383392$$, 0], 
+        Hold[$CellContext`\[Nu]1PoundPerIPS$$, \
+$CellContext`\[Nu]1PoundPerIPS$383393$$, 0], 
+        Hold[$CellContext`l10Inch$$, $CellContext`l10Inch$383394$$, 0], 
+        Hold[$CellContext`initialSpringExtensionFactor$$, \
+$CellContext`initialSpringExtensionFactor$383395$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Module[{$CellContext`x1$, $CellContext`\[Tau]$, $CellContext`m1$, \
+$CellContext`k1$, $CellContext`\[Nu]1$, $CellContext`l10$, \
+$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$, $CellContext`L$, \
+$CellContext`equations$, $CellContext`initialConditions$, $CellContext`toSI$, \
+$CellContext`realizer$, $CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$, $CellContext`soln$}, \
+$CellContext`toSI$[
+           Pattern[$CellContext`magn, 
+            Blank[]], 
+           Pattern[$CellContext`unit, 
+            Blank[]]] := QuantityMagnitude[
+           UnitConvert[
+            
+            Quantity[$CellContext`magn, $CellContext`unit]]]; \
+$CellContext`coordinates$ = {
+           $CellContext`x1$[$CellContext`\[Tau]$]}; $CellContext`velocities$ = 
+         D[$CellContext`coordinates$, $CellContext`\[Tau]$]; $CellContext`L$ = \
+(1/2) ($CellContext`m1$ 
+            Derivative[1][$CellContext`x1$][$CellContext`\[Tau]$]^2) - (1/
+           2) $CellContext`k1$ ($CellContext`x1$[$CellContext`\[Tau]$] - \
+$CellContext`l10$)^2; $CellContext`nonConservativeForces$ = (-{$CellContext`\
+\[Nu]1$}) $CellContext`velocities$; $CellContext`equations$ = MapThread[
+           Function[{$CellContext`q$, $CellContext`v$, $CellContext`h$}, D[
+               D[$CellContext`L$, $CellContext`v$], $CellContext`\[Tau]$] - 
+             D[$CellContext`L$, $CellContext`q$] == $CellContext`h$], \
+{$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$}]; $CellContext`initialConditions$ = \
+{$CellContext`x1$[
+            0] == $CellContext`initialSpringExtensionFactor$$ \
+$CellContext`l10$, Derivative[1][$CellContext`x1$][0] == 
+           0.}; $CellContext`realizer$ = 
+         N[{$CellContext`m1$ -> $CellContext`toSI$[$CellContext`m1Ounce$$, 
+              "ounce"], $CellContext`l10$ -> \
+$CellContext`toSI$[$CellContext`l10Inch$$, 
+              "inch"], $CellContext`k1$ -> \
+$CellContext`toSI$[$CellContext`k1PoundPerInch$$, 
+              "pound/inch"], $CellContext`\[Nu]1$ -> \
+$CellContext`toSI$[$CellContext`\[Nu]1PoundPerIPS$$, 
+              "pound/(inch/sec)"]}]; $CellContext`numericalEquations$ = 
+         ReplaceAll[$CellContext`equations$, $CellContext`realizer$]; \
+$CellContext`numericalInitialConditions$ = 
+         ReplaceAll[$CellContext`initialConditions$, $CellContext`realizer$]; \
+$CellContext`soln$ = NDSolve[
+           
+           Join[$CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$], $CellContext`coordinates$, \
+{$CellContext`\[Tau]$, 0, 1}, SolveDelayed -> True]; Plot[
+          ReplaceAll[
+           $CellContext`x1$[$CellContext`\[Tau]$], 
+           Part[$CellContext`soln$, 1]], {$CellContext`\[Tau]$, 
+           0, $CellContext`tlim$$}, Frame -> True, 
+          FrameLabel -> {{"x[meter]", ""}, {"t[sec]", 
+             StringJoin["Damped Harmonic Oscillator; Period = ", 
+              ToString[
+               ReplaceAll[
+               2 Pi Sqrt[$CellContext`m1$/$CellContext`k1$], \
+$CellContext`realizer$]]]}}, LabelStyle -> Directive[Bold, Medium], ImageSize -> 
+          Medium]], 
+      "Specifications" :> {{{$CellContext`tlim$$, 0.1}, 0.01, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`m1Ounce$$, 10}, 0, 100., Appearance -> 
+         "Labeled"}, {{$CellContext`k1PoundPerInch$$, 0.1}, 
+         2.220446049250313*^-16, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`\[Nu]1PoundPerIPS$$, 0.5}, 0., 10., 
+         Appearance -> "Labeled"}, {{$CellContext`l10Inch$$, 8}, 0, 36., 
+         Appearance -> 
+         "Labeled"}, {{$CellContext`initialSpringExtensionFactor$$, 
+          1.2}, -1.5, 1.5, Appearance -> "Labeled"}}, "Options" :> {}, 
+      "DefaultOptions" :> {ControllerLinking -> True}],
+     ImageSizeCache->{403., {231., 237.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.7134406156807623`*^9, 3.713440654577003*^9, 3.713440714759232*^9, 
+   3.713440900714649*^9, 3.713443301548362*^9, 3.7134434756547813`*^9, {
+   3.713443512255248*^9, 3.713443523548428*^9}},
+ CellID->45871638,ExpressionUUID->"462bee07-6a0d-4355-adc8-d1a029212e06"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SnapshotsSection",ExpressionUUID->"f5e65885-915b-4d3e-81b8-9843e0804fd4"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`initialSpringExtensionFactor$$ = 
+    1.2, $CellContext`k1PoundPerInch$$ = 0.793, $CellContext`l10Inch$$ = 
+    8, $CellContext`m1Ounce$$ = 3.8000000000000003`, $CellContext`tlim$$ = 
+    0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0., Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`tlim$$], 0.1}, 0.01, 1.}, {{
+       Hold[$CellContext`m1Ounce$$], 10}, 0, 100.}, {{
+       Hold[$CellContext`k1PoundPerInch$$], 0.1}, 2.220446049250313*^-16, 
+      1.}, {{
+       Hold[$CellContext`\[Nu]1PoundPerIPS$$], 0.5}, 0., 10.}, {{
+       Hold[$CellContext`l10Inch$$], 8}, 0, 36.}, {{
+       Hold[$CellContext`initialSpringExtensionFactor$$], 1.2}, -1.5, 1.5}}, 
+    Typeset`size$$ = {360., {117., 121.}}, Typeset`update$$ = 0, 
+    Typeset`initDone$$, Typeset`skipInitDone$$ = 
+    True, $CellContext`tlim$383390$$ = 0, $CellContext`m1Ounce$383391$$ = 
+    0, $CellContext`k1PoundPerInch$383392$$ = 
+    0, $CellContext`\[Nu]1PoundPerIPS$383393$$ = 
+    0, $CellContext`l10Inch$383394$$ = 
+    0, $CellContext`initialSpringExtensionFactor$383395$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`initialSpringExtensionFactor$$ = 
+        1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+        8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+        0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0.5}, "ControllerVariables" :> {
+        Hold[$CellContext`tlim$$, $CellContext`tlim$383390$$, 0], 
+        Hold[$CellContext`m1Ounce$$, $CellContext`m1Ounce$383391$$, 0], 
+        Hold[$CellContext`k1PoundPerInch$$, \
+$CellContext`k1PoundPerInch$383392$$, 0], 
+        Hold[$CellContext`\[Nu]1PoundPerIPS$$, \
+$CellContext`\[Nu]1PoundPerIPS$383393$$, 0], 
+        Hold[$CellContext`l10Inch$$, $CellContext`l10Inch$383394$$, 0], 
+        Hold[$CellContext`initialSpringExtensionFactor$$, \
+$CellContext`initialSpringExtensionFactor$383395$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Module[{$CellContext`x1$, $CellContext`\[Tau]$, $CellContext`m1$, \
+$CellContext`k1$, $CellContext`\[Nu]1$, $CellContext`l10$, \
+$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$, $CellContext`L$, \
+$CellContext`equations$, $CellContext`initialConditions$, $CellContext`toSI$, \
+$CellContext`realizer$, $CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$, $CellContext`soln$}, \
+$CellContext`toSI$[
+           Pattern[$CellContext`magn, 
+            Blank[]], 
+           Pattern[$CellContext`unit, 
+            Blank[]]] := QuantityMagnitude[
+           UnitConvert[
+            
+            Quantity[$CellContext`magn, $CellContext`unit]]]; \
+$CellContext`coordinates$ = {
+           $CellContext`x1$[$CellContext`\[Tau]$]}; $CellContext`velocities$ = 
+         D[$CellContext`coordinates$, $CellContext`\[Tau]$]; $CellContext`L$ = \
+(1/2) ($CellContext`m1$ 
+            Derivative[1][$CellContext`x1$][$CellContext`\[Tau]$]^2) - (1/
+           2) $CellContext`k1$ ($CellContext`x1$[$CellContext`\[Tau]$] - \
+$CellContext`l10$)^2; $CellContext`nonConservativeForces$ = (-{$CellContext`\
+\[Nu]1$}) $CellContext`velocities$; $CellContext`equations$ = MapThread[
+           Function[{$CellContext`q$, $CellContext`v$, $CellContext`h$}, D[
+               D[$CellContext`L$, $CellContext`v$], $CellContext`\[Tau]$] - 
+             D[$CellContext`L$, $CellContext`q$] == $CellContext`h$], \
+{$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$}]; $CellContext`initialConditions$ = \
+{$CellContext`x1$[
+            0] == $CellContext`initialSpringExtensionFactor$$ \
+$CellContext`l10$, Derivative[1][$CellContext`x1$][0] == 
+           0.}; $CellContext`realizer$ = 
+         N[{$CellContext`m1$ -> $CellContext`toSI$[$CellContext`m1Ounce$$, 
+              "ounce"], $CellContext`l10$ -> \
+$CellContext`toSI$[$CellContext`l10Inch$$, 
+              "inch"], $CellContext`k1$ -> \
+$CellContext`toSI$[$CellContext`k1PoundPerInch$$, 
+              "pound/inch"], $CellContext`\[Nu]1$ -> \
+$CellContext`toSI$[$CellContext`\[Nu]1PoundPerIPS$$, 
+              "pound/(inch/sec)"]}]; $CellContext`numericalEquations$ = 
+         ReplaceAll[$CellContext`equations$, $CellContext`realizer$]; \
+$CellContext`numericalInitialConditions$ = 
+         ReplaceAll[$CellContext`initialConditions$, $CellContext`realizer$]; \
+$CellContext`soln$ = NDSolve[
+           
+           Join[$CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$], $CellContext`coordinates$, \
+{$CellContext`\[Tau]$, 0, 1}, SolveDelayed -> True]; Plot[
+          ReplaceAll[
+           $CellContext`x1$[$CellContext`\[Tau]$], 
+           Part[$CellContext`soln$, 1]], {$CellContext`\[Tau]$, 
+           0, $CellContext`tlim$$}, Frame -> True, 
+          FrameLabel -> {{"x[meter]", ""}, {"t[sec]", 
+             StringJoin["Damped Harmonic Oscillator; Period = ", 
+              ToString[
+               ReplaceAll[
+               2 Pi Sqrt[$CellContext`m1$/$CellContext`k1$], \
+$CellContext`realizer$]]]}}, LabelStyle -> Directive[Bold, Medium], ImageSize -> 
+          Medium]], 
+      "Specifications" :> {{{$CellContext`tlim$$, 0.1}, 0.01, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`m1Ounce$$, 10}, 0, 100., Appearance -> 
+         "Labeled"}, {{$CellContext`k1PoundPerInch$$, 0.1}, 
+         2.220446049250313*^-16, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`\[Nu]1PoundPerIPS$$, 0.5}, 0., 10., 
+         Appearance -> "Labeled"}, {{$CellContext`l10Inch$$, 8}, 0, 36., 
+         Appearance -> 
+         "Labeled"}, {{$CellContext`initialSpringExtensionFactor$$, 
+          1.2}, -1.5, 1.5, Appearance -> "Labeled"}}, "Options" :> {}, 
+      "DefaultOptions" :> {ControllerLinking -> True}],
+     ImageSizeCache->{403., {231., 237.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.7134406156807623`*^9, 3.713440654577003*^9, 3.713440714759232*^9, 
+   3.713440900714649*^9, 3.713443301548362*^9, 3.7134434756547813`*^9, {
+   3.713443512255248*^9, 3.713443523548428*^9}},
+ CellID->17990593,ExpressionUUID->"ec217f78-0d7b-4057-aa14-9190cdac27ea"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`initialSpringExtensionFactor$$ = 
+    1., $CellContext`k1PoundPerInch$$ = 0.213, $CellContext`l10Inch$$ = 
+    8, $CellContext`m1Ounce$$ = 3.8000000000000003`, $CellContext`tlim$$ = 
+    0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0., Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`tlim$$], 0.1}, 0.01, 1.}, {{
+       Hold[$CellContext`m1Ounce$$], 10}, 0, 100.}, {{
+       Hold[$CellContext`k1PoundPerInch$$], 0.1}, 2.220446049250313*^-16, 
+      1.}, {{
+       Hold[$CellContext`\[Nu]1PoundPerIPS$$], 0.5}, 0., 10.}, {{
+       Hold[$CellContext`l10Inch$$], 8}, 0, 36.}, {{
+       Hold[$CellContext`initialSpringExtensionFactor$$], 1.2}, -1.5, 1.5}}, 
+    Typeset`size$$ = {360., {119., 123.}}, Typeset`update$$ = 0, 
+    Typeset`initDone$$, Typeset`skipInitDone$$ = 
+    True, $CellContext`tlim$383390$$ = 0, $CellContext`m1Ounce$383391$$ = 
+    0, $CellContext`k1PoundPerInch$383392$$ = 
+    0, $CellContext`\[Nu]1PoundPerIPS$383393$$ = 
+    0, $CellContext`l10Inch$383394$$ = 
+    0, $CellContext`initialSpringExtensionFactor$383395$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`initialSpringExtensionFactor$$ = 
+        1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+        8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+        0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0.5}, "ControllerVariables" :> {
+        Hold[$CellContext`tlim$$, $CellContext`tlim$383390$$, 0], 
+        Hold[$CellContext`m1Ounce$$, $CellContext`m1Ounce$383391$$, 0], 
+        Hold[$CellContext`k1PoundPerInch$$, \
+$CellContext`k1PoundPerInch$383392$$, 0], 
+        Hold[$CellContext`\[Nu]1PoundPerIPS$$, \
+$CellContext`\[Nu]1PoundPerIPS$383393$$, 0], 
+        Hold[$CellContext`l10Inch$$, $CellContext`l10Inch$383394$$, 0], 
+        Hold[$CellContext`initialSpringExtensionFactor$$, \
+$CellContext`initialSpringExtensionFactor$383395$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Module[{$CellContext`x1$, $CellContext`\[Tau]$, $CellContext`m1$, \
+$CellContext`k1$, $CellContext`\[Nu]1$, $CellContext`l10$, \
+$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$, $CellContext`L$, \
+$CellContext`equations$, $CellContext`initialConditions$, $CellContext`toSI$, \
+$CellContext`realizer$, $CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$, $CellContext`soln$}, \
+$CellContext`toSI$[
+           Pattern[$CellContext`magn, 
+            Blank[]], 
+           Pattern[$CellContext`unit, 
+            Blank[]]] := QuantityMagnitude[
+           UnitConvert[
+            
+            Quantity[$CellContext`magn, $CellContext`unit]]]; \
+$CellContext`coordinates$ = {
+           $CellContext`x1$[$CellContext`\[Tau]$]}; $CellContext`velocities$ = 
+         D[$CellContext`coordinates$, $CellContext`\[Tau]$]; $CellContext`L$ = \
+(1/2) ($CellContext`m1$ 
+            Derivative[1][$CellContext`x1$][$CellContext`\[Tau]$]^2) - (1/
+           2) $CellContext`k1$ ($CellContext`x1$[$CellContext`\[Tau]$] - \
+$CellContext`l10$)^2; $CellContext`nonConservativeForces$ = (-{$CellContext`\
+\[Nu]1$}) $CellContext`velocities$; $CellContext`equations$ = MapThread[
+           Function[{$CellContext`q$, $CellContext`v$, $CellContext`h$}, D[
+               D[$CellContext`L$, $CellContext`v$], $CellContext`\[Tau]$] - 
+             D[$CellContext`L$, $CellContext`q$] == $CellContext`h$], \
+{$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$}]; $CellContext`initialConditions$ = \
+{$CellContext`x1$[
+            0] == $CellContext`initialSpringExtensionFactor$$ \
+$CellContext`l10$, Derivative[1][$CellContext`x1$][0] == 
+           0.}; $CellContext`realizer$ = 
+         N[{$CellContext`m1$ -> $CellContext`toSI$[$CellContext`m1Ounce$$, 
+              "ounce"], $CellContext`l10$ -> \
+$CellContext`toSI$[$CellContext`l10Inch$$, 
+              "inch"], $CellContext`k1$ -> \
+$CellContext`toSI$[$CellContext`k1PoundPerInch$$, 
+              "pound/inch"], $CellContext`\[Nu]1$ -> \
+$CellContext`toSI$[$CellContext`\[Nu]1PoundPerIPS$$, 
+              "pound/(inch/sec)"]}]; $CellContext`numericalEquations$ = 
+         ReplaceAll[$CellContext`equations$, $CellContext`realizer$]; \
+$CellContext`numericalInitialConditions$ = 
+         ReplaceAll[$CellContext`initialConditions$, $CellContext`realizer$]; \
+$CellContext`soln$ = NDSolve[
+           
+           Join[$CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$], $CellContext`coordinates$, \
+{$CellContext`\[Tau]$, 0, 1}, SolveDelayed -> True]; Plot[
+          ReplaceAll[
+           $CellContext`x1$[$CellContext`\[Tau]$], 
+           Part[$CellContext`soln$, 1]], {$CellContext`\[Tau]$, 
+           0, $CellContext`tlim$$}, Frame -> True, 
+          FrameLabel -> {{"x[meter]", ""}, {"t[sec]", 
+             StringJoin["Damped Harmonic Oscillator; Period = ", 
+              ToString[
+               ReplaceAll[
+               2 Pi Sqrt[$CellContext`m1$/$CellContext`k1$], \
+$CellContext`realizer$]]]}}, LabelStyle -> Directive[Bold, Medium], ImageSize -> 
+          Medium]], 
+      "Specifications" :> {{{$CellContext`tlim$$, 0.1}, 0.01, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`m1Ounce$$, 10}, 0, 100., Appearance -> 
+         "Labeled"}, {{$CellContext`k1PoundPerInch$$, 0.1}, 
+         2.220446049250313*^-16, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`\[Nu]1PoundPerIPS$$, 0.5}, 0., 10., 
+         Appearance -> "Labeled"}, {{$CellContext`l10Inch$$, 8}, 0, 36., 
+         Appearance -> 
+         "Labeled"}, {{$CellContext`initialSpringExtensionFactor$$, 
+          1.2}, -1.5, 1.5, Appearance -> "Labeled"}}, "Options" :> {}, 
+      "DefaultOptions" :> {ControllerLinking -> True}],
+     ImageSizeCache->{403., {246., 252.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.7134406156807623`*^9, 3.713440654577003*^9, 3.713440714759232*^9, 
+   3.713440900714649*^9, 3.713443301548362*^9, 3.7134434756547813`*^9, {
+   3.713443512255248*^9, 3.713443523548428*^9}},
+ CellID->1831440805,ExpressionUUID->"2eedd5db-b61c-4b42-aee4-00a594a041fd"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`initialSpringExtensionFactor$$ = 
+    1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+    8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+    0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 8.72, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{{
+       Hold[$CellContext`tlim$$], 0.1}, 0.01, 1.}, {{
+       Hold[$CellContext`m1Ounce$$], 10}, 0, 100.}, {{
+       Hold[$CellContext`k1PoundPerInch$$], 0.1}, 2.220446049250313*^-16, 
+      1.}, {{
+       Hold[$CellContext`\[Nu]1PoundPerIPS$$], 0.5}, 0., 10.}, {{
+       Hold[$CellContext`l10Inch$$], 8}, 0, 36.}, {{
+       Hold[$CellContext`initialSpringExtensionFactor$$], 1.2}, -1.5, 1.5}}, 
+    Typeset`size$$ = {360., {113., 118.}}, Typeset`update$$ = 0, 
+    Typeset`initDone$$, Typeset`skipInitDone$$ = 
+    True, $CellContext`tlim$398212$$ = 0, $CellContext`m1Ounce$398213$$ = 
+    0, $CellContext`k1PoundPerInch$398214$$ = 
+    0, $CellContext`\[Nu]1PoundPerIPS$398215$$ = 
+    0, $CellContext`l10Inch$398216$$ = 
+    0, $CellContext`initialSpringExtensionFactor$398217$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, 
+      "Variables" :> {$CellContext`initialSpringExtensionFactor$$ = 
+        1.2, $CellContext`k1PoundPerInch$$ = 0.1, $CellContext`l10Inch$$ = 
+        8, $CellContext`m1Ounce$$ = 10, $CellContext`tlim$$ = 
+        0.1, $CellContext`\[Nu]1PoundPerIPS$$ = 0.5}, "ControllerVariables" :> {
+        Hold[$CellContext`tlim$$, $CellContext`tlim$398212$$, 0], 
+        Hold[$CellContext`m1Ounce$$, $CellContext`m1Ounce$398213$$, 0], 
+        Hold[$CellContext`k1PoundPerInch$$, \
+$CellContext`k1PoundPerInch$398214$$, 0], 
+        Hold[$CellContext`\[Nu]1PoundPerIPS$$, \
+$CellContext`\[Nu]1PoundPerIPS$398215$$, 0], 
+        Hold[$CellContext`l10Inch$$, $CellContext`l10Inch$398216$$, 0], 
+        Hold[$CellContext`initialSpringExtensionFactor$$, \
+$CellContext`initialSpringExtensionFactor$398217$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> 
+      Module[{$CellContext`x1$, $CellContext`\[Tau]$, $CellContext`m1$, \
+$CellContext`k1$, $CellContext`\[Nu]1$, $CellContext`l10$, \
+$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$, $CellContext`L$, \
+$CellContext`equations$, $CellContext`initialConditions$, $CellContext`toSI$, \
+$CellContext`realizer$, $CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$, $CellContext`soln$}, \
+$CellContext`toSI$[
+           Pattern[$CellContext`magn, 
+            Blank[]], 
+           Pattern[$CellContext`unit, 
+            Blank[]]] := QuantityMagnitude[
+           UnitConvert[
+            
+            Quantity[$CellContext`magn, $CellContext`unit]]]; \
+$CellContext`coordinates$ = {
+           $CellContext`x1$[$CellContext`\[Tau]$]}; $CellContext`velocities$ = 
+         D[$CellContext`coordinates$, $CellContext`\[Tau]$]; $CellContext`L$ = \
+(1/2) ($CellContext`m1$ 
+            Derivative[1][$CellContext`x1$][$CellContext`\[Tau]$]^2) - (1/
+           2) $CellContext`k1$ ($CellContext`x1$[$CellContext`\[Tau]$] - \
+$CellContext`l10$)^2; $CellContext`nonConservativeForces$ = (-{$CellContext`\
+\[Nu]1$}) $CellContext`velocities$; $CellContext`equations$ = MapThread[
+           Function[{$CellContext`q$, $CellContext`v$, $CellContext`h$}, D[
+               D[$CellContext`L$, $CellContext`v$], $CellContext`\[Tau]$] - 
+             D[$CellContext`L$, $CellContext`q$] == $CellContext`h$], \
+{$CellContext`coordinates$, $CellContext`velocities$, \
+$CellContext`nonConservativeForces$}]; $CellContext`initialConditions$ = \
+{$CellContext`x1$[
+            0] == $CellContext`initialSpringExtensionFactor$$ \
+$CellContext`l10$, Derivative[1][$CellContext`x1$][0] == 
+           0.}; $CellContext`realizer$ = 
+         N[{$CellContext`m1$ -> $CellContext`toSI$[$CellContext`m1Ounce$$, 
+              "ounce"], $CellContext`l10$ -> \
+$CellContext`toSI$[$CellContext`l10Inch$$, 
+              "inch"], $CellContext`k1$ -> \
+$CellContext`toSI$[$CellContext`k1PoundPerInch$$, 
+              "pound/inch"], $CellContext`\[Nu]1$ -> \
+$CellContext`toSI$[$CellContext`\[Nu]1PoundPerIPS$$, 
+              "pound/(inch/sec)"]}]; $CellContext`numericalEquations$ = 
+         ReplaceAll[$CellContext`equations$, $CellContext`realizer$]; \
+$CellContext`numericalInitialConditions$ = 
+         ReplaceAll[$CellContext`initialConditions$, $CellContext`realizer$]; \
+$CellContext`soln$ = NDSolve[
+           
+           Join[$CellContext`numericalEquations$, \
+$CellContext`numericalInitialConditions$], $CellContext`coordinates$, \
+{$CellContext`\[Tau]$, 0, 1}, SolveDelayed -> True]; Plot[
+          ReplaceAll[
+           $CellContext`x1$[$CellContext`\[Tau]$], 
+           Part[$CellContext`soln$, 1]], {$CellContext`\[Tau]$, 
+           0, $CellContext`tlim$$}, Frame -> True, 
+          FrameLabel -> {{"x[meter]", ""}, {"t[sec]", 
+             StringJoin["Damped Harmonic Oscillator; Period = ", 
+              ToString[
+               ReplaceAll[
+               2 Pi Sqrt[$CellContext`m1$/$CellContext`k1$], \
+$CellContext`realizer$]]]}}, LabelStyle -> Directive[Bold, Medium], ImageSize -> 
+          Medium]], 
+      "Specifications" :> {{{$CellContext`tlim$$, 0.1}, 0.01, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`m1Ounce$$, 10}, 0, 100., Appearance -> 
+         "Labeled"}, {{$CellContext`k1PoundPerInch$$, 0.1}, 
+         2.220446049250313*^-16, 1., Appearance -> 
+         "Labeled"}, {{$CellContext`\[Nu]1PoundPerIPS$$, 0.5}, 0., 10., 
+         Appearance -> "Labeled"}, {{$CellContext`l10Inch$$, 8}, 0, 36., 
+         Appearance -> 
+         "Labeled"}, {{$CellContext`initialSpringExtensionFactor$$, 
+          1.2}, -1.5, 1.5, Appearance -> "Labeled"}}, "Options" :> {}, 
+      "DefaultOptions" :> {ControllerLinking -> True}],
+     ImageSizeCache->{403., {227., 233.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.7134406156807623`*^9, 3.713440654577003*^9, 3.713440714759232*^9, 
+   3.713440900714649*^9, 3.713443301548362*^9, 3.7134434756547813`*^9, {
+   3.713443512255248*^9, 3.713443523548428*^9}, {3.7134436704361887`*^9, 
+   3.71344368767249*^9}},
+ CellID->351691924,ExpressionUUID->"6d695fca-c189-4b76-ac19-e62cb2087f1e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "DetailsSection",ExpressionUUID->"260e72b3-7c95-48c4-9f20-2b96a19cb66a"],
+
+Cell["\<\
+Mathematica's combined symbolic and numeric evaluation enables concise and \
+general problem-solving. Try adding more masses, springs, and dampers. Use \
+two or three dimensions. Add rigid bodies, anything with holonomic \
+constraints. Try all the problems in the references. All you have to change \
+is the list of generalized coordinates, the Lagrangian itself, the list of \
+non-conservative forces, and numerical values for constants and for initial \
+conditions. The performance is good even with five or more degrees of freedom.\
+\>", "DetailNotes",
+ CellChangeTimes->{{3.713443812634123*^9, 3.713443886805606*^9}, {
+  3.713443968905592*^9, 3.713444076480517*^9}, {3.713444270899167*^9, 
+  3.7134443228722963`*^9}, {3.71344441731641*^9, 3.713444451874915*^9}, {
+  3.7134445907722*^9, 3.7134445930921097`*^9}, {3.7134447662836657`*^9, 
+  3.713444809881679*^9}, {3.7134448511260757`*^9, 3.713444918364111*^9}},
+ CellID->1011170124,ExpressionUUID->"6de1d3a8-a1b3-47f4-8d41-19af2574b7c2"],
+
+Cell["References", "DetailNotes",
+ CellChangeTimes->{{3.713443812634123*^9, 3.713443886805606*^9}, {
+  3.713443968905592*^9, 3.713444076480517*^9}, {3.713444270899167*^9, 
+  3.713444329581626*^9}},
+ CellID->1132597625,ExpressionUUID->"542538af-fe54-43a1-aa9f-4315ba848a4d"],
+
+Cell[TextData[{
+ "[1] Dare A. Wells, ",
+ StyleBox["Theory and Problems of Lagrangian Dynamics",
+  FontSlant->"Italic"],
+ ", Schaum's outline series"
+}], "DetailNotes",
+ CellChangeTimes->{{3.713443812634123*^9, 3.713443886805606*^9}, {
+  3.713443968905592*^9, 3.713444076480517*^9}, {3.713444270899167*^9, 
+  3.713444328952182*^9}, {3.713444385941972*^9, 3.71344440494849*^9}, {
+  3.713444465480832*^9, 3.713444476664838*^9}},
+ CellID->963582883,ExpressionUUID->"64105d9d-ceb8-4257-9f61-7a32f425e423"],
+
+Cell[TextData[{
+ "[2] Sussman, Gerald Jay, Wisdom, Jack, ",
+ StyleBox["Structure and Interpretation of Classical Mechanics",
+  FontSlant->"Italic"],
+ ", MIT Press "
+}], "DetailNotes",
+ CellChangeTimes->{{3.713443812634123*^9, 3.713443886805606*^9}, {
+  3.713443968905592*^9, 3.713444076480517*^9}, {3.713444270899167*^9, 
+  3.713444328952182*^9}, {3.713444385941972*^9, 3.71344440494849*^9}, {
+  3.713444465480832*^9, 3.7134444791525173`*^9}, {3.7134445425390368`*^9, 
+  3.71344456282857*^9}},
+ CellID->1684703755,ExpressionUUID->"13e0ac87-f371-4da9-b406-327fd271272b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "ControlSuggestionsSection",ExpressionUUID->"cbc04e02-11b1-4faa-b974-7b99f6c8d167"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Resize Images",ExpressionUUID->"1e9040fa-fd03-480d-9ef1-cd108cb1aa23"]}],
+  
+  "\"Click inside an image to reveal its orange resize frame.\\nDrag any of \
+the orange resize handles to resize the image.\"",
+  TooltipDelay->0.35]], "ControlSuggestions",
+ FontFamily->"Verdana",
+ CellTags->
+  "ResizeImages",ExpressionUUID->"ecb3945d-3415-4967-9ac1-b36d51ad6235"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Rotate and Zoom in 3D",ExpressionUUID->
+    "f2951d9c-1179-4cef-953a-f3a562fbc584"]}],
+  RowBox[{
+   "\"Drag a 3D graphic to rotate it. Starting the drag near the center \
+tumbles\\nthe graphic; starting near a corner turns it parallel to the plane \
+of the screen.\\nHold down \"", 
+    FrameBox[
+    "Ctrl", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], "\" (or \"", 
+    FrameBox[
+    "Cmd", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], "\" on Mac) and drag up and down to zoom.\""}],
+  TooltipDelay->0.35]], "ControlSuggestions",
+ FontFamily->"Verdana",
+ CellTags->
+  "RotateAndZoomIn3D",ExpressionUUID->"f443ce8e-a5f1-494a-8642-d0ae62a043c7"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Drag Locators",ExpressionUUID->"f2f8871b-f889-4224-b113-38c7cf79b36a"]}],
+  
+  RowBox[{"\"Drag any locator (\"", 
+    GraphicsBox[
+     LocatorBox[
+      Scaled[{0.5, 0.5}]], ImageSize -> 20], 
+    "\", etc.) to move it around.\""}],
+  TooltipDelay->0.35]], "ControlSuggestions",
+ FontFamily->"Verdana",
+ CellTags->
+  "DragLocators",ExpressionUUID->"2c156f02-3546-4dc0-bb50-dfc19673c74c"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Create and Delete Locators",ExpressionUUID->
+    "4fe4b36d-b15f-4a43-a471-672219ad34cc"]}],
+  RowBox[{"\"Insert a new locator in the graphic by holding down the \"", 
+    FrameBox[
+    "Alt", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], 
+    "\" key\\nand clicking where you want it to be. Delete a locator by \
+clicking it\\nwhile holding down the \"", 
+    FrameBox[
+    "Alt", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], "\" key.\""}],
+  TooltipDelay->0.35]], "ControlSuggestions",
+ FontFamily->"Verdana",
+ CellTags->
+  "CreateAndDeleteLocators",ExpressionUUID->"f5a53b4d-4cf4-4080-9c39-\
+0323971194f7"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Slider Zoom",ExpressionUUID->"093d6bcc-0b5f-421c-b1a0-a2474d899a51"]}],
+  RowBox[{"\"Hold down the \"", 
+    FrameBox[
+    "Alt", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], 
+    "\" key while moving a slider to make fine adjustments in the slider \
+value.\\nHold \"", 
+    FrameBox[
+    "Ctrl", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], "\" and/or \"", 
+    FrameBox[
+    "Shift", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], "\" at the same time as \"", 
+    FrameBox[
+    "Alt", Background -> GrayLevel[0.9], FrameMargins -> 2, FrameStyle -> 
+     GrayLevel[0.9]], "\" to make ever finer adjustments.\""}],
+  TooltipDelay->0.35]], "ControlSuggestions",
+ FontFamily->"Verdana",
+ CellTags->
+  "SliderZoom",ExpressionUUID->"a757fcc7-84b6-48c6-89e5-c9d843762334"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Gamepad Controls",ExpressionUUID->
+    "a4e759ec-ee7e-4815-9b88-028aca90bf62"]}],
+  "\"Control this Demonstration with a gamepad or other\\nhuman interface \
+device connected to your computer.\"",
+  TooltipDelay->0.35]], "ControlSuggestions",
+ CellChangeTimes->{3.35696210375764*^9, 3.3895522232313623`*^9},
+ FontFamily->"Verdana",
+ CellTags->
+  "GamepadControls",ExpressionUUID->"e1c6e42d-cece-4e38-9c89-a2abab26f0ae"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Automatic Animation",ExpressionUUID->
+    "8eb64eee-2efa-4098-8aa9-1ba47cd8107a"]}],
+  RowBox[{"\"Animate a slider in this Demonstration by clicking the\"", 
+    AdjustmentBox[
+     Cell[
+      GraphicsData[
+      "CompressedBitmap", 
+       "eJzzTSzJSM1NLMlMTlRwL0osyMhMLlZwyy8CCjEzMjAwcIKwAgOI/R/IhBKc\n\
+/4EAyGAG0f+nTZsGwgysIJIRKsWKLAXGIHFmEpUgLADxWUAkI24jZs+eTaEt\n\
+IG+wQKRmzJgBlYf5lhEA30OqWA=="], "Graphics", ImageSize -> {9, 9}, ImageMargins -> 
+      0, CellBaseline -> Baseline], BoxBaselineShift -> 0.1839080459770115, 
+     BoxMargins -> {{0., 0.}, {-0.1839080459770115, 0.1839080459770115}}], 
+    "\"button\\nnext to the slider, and then clicking the play button that \
+appears.\\nAnimate all controls by selecting \"", 
+    StyleBox["Autorun", FontWeight -> "Bold"], "\" from the\"", 
+    AdjustmentBox[
+     Cell[
+      GraphicsData[
+      "CompressedBitmap", 
+       "eJyNULENwyAQfEySIlMwTVJlCGRFsosokeNtqBmDBagoaZjAI1C8/8GUUUC6\n\
+57h7cQ8PvU7Pl17nUav7oj/TPH7V7b2QJAUAXBkKmCPRowxICy64bRvGGNF7\n\
+X8CctGoDSN4xhIDGGDhzFXwUh3/ClBKrDQPmnGXtI6u0OOd+tZBVUqy1xSaH\n\
+UqiK6pPe4XdEdAz6563tx/gejuORGMxJaz8mdpJn7hc="], "Graphics", 
+      ImageSize -> {10, 10}, ImageMargins -> 0, CellBaseline -> Baseline], 
+     BoxBaselineShift -> 0.1839080459770115, 
+     BoxMargins -> {{0., 0.}, {-0.1839080459770115, 0.1839080459770115}}], 
+    "\"menu.\""}],
+  TooltipDelay->0.35]], "ControlSuggestions",
+ FontFamily->"Verdana",
+ CellTags->
+  "AutomaticAnimation",ExpressionUUID->"e4b58932-66f0-476b-8e0d-df9ca87a6737"],
+
+Cell[BoxData[
+ TooltipBox[
+  RowBox[{
+   CheckboxBox[False], Cell[
+   " Bookmark Animation",ExpressionUUID->
+    "717b132b-59ac-4cc2-9890-f082223ed8ab"]}],
+  RowBox[{
+   "\"See a prepared animation of this Demonstration by selecting\\n\"", 
+    StyleBox["Animate Bookmarks", FontWeight -> "Bold"], "\" from the\"", 
+    AdjustmentBox[
+     Cell[
+      GraphicsData[
+      "CompressedBitmap", 
+       "eJyNULENwyAQfEySIlMwTVJlCGRFsosokeNtqBmDBagoaZjAI1C8/8GUUUC6\n\
+57h7cQ8PvU7Pl17nUav7oj/TPH7V7b2QJAUAXBkKmCPRowxICy64bRvGGNF7\n\
+X8CctGoDSN4xhIDGGDhzFXwUh3/ClBKrDQPmnGXtI6u0OOd+tZBVUqy1xSaH\n\
+UqiK6pPe4XdEdAz6563tx/gejuORGMxJaz8mdpJn7hc="], "Graphics", 
+      ImageSize -> {10, 10}, ImageMargins -> 0, CellBaseline -> Baseline], 
+     BoxBaselineShift -> 0.1839080459770115, 
+     BoxMargins -> {{0., 0.}, {-0.1839080459770115, 0.1839080459770115}}], 
+    "\"menu.\""}],
+  TooltipDelay->0.35]], "ControlSuggestions",
+ FontFamily->"Verdana",
+ CellTags->
+  "BookmarkAnimation",ExpressionUUID->"3992c13c-d850-4680-a9d5-92edd6240632"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "SearchTermsSection",ExpressionUUID->"7651ebfd-17cd-4e64-8c5c-f29cd75bb758"],
+
+Cell["Lagrangian Dynamics", "SearchTerms",
+ CellChangeTimes->{{3.7134446214726973`*^9, 3.7134446264496317`*^9}, {
+  3.713444671214677*^9, 3.713444671214875*^9}},
+ CellID->1690982133,ExpressionUUID->"512b52df-1219-4cd3-beb6-cc3e1e183b82"],
+
+Cell["Classical Mechanics", "SearchTerms",
+ CellChangeTimes->{{3.7134446214726973`*^9, 3.7134446264496317`*^9}, {
+  3.71344467392747*^9, 3.713444678310563*^9}},
+ CellID->1212111414,ExpressionUUID->"4fd1e218-78e5-4fd7-9389-622aeb1ede7d"],
+
+Cell["Damped Harmonic Oscillator", "SearchTerms",
+ CellChangeTimes->{{3.7134446214726973`*^9, 3.7134446264496317`*^9}, {
+  3.71344467392747*^9, 3.713444688470042*^9}},
+ CellID->817430348,ExpressionUUID->"08632030-917c-42d6-9cee-0fc1782444db"],
+
+Cell["Harmonic Oscillator", "SearchTerms",
+ CellChangeTimes->{{3.7134446214726973`*^9, 3.7134446264496317`*^9}, {
+  3.71344467392747*^9, 3.7134446953101997`*^9}},
+ CellID->1885421355,ExpressionUUID->"bb76bb43-3984-484d-a8ea-5089aecfb909"]
+}, Open  ]],
+
+Cell["", "RelatedLinksSection",ExpressionUUID->"7c69dec5-540f-4137-803e-dd6337a3be50"],
+
+Cell[CellGroupData[{
+
+Cell["", "AuthorSection",ExpressionUUID->"55b0607a-4562-4156-ab79-0dd3d06cb0b2"],
+
+Cell["Contributed by: Brian C. Beckman", "Author",
+ CellChangeTimes->{{3.713444699542152*^9, 
+  3.713444701933148*^9}},ExpressionUUID->"80875ef2-e763-43e3-bc7c-\
+21816dc7ef4a"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{720, 851},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 18, \
+2017)",
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "Demonstration.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "AutomaticAnimation"->{
+  Cell[51460, 1082, 1586, 34, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "e4b58932-66f0-476b-8e0d-
+   df9ca87a6737",
+   CellTags->"AutomaticAnimation"]},
+ "BookmarkAnimation"->{
+  Cell[53049, 1118, 1030, 24, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "3992c13c-d850-4680-
+   a9d5-92edd6240632",
+   CellTags->"BookmarkAnimation"]},
+ "CreateAndDeleteLocators"->{
+  Cell[49238, 1022, 761, 19, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "
+   f5a53b4d-4cf4-4080-9c39-0323971194f7",
+   CellTags->"CreateAndDeleteLocators"]},
+ "DragLocators"->{
+  Cell[48775, 1006, 460, 14, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "2c156f02-3546-4dc0-bb50-
+   dfc19673c74c",
+   CellTags->"DragLocators"]},
+ "GamepadControls"->{
+  Cell[50966, 1068, 491, 12, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "e1c6e42d-cece-4e38-9c89-
+   a2abab26f0ae",
+   CellTags->"GamepadControls"]},
+ "ResizeImages"->{
+  Cell[47537, 972, 432, 11, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "ecb3945d-3415-4967-9ac1-
+   b36d51ad6235",
+   CellTags->"ResizeImages"]},
+ "RotateAndZoomIn3D"->{
+  Cell[47972, 985, 800, 19, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "f443ce8e-a5f1-494a-8642-
+   d0ae62a043c7",
+   CellTags->"RotateAndZoomIn3D"]},
+ "SliderZoom"->{
+  Cell[50002, 1043, 961, 23, 
+  29, "ControlSuggestions", "ExpressionUUID" -> "a757fcc7-84b6-48c6-89e5-
+   c9d843762334",
+   CellTags->"SliderZoom"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"AutomaticAnimation", 55963, 1195},
+ {"BookmarkAnimation", 56147, 1200},
+ {"CreateAndDeleteLocators", 56336, 1205},
+ {"DragLocators", 56519, 1210},
+ {"GamepadControls", 56694, 1215},
+ {"ResizeImages", 56869, 1220},
+ {"RotateAndZoomIn3D", 57045, 1225},
+ {"SliderZoom", 57219, 1230}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 168, 3, 76, "DemoTitle", "ExpressionUUID" -> \
+"4e65d0d8-99fb-4b83-880f-96aa2d8543de"],
+Cell[751, 27, 88, 0, 301, "InitializationSection", "ExpressionUUID" -> \
+"a7ffef75-6f95-4774-970c-0cb6a5076473"],
+Cell[CellGroupData[{
+Cell[864, 31, 84, 0, 205, "ManipulateSection", "ExpressionUUID" -> \
+"5165bd6c-1b1a-4611-82cd-b48f2099b8bf"],
+Cell[CellGroupData[{
+Cell[973, 35, 7759, 194, 681, "Input", "ExpressionUUID" -> \
+"5672ff92-e4fe-48f9-81df-7018239a5aec"],
+Cell[8735, 231, 7021, 129, 480, "Output", "ExpressionUUID" -> \
+"216399ff-abc4-4cbd-8d10-7f33d4a6e602",
+ CellID->133405003]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15805, 366, 91, 0, 181, "ManipulateCaptionSection", "ExpressionUUID" -> \
+"3f7d587c-4953-4da7-a287-779d41cce169"],
+Cell[15899, 368, 900, 14, 103, "ManipulateCaption", "ExpressionUUID" -> \
+"3052507c-5c15-451d-9175-1ca3a0d6278c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16836, 387, 83, 0, 179, "ThumbnailSection", "ExpressionUUID" -> \
+"136149f8-d1ad-4e61-a5da-71e791f8dab7"],
+Cell[16922, 389, 6948, 128, 480, "Output", "ExpressionUUID" -> \
+"462bee07-6a0d-4355-adc8-d1a029212e06",
+ CellID->45871638]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23907, 522, 83, 0, 149, "SnapshotsSection", "ExpressionUUID" -> \
+"f5e65885-915b-4d3e-81b8-9843e0804fd4"],
+Cell[23993, 524, 6966, 128, 480, "Output", "ExpressionUUID" -> \
+"ec217f78-0d7b-4057-aa14-9190cdac27ea",
+ CellID->17990593],
+Cell[30962, 654, 6967, 128, 510, "Output", "ExpressionUUID" -> \
+"2eedd5db-b61c-4b42-aee4-00a594a041fd",
+ CellID->1831440805],
+Cell[37932, 784, 7001, 129, 472, "Output", "ExpressionUUID" -> \
+"6d695fca-c189-4b76-ac19-e62cb2087f1e",
+ CellID->351691924]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44970, 918, 81, 0, 359, "DetailsSection", "ExpressionUUID" -> \
+"260e72b3-7c95-48c4-9f20-2b96a19cb66a"],
+Cell[45054, 920, 1000, 14, 103, "DetailNotes", "ExpressionUUID" -> \
+"6de1d3a8-a1b3-47f4-8d41-19af2574b7c2",
+ CellID->1011170124],
+Cell[46057, 936, 273, 4, 23, "DetailNotes", "ExpressionUUID" -> \
+"542538af-fe54-43a1-aa9f-4315ba848a4d",
+ CellID->1132597625],
+Cell[46333, 942, 500, 10, 23, "DetailNotes", "ExpressionUUID" -> \
+"64105d9d-ceb8-4257-9f61-7a32f425e423",
+ CellID->963582883],
+Cell[46836, 954, 569, 11, 39, "DetailNotes", "ExpressionUUID" -> \
+"13e0ac87-f371-4da9-b406-327fd271272b",
+ CellID->1684703755]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[47442, 970, 92, 0, 131, "ControlSuggestionsSection", "ExpressionUUID" -> \
+"cbc04e02-11b1-4faa-b974-7b99f6c8d167"],
+Cell[47537, 972, 432, 11, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"ecb3945d-3415-4967-9ac1-b36d51ad6235",
+ CellTags->"ResizeImages"],
+Cell[47972, 985, 800, 19, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"f443ce8e-a5f1-494a-8642-d0ae62a043c7",
+ CellTags->"RotateAndZoomIn3D"],
+Cell[48775, 1006, 460, 14, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"2c156f02-3546-4dc0-bb50-dfc19673c74c",
+ CellTags->"DragLocators"],
+Cell[49238, 1022, 761, 19, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"f5a53b4d-4cf4-4080-9c39-0323971194f7",
+ CellTags->"CreateAndDeleteLocators"],
+Cell[50002, 1043, 961, 23, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"a757fcc7-84b6-48c6-89e5-c9d843762334",
+ CellTags->"SliderZoom"],
+Cell[50966, 1068, 491, 12, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"e1c6e42d-cece-4e38-9c89-a2abab26f0ae",
+ CellTags->"GamepadControls"],
+Cell[51460, 1082, 1586, 34, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"e4b58932-66f0-476b-8e0d-df9ca87a6737",
+ CellTags->"AutomaticAnimation"],
+Cell[53049, 1118, 1030, 24, 29, "ControlSuggestions", "ExpressionUUID" -> \
+"3992c13c-d850-4680-a9d5-92edd6240632",
+ CellTags->"BookmarkAnimation"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[54116, 1147, 85, 0, 165, "SearchTermsSection", "ExpressionUUID" -> \
+"7651ebfd-17cd-4e64-8c5c-f29cd75bb758"],
+Cell[54204, 1149, 237, 3, 23, "SearchTerms", "ExpressionUUID" -> \
+"512b52df-1219-4cd3-beb6-cc3e1e183b82",
+ CellID->1690982133],
+Cell[54444, 1154, 236, 3, 23, "SearchTerms", "ExpressionUUID" -> \
+"4fd1e218-78e5-4fd7-9389-622aeb1ede7d",
+ CellID->1212111414],
+Cell[54683, 1159, 242, 3, 23, "SearchTerms", "ExpressionUUID" -> \
+"08632030-917c-42d6-9cee-0fc1782444db",
+ CellID->817430348],
+Cell[54928, 1164, 238, 3, 23, "SearchTerms", "ExpressionUUID" -> \
+"bb76bb43-3984-484d-a8ea-5089aecfb909",
+ CellID->1885421355]
+}, Open  ]],
+Cell[55181, 1170, 86, 0, 149, "RelatedLinksSection", "ExpressionUUID" -> \
+"7c69dec5-540f-4137-803e-dd6337a3be50"],
+Cell[CellGroupData[{
+Cell[55292, 1174, 80, 0, 137, "AuthorSection", "ExpressionUUID" -> \
+"55b0607a-4562-4156-ab79-0dd3d06cb0b2"],
+Cell[55375, 1176, 176, 3, 23, "Author", "ExpressionUUID" -> \
+"80875ef2-e763-43e3-bc7c-21816dc7ef4a"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

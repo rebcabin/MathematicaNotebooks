@@ -1,0 +1,393 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     12400,        384]
+NotebookOptionsPosition[      9238,        290]
+NotebookOutlinePosition[     11098,        343]
+CellTagsIndexPosition[     11013,        338]
+WindowTitle->\:03C9n - Dzhanybekhov`RigidBodies`
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[GridBox[{
+   {Cell["DZHANYBEKHOV`RIGIDBODIES` SYMBOL", "PacletNameCell"], Cell[TextData[{
+     Cell[BoxData[
+      ActionMenuBox[
+       FrameBox["\<\"Tutorials \[RightGuillemet]\"\>",
+        StripOnInput->False], {"\<\"Title of tutorial 1\"\>":>
+       Documentation`HelpLookup[
+        StringJoin[
+        "paclet:", "Dzhanybekhov", 
+         "/tutorial/tutorialName1"]], "\<\"Title of tutorial 2\"\>":>
+       Documentation`HelpLookup[
+        StringJoin["paclet:", "Dzhanybekhov", "/tutorial/tutorialName2"]]},
+       Appearance->None,
+       MenuAppearance->Automatic]],
+      LineSpacing->{1.4, 0}],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      ActionMenuBox[
+       FrameBox["\<\"See Also \[RightGuillemet]\"\>",
+        StripOnInput->False], {"\<\"Symbol1\"\>":>Documentation`HelpLookup[
+        StringJoin[
+        "paclet:", "Dzhanybekhov", "/ref/Symbol1"]], "\<\"Symbol2\"\>":>
+       Documentation`HelpLookup[
+        StringJoin["paclet:", "Dzhanybekhov", "/ref/Symbol2"]]},
+       Appearance->None,
+       MenuAppearance->Automatic]],
+      LineSpacing->{1.4, 0}],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      ActionMenuBox[
+       FrameBox["\<\"More About \[RightGuillemet]\"\>",
+        StripOnInput->False], {"\<\"Guide 1\"\>":>Documentation`HelpLookup[
+        StringJoin[
+        "paclet:", "Dzhanybekhov", "/guide/Guide1"]], "\<\"Guide 2\"\>":>
+       Documentation`HelpLookup[
+        StringJoin["paclet:", "Dzhanybekhov", "/guide/Guide2"]]},
+       Appearance->None,
+       MenuAppearance->Automatic]],
+      LineSpacing->{1.4, 0}],
+     "\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\[ThickSpace]\
+\[ThickSpace]",
+     Cell[BoxData[
+      ActionMenuBox[
+       FrameBox["\<\"URL \[RightGuillemet]\"\>",
+        StripOnInput->False], {"\<\"Go to Dzhanybekhov/ref/\[Omega]n URL\"\>":>
+       FrontEndExecute[{
+         NotebookLocate[{
+           URL["your.website.goes.here/documentationIfAny"], None}]}], 
+       Delimiter, "\<\"Go to wolfram URL\"\>":>FrontEndExecute[{
+         NotebookLocate[{
+           URL[
+           "http://reference.wolfram.com/mathematica/guide/Mathematica.html"],
+            None}]}], "\<\"Go to authors URL\"\>":>FrontEndExecute[{
+         NotebookLocate[{
+           URL["your.website.goes.here"], None}]}]},
+       Appearance->None,
+       MenuAppearance->Automatic]],
+      LineSpacing->{1.4, 0}]
+    }], "AnchorBar"]}
+  }]], "AnchorBarGrid"],
+
+Cell["\[Omega]n", "ObjectName"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[GridBox[{
+   {"", Cell[TextData[{
+     Cell[BoxData[
+      RowBox[{
+       ButtonBox["\[Omega]n",
+        BaseStyle->"Link",
+        ButtonData->"paclet:Dzhanybekhov/ref/\[Omega]n"], "[", 
+       StyleBox["args", "TI"], "]"}]], "InlineFormula"],
+     "\[LineSeparator]\[Omega]n[\[Omega],mi,mii,dt] produces an incremental \
+value for the angular velocity given a prior value \[Omega], a moment of \
+inertia tensor mi, its inverse mii, and a time increment dt."
+    }]]}
+  }]], "Usage"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[Cell[BoxData[
+ ButtonBox[
+  FrameBox[
+   StyleBox[
+    RowBox[{"MORE", " ", "INFORMATION"}], "NotesFrameText"],
+   StripOnInput->False],
+  Appearance->{Automatic, None},
+  BaseStyle->None,
+  ButtonFunction:>(FrontEndExecute[{
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], All, ButtonCell], 
+     FrontEndToken["OpenCloseGroup"], 
+     FrontEnd`SelectionMove[
+      FrontEnd`SelectedNotebook[], After, CellContents]}]& ),
+  Evaluator->None,
+  Method->"Preemptive"]]]], "NotesSection",
+ CellGroupingRules->{"SectionGrouping", 50},
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell["Note about the function goes here.", "Notes"],
+
+Cell["Another Note about the function goes here.", "Notes"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["EXAMPLES",
+ BaseStyle->None,
+ Appearance->{Automatic, None},
+ Evaluator->None,
+ Method->"Preemptive",
+ ButtonFunction:>(FrontEndExecute[{
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], All, ButtonCell], 
+    FrontEndToken["OpenCloseGroup"], 
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], After, 
+     CellContents]}]& )]], "PrimaryExamplesSection",
+ CellTags->"PrimaryExamplesSection",
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Basic Examples",
+ "\[NonBreakingSpace]\[NonBreakingSpace]",
+ Cell["(#)", "ExampleCount"]
+}], "ExampleSection", "ExampleSection",
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell["Use the ExampleText style to write cells like this one.", "ExampleText"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[Cell[TextData[{
+   "Scope",
+   "  ",
+   Cell["(#)", "ExampleCount"]
+  }], "ExampleSection"],
+  $Line = 0; Null]], "ExampleSection", "ExampleSection",
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell["Use the ExampleText style to write cells like this one.", "ExampleText"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["SEE ALSO",
+ BaseStyle->None,
+ Appearance->{Automatic, None},
+ Evaluator->None,
+ Method->"Preemptive",
+ ButtonFunction:>(FrontEndExecute[{
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], All, ButtonCell], 
+    FrontEndToken["OpenCloseGroup"], 
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], After, 
+     CellContents]}]& )]], "SeeAlsoSection",
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell[TextData[{
+ Cell[BoxData[
+  StyleBox[
+   ButtonBox["SymbolOne",
+    BaseStyle->"Link",
+    ButtonData->"paclet:Dzhanybekhov/ref/SymbolOne"],
+   FontFamily->"Verdana"]], "InlineFormula"],
+ "\[NonBreakingSpace]",
+ StyleBox["\[MediumSpace]\[FilledVerySmallSquare]\[MediumSpace]", 
+  "InlineSeparator"],
+ " ",
+ Cell[BoxData[
+  StyleBox[
+   ButtonBox["SymbolTwo",
+    BaseStyle->"Link",
+    ButtonData->"paclet:Dzhanybekhov/ref/SymbolTwo"],
+   FontFamily->"Verdana"]], "InlineFormula"]
+}], "SeeAlso"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["TUTORIALS",
+ BaseStyle->None,
+ Appearance->{Automatic, None},
+ Evaluator->None,
+ Method->"Preemptive",
+ ButtonFunction:>(FrontEndExecute[{
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], All, ButtonCell], 
+    FrontEndToken["OpenCloseGroup"], 
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], After, 
+     CellContents]}]& )]], "TutorialsSection",
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell[TextData[ButtonBox["Tutorial Title 1",
+ BaseStyle->"Link",
+ ButtonData->"paclet:Dzhanybekhov/tutorial/tutorial1"]], "Tutorials"],
+
+Cell[TextData[ButtonBox["Tutorial Title 2",
+ BaseStyle->"Link",
+ ButtonData->"paclet:Dzhanybekhov/tutorial/tutorial2"]], "Tutorials"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["MORE ABOUT",
+ BaseStyle->None,
+ Appearance->{Automatic, None},
+ Evaluator->None,
+ Method->"Preemptive",
+ ButtonFunction:>(FrontEndExecute[{
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], All, ButtonCell], 
+    FrontEndToken["OpenCloseGroup"], 
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], After, 
+     CellContents]}]& )]], "MoreAboutSection",
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell[TextData[ButtonBox["Title of Guide 1",
+ BaseStyle->"Link",
+ ButtonData->"paclet:Dzhanybekhov/guide/Guide1"]], "MoreAbout"],
+
+Cell[TextData[ButtonBox["Title of Guide 2",
+ BaseStyle->"Link",
+ ButtonData->"paclet:Dzhanybekhov/guide/Guide2"]], "MoreAbout"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[ButtonBox["RELATED LINKS",
+ BaseStyle->None,
+ Appearance->{Automatic, None},
+ Evaluator->None,
+ Method->"Preemptive",
+ ButtonFunction:>(FrontEndExecute[{
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], All, ButtonCell], 
+    FrontEndToken["OpenCloseGroup"], 
+    FrontEnd`SelectionMove[
+     FrontEnd`SelectedNotebook[], After, 
+     CellContents]}]& )]], "RelatedLinksSection",
+ ApplicationMaker`DocumentationMaker`Private`WholeCellGroupOpener -> True],
+
+Cell[TextData[ButtonBox["Link Title 1",
+ BaseStyle->"Hyperlink",
+ ButtonData->{
+   URL["URL.goes.here"], None}]], "RelatedLinks"],
+
+Cell[TextData[ButtonBox["Link Title 2",
+ BaseStyle->"Hyperlink",
+ ButtonData->{
+   URL["URL.goes.here"], None}]], "RelatedLinks"]
+}, Open  ]],
+
+Cell["Made for Mathematica 8  |  Last modified in May 2014", "History"],
+
+Cell[" ", "FooterCell"]
+},
+Saveable->False,
+WindowSize->{740, 867},
+WindowMargins->{{590, Automatic}, {Automatic, 82}},
+WindowTitle->"\[Omega]n - Dzhanybekhov`RigidBodies`",
+DockedCells->FEPrivate`FrontEndResource[
+ "FEExpressions", "HelpViewerToolbar"],
+PageHeaders->{{None, None, None}, {None, None, 
+   Cell[
+    TextData[{
+      Cell[
+       TextData[{""}], "PageHeader"], 
+      Cell[
+       TextData[{
+         CounterBox["Page"]}], "PageNumber"]}], 
+    CellMargins -> {{Inherited, -29}, {Inherited, Inherited}}]}},
+PageFooters->{{None, None, None}, {
+   Cell[
+    TextData[{""}], "PageFooter"], None, None}},
+TaggingRules->{
+ "ModificationHighlight" -> False, 
+  "Metadata" -> {
+   "context" -> "Dzhanybekhov`", 
+    "keywords" -> {"\[Omega]n", "\[CapitalOmega]N"}, "index" -> True, "label" -> 
+    "Dzhanybekhov`RigidBodies` Symbol", "language" -> "en", "paclet" -> 
+    "Dzhanybekhov RigidBodies", "status" -> "", "summary" -> 
+    "\[Omega]n[\[Omega],mi,mii,dt] produces an incremental value for the \
+angular velocity given a prior value \[Omega], a moment of inertia tensor mi, \
+its inverse mii, and a time increment dt.", 
+    "synonyms" -> {"\[Omega]n", "\[CapitalOmega]N"}, "title" -> "\[Omega]n", 
+    "windowTitle" -> "\[Omega]n", "type" -> "Symbol", "uri" -> 
+    "Dzhanybekhov/ref/\[Omega]n"}, "SearchTextTranslated" -> "", "LinkTrails" -> 
+  ""},
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "Reference.nb", 
+  CharacterEncoding -> "UTF-8"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "PrimaryExamplesSection"->{
+  Cell[4544, 131, 516, 13, 29, "PrimaryExamplesSection",
+   CellTags->"PrimaryExamplesSection"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"PrimaryExamplesSection", 10892, 332}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[606, 21, 2556, 61, 51, "AnchorBarGrid"],
+Cell[3165, 84, 31, 0, 43, "ObjectName"],
+Cell[CellGroupData[{
+Cell[3221, 88, 498, 12, 100, "Usage"],
+Cell[CellGroupData[{
+Cell[3744, 104, 635, 17, 41, "NotesSection",
+ CellGroupingRules->{"SectionGrouping", 50}],
+Cell[4382, 123, 51, 0, 32, "Notes"],
+Cell[4436, 125, 59, 0, 32, "Notes"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4544, 131, 516, 13, 29, "PrimaryExamplesSection",
+ CellTags->"PrimaryExamplesSection"],
+Cell[CellGroupData[{
+Cell[5085, 148, 221, 5, 24, "ExampleSection"],
+Cell[5309, 155, 78, 0, 35, "ExampleText"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5424, 160, 257, 7, 26, "ExampleSection"],
+Cell[5684, 169, 78, 0, 35, "ExampleText"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5811, 175, 471, 12, 29, "SeeAlsoSection"],
+Cell[6285, 189, 500, 17, 59, "SeeAlso"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6822, 211, 474, 12, 29, "TutorialsSection"],
+Cell[7299, 225, 133, 2, 20, "Tutorials"],
+Cell[7435, 229, 133, 2, 20, "Tutorials"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7605, 236, 475, 12, 29, "MoreAboutSection"],
+Cell[8083, 250, 127, 2, 20, "MoreAbout"],
+Cell[8213, 254, 127, 2, 20, "MoreAbout"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8377, 261, 481, 12, 29, "RelatedLinksSection"],
+Cell[8861, 275, 129, 3, 20, "RelatedLinks"],
+Cell[8993, 280, 129, 3, 20, "RelatedLinks"]
+}, Open  ]],
+Cell[9137, 286, 71, 0, 45, "History"],
+Cell[9211, 288, 23, 0, 24, "FooterCell"]
+}
+]
+*)
+
+(* End of internal cache information *)

@@ -1,0 +1,232 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      9722,        224]
+NotebookOptionsPosition[      2896,         76]
+NotebookOutlinePosition[      9277,        215]
+CellTagsIndexPosition[      9212,        210]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Tipping the Box Over", "Title",
+ CellChangeTimes->{{3.727038100871808*^9, 3.727038119380846*^9}, {
+   3.727471593317396*^9, 3.7274715984595823`*^9}, {3.729120277549485*^9, 
+   3.729120279330949*^9}, {3.729164818218039*^9, 3.729164831400428*^9}, {
+   3.72917959045429*^9, 3.7291795965711203`*^9}, {3.7291976388841267`*^9, 
+   3.729197641402032*^9}, 3.7618173218764267`*^9, 3.766010196702277*^9, {
+   3.766053840839232*^9, 3.766053854214931*^9}, {3.766064635820005*^9, 
+   3.766064666465206*^9}, {3.766087377462359*^9, 3.766087385906043*^9}, {
+   3.774303471521379*^9, 3.774303483313287*^9}, {3.778422384802032*^9, 
+   3.778422391025675*^9}},
+ CellTags->"c:1",ExpressionUUID->"6f3cba05-b339-4654-99a4-829a31dbb3b1"],
+
+Cell["\<\
+Brian Beckman
+25 Sept 2019\
+\>", "Text",
+ CellChangeTimes->{{3.727471602355763*^9, 3.7274716101393967`*^9}, {
+   3.727925773402236*^9, 3.727925775055613*^9}, {3.7291796049113493`*^9, 
+   3.729179606176675*^9}, 3.729642307282371*^9, {3.72971195796128*^9, 
+   3.729711959054461*^9}, {3.7297934248121*^9, 3.729793424979403*^9}, 
+   3.731527806071295*^9, {3.733640231589473*^9, 3.733640234672677*^9}, {
+   3.761817304934888*^9, 3.7618173125575304`*^9}, {3.7660102753115883`*^9, 
+   3.766010279790196*^9}, {3.7660873923218718`*^9, 3.7660873975423603`*^9}, {
+   3.766088099067906*^9, 3.7660881044808073`*^9}, {3.774303492279028*^9, 
+   3.7743034958461647`*^9}, {3.778422396954095*^9, 
+   3.778422401088748*^9}},ExpressionUUID->"f8a900e9-2e08-4795-8dd9-\
+f13eab31aca1"],
+
+Cell[CellGroupData[{
+
+Cell["A Box on a Cart", "Chapter",
+ CellChangeTimes->{{3.7771512617602453`*^9, 3.777151272120976*^9}, {
+   3.777193991842126*^9, 3.7771939948448887`*^9}, 3.777196298270934*^9, {
+   3.778422427844528*^9, 
+   3.778422434811089*^9}},ExpressionUUID->"8617b279-97bf-46a2-8d8a-\
+769b5668288b"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics", "[", 
+  RowBox[{"{", 
+   RowBox[{"Rectangle", "[", "]"}], "}"}], "]"}]], "Input",
+ CellChangeTimes->{{3.778422445067183*^9, 3.7784224538084173`*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"25d42366-c27e-4bbe-90a7-7e35ed32801f"],
+
+Cell[BoxData[
+ GraphicsBox[RectangleBox[{0, 0}]]], "Output",
+ CellChangeTimes->{3.778422455048964*^9},
+ CellLabel->"Out[1]=",ExpressionUUID->"2cf5d8ff-a512-4441-8895-5902a1551428"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1920, 2049},
+WindowMargins->{{Automatic, 0}, {0, Automatic}},
+PrintingCopies->1,
+PrintingStartingPageNumber->1,
+PrintingPageRange->{Automatic, Automatic},
+PrintingOptions->{"PaperOrientation"->"Portrait",
+"PaperSize"->{Automatic, Automatic},
+"PostScriptOutputFile"->"/home/ANT.AMAZON.COM/bbeckman/Dropbox/MMA/\
+SunShield004.pdf"},
+TaggingRules->{
+ "PaginationCache" -> {{2018, 2, 20, 19, 46, 39.675061`8.351092581673305}, {1,
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+     4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 6, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 
+    9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 11, 12, 12, 12, 12, 13, 14, 14, 
+    15, 15, 17, 17, 19, 19, 19, 20}, Automatic}, 
+  "SlideshowSettings" -> {"Toolbar" -> True}},
+Magnification:>2.5 Inherited,
+FrontEndVersion->"12.0 for Linux x86 (64-bit) (April 8, 2019)",
+StyleDefinitions->Notebook[{
+   Cell[
+    StyleData[
+    StyleDefinitions -> 
+     FrontEnd`FileName[{"Creative"}, "PastelColor.nb", CharacterEncoding -> 
+       "UTF-8"]]], 
+   Cell[
+    StyleData["Text"], FontFamily -> "DejaVu Sans", FontSize -> 13, 
+    FontWeight -> "Plain", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Title"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 30,
+     FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["ItemNumbered"], FontFamily -> "DejaVu Sans Condensed", 
+    FontSize -> 13, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Subsubsection"], FontFamily -> "DejaVu Sans Condensed", 
+    FontSize -> 15, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Subsection"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    15, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Section"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    18, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Subchapter"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    28, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Chapter"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    30, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Subtitle"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    15, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Subsubtitle"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    15, FontWeight -> "Bold", FontSlant -> "Italic", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Item"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 13, 
+    FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["ItemParagraph"], FontFamily -> "DejaVu Sans", FontSize -> 13, 
+    FontWeight -> "Plain", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Subitem"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    13, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["SubitemParagraph"], FontFamily -> "DejaVu Sans", FontSize -> 
+    13, FontWeight -> "Plain", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Subsubitem"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    13, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["SubsubitemParagraph"], FontFamily -> "DejaVu Sans", FontSize -> 
+    13, FontWeight -> "Plain", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["ItemNumbered"]], 
+   Cell[
+    StyleData["SubitemNumbered"], FontFamily -> "DejaVu Sans Condensed", 
+    FontSize -> 13, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["SubsubitemNumbered"], FontFamily -> "DejaVu Sans Condensed", 
+    FontSize -> 13, FontWeight -> "Bold", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Input"]], 
+   Cell[
+    StyleData["Code"]], 
+   Cell[
+    StyleData["CodeText"], FontFamily -> "Source Sans Pro", FontSize -> 13, 
+    FontWeight -> "Plain", FontSlant -> "Plain", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}], 
+   Cell[
+    StyleData["Output"]], 
+   Cell[
+    StyleData["Subtitle"]], 
+   Cell[
+    StyleData["Subsubtitle"], FontFamily -> "DejaVu Sans Condensed", FontSize -> 
+    15, FontWeight -> "Bold", FontSlant -> "Italic", 
+    FontVariations -> {"StrikeThrough" -> False, "Underline" -> False}]}, 
+  WindowMargins -> {{Automatic, 379}, {Automatic, 80}}, Visible -> False, 
+  TaggingRules -> {"SlideshowSettings" -> {"Toolbar" -> True}}, Magnification :> 
+  2. Inherited, FrontEndVersion -> 
+  "12.0 for Linux x86 (64-bit) (April 8, 2019)", StyleDefinitions -> 
+  "PrivateStylesheetFormatting.nb"]
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "c:1"->{
+  Cell[580, 22, 719, 10, 167, "Title",ExpressionUUID->"6f3cba05-b339-4654-99a4-829a31dbb3b1",
+   CellTags->"c:1"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"c:1", 9073, 204}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 719, 10, 167, "Title",ExpressionUUID->"6f3cba05-b339-4654-99a4-829a31dbb3b1",
+ CellTags->"c:1"],
+Cell[1302, 34, 772, 14, 128, "Text",ExpressionUUID->"f8a900e9-2e08-4795-8dd9-f13eab31aca1"],
+Cell[CellGroupData[{
+Cell[2099, 52, 287, 5, 155, "Chapter",ExpressionUUID->"8617b279-97bf-46a2-8d8a-769b5668288b"],
+Cell[CellGroupData[{
+Cell[2411, 61, 262, 5, 146, "Input",ExpressionUUID->"25d42366-c27e-4bbe-90a7-7e35ed32801f"],
+Cell[2676, 68, 180, 3, 1000, "Output",ExpressionUUID->"2cf5d8ff-a512-4441-8895-5902a1551428"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

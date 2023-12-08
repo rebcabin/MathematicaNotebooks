@@ -1,0 +1,1886 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     72278,       1877]
+NotebookOptionsPosition[     64260,       1632]
+NotebookOutlinePosition[     66940,       1710]
+CellTagsIndexPosition[     66476,       1696]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"<<", "ApplicationMaker`"}]], "Input",
+ CellChangeTimes->{{3.6096662459686604`*^9, 3.6096662614756107`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"UpdateInit", "[", "\"\<Dzhanybekhov\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.6096662888910522`*^9, 3.609666312586073*^9}, {
+   3.6096663634477177`*^9, 3.609666390832116*^9}, 3.60966972089942*^9}],
+
+Cell[BoxData["\<\"/Users/bbeckman/Library/Mathematica/Applications/\
+Dzhanybekhov/Kernel/Init.m\"\>"], "Output",
+ CellChangeTimes->{
+  3.609666313431634*^9, {3.609666364645671*^9, 3.609666391906345*^9}, 
+   3.609666883696513*^9, 3.609666930126749*^9, 3.609669721710252*^9, 
+   3.6096963454361258`*^9, 3.609697684309911*^9, 3.609697742935308*^9, 
+   3.6096977857626743`*^9, 3.609698098541574*^9, 3.609714212593852*^9, 
+   3.6097146364269342`*^9, 3.609714794816896*^9, 3.609715456251007*^9, 
+   3.609718703581852*^9, 3.6097190452852993`*^9, 3.609719280237894*^9, 
+   3.609719573901471*^9, 3.609719672265407*^9, 3.6097197421956882`*^9, 
+   3.609756833132374*^9, 3.610363324546323*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "UpdateInit"}]], "Input",
+ CellChangeTimes->{{3.6096663179782667`*^9, 3.609666320780973*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"UpdateInit[\!\(\*\\nStyleBox[\\\"appName\\\", \\\"TI\\\"]\)] \
+creates the init file for the application \!\(\*\\nStyleBox[\\\"appName\\\", \
+\\\"TI\\\"]\).\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:ApplicationMaker/ref/UpdateInit"]}]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.6103633247830267`*^9},
+ CellTags->"Info3610338124-8525972"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"<<", "Dzhanybekhov`"}]], "Input",
+ CellChangeTimes->{{3.609666397211863*^9, 3.609666446624633*^9}, {
+   3.609666543256103*^9, 3.6096665498290777`*^9}, {3.609666837223233*^9, 
+   3.609666845644773*^9}, 3.609666910063362*^9, {3.609669727483333*^9, 
+   3.609669727947384*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "rq"}]], "Input",
+ CellChangeTimes->{{3.6096981080960007`*^9, 3.609698111546234*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"rq[\[Theta],vec3] produces a rotation quaternion for the \
+given angle counterclockwise about the given 3-vector direction. \
+rq[\[Theta],x,y,z] accepts the components of the direction vector \
+individually.\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/rq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363325182987*^9},
+ CellTags->"Info3610338124-8525972"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "rk4"}]], "Input",
+ CellChangeTimes->{{3.6097193974538527`*^9, 3.609719400126617*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"rk4[vt,v',dt,args...] produces a new value of a dynamic \
+variable vt given a derivative function, v', which takes vt and ars as \
+arguments, and a time inrement dt.\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/rk4"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363325560902*^9},
+ CellTags->"Info3610338125-8525972"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"rqn", "[", 
+  RowBox[{
+   RowBox[{"ranrq", "[", "]"}], ",", 
+   RowBox[{"ranv", "[", "]"}], ",", "42"}], "]"}]], "Input",
+ CellChangeTimes->{{3.60966641105752*^9, 3.60966641910065*^9}, 
+   3.609667402964816*^9, {3.609697699388525*^9, 3.609697709172575*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Quaternion", "[", 
+  RowBox[{"2585.250045095878`", ",", 
+   RowBox[{"-", "9993.505419818222`"}], ",", 
+   RowBox[{"-", "775.2792849274089`"}], ",", 
+   RowBox[{"-", "3165.82800170103`"}]}], "]"}]], "Output",
+ CellChangeTimes->{3.6096977866212187`*^9, 3.6097142308307133`*^9, 
+  3.609714645585656*^9, 3.609718723918706*^9, 3.609719046050816*^9, 
+  3.60971928093672*^9, 3.609719574950406*^9, 3.609719673529801*^9, 
+  3.60971974349653*^9, 3.6097568339653397`*^9, 3.610363325914056*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"NewPackage", "[", 
+  RowBox[{"\"\<RigidBodies\>\"", ",", "\"\<Dzhanybekhov\>\""}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.60967141360513*^9, 3.609671458562088*^9}, 
+   3.609714244519314*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"NewPackage", "::", "pkgerr"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"The package you are trying to create in the application \
+\[NoBreak]\\!\\(\\\"Dzhanybekhov\\\"\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+RigidBodies.nb\\\", None]], Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/RigidBodies.\
+nb\\\"]], Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/RigidBodies.\
+nb\\\", \\\"Hyperlink\\\"]]]\\)\[NoBreak] to edit its contents. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/NewPackage\\\", ButtonNote -> \
+\\\"ApplicationMaker`PackageMaker`NewPackage::pkgerr\\\"]\\)\"\>"}]], \
+"Message", "MSG",
+ CellChangeTimes->{3.609719046128928*^9, 3.609719281008493*^9, 
+  3.609719575025589*^9, 3.609719673614751*^9, 3.6097197435939913`*^9, 
+  3.609756834040601*^9, 3.610363325985962*^9}],
+
+Cell[BoxData["$Failed"], "Output",
+ CellChangeTimes->{3.6097187257893753`*^9, 3.6097190461300373`*^9, 
+  3.6097192810105877`*^9, 3.609719575027766*^9, 3.609719673616941*^9, 
+  3.609719743596182*^9, 3.609756834043104*^9, 3.61036332598877*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"NewPackage", "::", "pkgerr"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"The package you are trying to create in the application \
+\[NoBreak]\\!\\(\\\"Dzhanybekhov\\\"\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+RigidBodies.nb\\\", None]], Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/RigidBodies.\
+nb\\\"]], Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/RigidBodies.\
+nb\\\", \\\"Hyperlink\\\"]]]\\)\[NoBreak] to edit its contents. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/NewPackage\\\", ButtonNote -> \
+\\\"ApplicationMaker`PackageMaker`NewPackage::pkgerr\\\"]\\)\"\>"}]], \
+"Message", "MSG",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.6096977867023973`*^9, 3.609714244520083*^9, 
+  3.6097187257880373`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"NewPackage", "::", "pkgerr"}], "MessageName"], ":", 
+  " ", "\<\"The package you are trying to create in the application \
+\[NoBreak]\\!\\(\\\"Dzhanybekhov\\\"\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+RigidBodies.nb\\\", None]], Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/RigidBodies.\
+nb\\\"]], Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/RigidBodies.\
+nb\\\", \\\"Hyperlink\\\"]]]\\)\[NoBreak] to edit its contents. \
+\\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", \
+ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/NewPackage\\\", ButtonNote -> \
+\\\"ApplicationMaker`PackageMaker`NewPackage::pkgerr\\\"]\\)\"\>"}]], \
+"Message", "MSG",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.6096977867023973`*^9, 3.609714244520083*^9}],
+
+Cell[BoxData["$Failed"], "Output",
+ GeneratedCell->False,
+ CellAutoOverwrite->False,
+ CellChangeTimes->{3.609671459126049*^9, 3.6096715058563547`*^9, 
+  3.609697786708128*^9, 3.609714244523363*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CreateReferencePages", "[", "\"\<Dzhanybekhov\>\"", "]"}]], "Input",\
+
+ CellChangeTimes->{{3.609714331426509*^9, 3.609714332624566*^9}, {
+  3.609714363603117*^9, 3.609714380893086*^9}}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Building reference pages for: \"\>", "MSG",
+    StripOnInput->False], "\[InvisibleSpace]", 
+   StyleBox["\<\"RigidBodies\"\>", "Input",
+    StripOnInput->False]}],
+  SequenceForm[
+   Style["Building reference pages for: ", "MSG"], 
+   Style["RigidBodies", "Input"]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.609714381776917*^9, 3.609714465892321*^9, 
+  3.609714651513776*^9, 3.6097148002162447`*^9, 3.609714881895574*^9, 
+  3.609718729934164*^9, 3.609719046179687*^9, 3.6097192810612698`*^9, 
+  3.6097195750753813`*^9, 3.6097196736670847`*^9, 3.609719743666567*^9, 
+  3.609756834088489*^9, 3.610363326038679*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"drqdt\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___drqdt.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___drqdt.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___drqdt.nb\\\", \\\"Hyperlink\\\
+\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
+\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326124159*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \
+\[NoBreak]\\!\\(\\\"d\\\\[Omega]dt\\\"\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___d\\\\[Omega]dt.nb\\\", \
+None]], Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___d\\\\[Omega]dt.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___d\\\\[Omega]dt.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326195591*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"rk4\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rk4.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rk4.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rk4.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326263473*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"rqn\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rqn.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rqn.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rqn.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326331471*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \
+\[NoBreak]\\!\\(\\\"\\\\[Omega]n\\\"\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Omega]n.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Omega]n.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Omega]n.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326400329*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Building reference pages for: \"\>", "MSG",
+    StripOnInput->False], "\[InvisibleSpace]", 
+   StyleBox["\<\"RotationQuaternions\"\>", "Input",
+    StripOnInput->False]}],
+  SequenceForm[
+   Style["Building reference pages for: ", "MSG"], 
+   Style["RotationQuaternions", "Input"]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.609714381776917*^9, 3.609714465892321*^9, 
+  3.609714651513776*^9, 3.6097148002162447`*^9, 3.609714881895574*^9, 
+  3.609718729934164*^9, 3.609719046179687*^9, 3.6097192810612698`*^9, 
+  3.6097195750753813`*^9, 3.6097196736670847`*^9, 3.609719743666567*^9, 
+  3.609756834088489*^9, 3.6103633264020367`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"qv\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___qv.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___qv.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___qv.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326481152*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"ranrq\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ranrq.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ranrq.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ranrq.nb\\\", \\\"Hyperlink\\\
+\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\
+\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326549348*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"ranv\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ranv.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ranv.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ranv.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.6103633266169863`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \
+\[NoBreak]\\!\\(\\\"ran\\\\[Theta]\\\"\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ran\\\\[Theta].nb\\\", \
+None]], Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ran\\\\[Theta].nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___ran\\\\[Theta].nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326688768*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"rf\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rf.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rf.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rf.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326757021*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"rq\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rq.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rq.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rq.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.6103633268250303`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"rqw\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rqw.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rqw.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rqw.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.6103633268930607`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"rv\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rv.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rv.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___rv.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363326961067*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"vq\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___vq.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___vq.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___vq.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363327029471*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"vrq\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___vrq.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___vrq.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___vrq.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.61036332709783*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"wrq\\\"\\)\
+\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___wrq.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___wrq.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___wrq.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.6103633271691637`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \[NoBreak]\\!\\(\\\"\\\\[Theta]rq\\\"\
+\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Theta]rq.nb\\\", None]], \
+Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Theta]rq.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Theta]rq.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363327243042*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"CreateReferencePages", "::", "symb"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"A reference page for \
+\[NoBreak]\\!\\(\\\"\\\\[Theta]vrq\\\"\\)\[NoBreak] already exists. Click \
+\[NoBreak]\\!\\(\\*TagBox[ButtonBox[PaneSelectorBox[{False -> \
+\\\"\\\\\\\"here\\\\\\\"\\\", Rule[True, \
+StyleBox[\\\"\\\\\\\"here\\\\\\\"\\\", List[\\\"HyperlinkActive\\\"]]]}, \
+Dynamic[CurrentValue[\\\"MouseOver\\\"]], Rule[BaseStyle, \
+List[\\\"Hyperlink\\\"]], Rule[FrameMargins, 0], Rule[ImageSize, Automatic]], \
+Rule[BaseStyle, \\\"Hyperlink\\\"], RuleDelayed[ButtonData, \
+List[\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Theta]vrq.nb\\\", \
+None]], Rule[ButtonNote, \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Theta]vrq.nb\\\"]], \
+Function[Annotation[Slot[1], \
+\\\"/Users/bbeckman/Library/Mathematica/Applications/Dzhanybekhov/\
+Documentation/English/ReferencePages/Symbols/___\\\\[Theta]vrq.nb\\\", \
+\\\"Hyperlink\\\"]]]\\)\[NoBreak] to make changes. \\!\\(\\*ButtonBox[\\\"\
+\[RightSkeleton]\\\", ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ApplicationMaker/ref/CreateReferencePages\\\", \
+ButtonNote -> \
+\\\"ApplicationMaker`DocumentationMaker`CreateReferencePages::symb\\\"]\\)\"\>\
+"}]], "Message", "MSG",
+ CellChangeTimes->{3.610363327317048*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"BuildApplication", "[", "\"\<Dzhanybekhov\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.609715422277052*^9, 3.6097154354353867`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"drqdt\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["drqdt", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363330949607*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"d\[Omega]dt\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["d\[Omega]dt", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363332678941*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"qv\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["qv", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363334011573*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"ranrq\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["ranrq", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363334528132*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"ranv\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["ranv", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363335028118*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"ran\[Theta]\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["ran\[Theta]", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363335577829*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"rf\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["rf", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363336079741*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"rk4\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["rk4", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363336578117*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"rq\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["rq", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.6103633370692587`*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"rqn\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["rqn", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.6103633375945063`*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"rqw\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["rqw", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363338101138*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"rv\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["rv", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363338617649*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"vq\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["vq", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.61036333913834*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"vrq\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["vrq", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363339645074*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"wrq\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["wrq", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363340145069*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"\[Theta]rq\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["\[Theta]rq", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.610363340678858*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"\[Theta]vrq\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["\[Theta]vrq", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.61036334117949*^9}],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{
+   StyleBox["\<\"Adding Reference : \"\>", "MSG",
+    StripOnInput->False,
+    LineColor->GrayLevel[0.5],
+    FrontFaceColor->GrayLevel[0.5],
+    BackFaceColor->GrayLevel[0.5],
+    GraphicsColor->GrayLevel[0.5],
+    FontColor->GrayLevel[0.5]], "\[InvisibleSpace]", 
+   StyleBox["\<\"\[Omega]n\"\>", "MSG",
+    StripOnInput->False,
+    FontWeight->Bold]}],
+  SequenceForm[
+   Style["Adding Reference : ", "MSG", 
+    GrayLevel[0.5]], 
+   Style["\[Omega]n", "MSG", Bold]],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.6097154641445303`*^9, 3.6097187535801363`*^9, 
+  3.609719049965928*^9, 3.609719284771618*^9, 3.609719580331373*^9, 
+  3.609719677252529*^9, 3.6097197677932053`*^9, 3.609756853233231*^9, 
+  3.61036334171817*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "rq$$"}]], "Input",
+ CellChangeTimes->{{3.609718772807802*^9, 3.6097187752086973`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"Information", "::", "notfound"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Symbol \[NoBreak]\\!\\(\\\"rq$$\\\"\\)\[NoBreak] not \
+found. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/message/General/notfound\\\", ButtonNote -> \
+\\\"Information::notfound\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.6097196885993357`*^9, 3.609719775942089*^9, 
+  3.609756859818598*^9, 3.609756910409013*^9, 3.610363341884644*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"??", "\[Theta]rq"}]], "Input",
+ CellChangeTimes->{{3.609756921121352*^9, 3.609756927774091*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"\[Theta]rq[rq] extracts the angle of rotation from the \
+rotation quaternion rq. \[Theta]rq[rq] is equivalent to \
+2\[NonBreakingSpace]ArcCos[rq\[LeftDoubleBracket]1\[RightDoubleBracket]].\"\>\
+", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/\[Theta]rq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6103633421148653`*^9},
+ CellTags->"Info3610338141-8718031"],
+
+Cell[BoxData[
+ InterpretationBox[GridBox[{
+    {
+     RowBox[{
+      RowBox[{"Attributes", "[", "\[Theta]rq", "]"}], "=", 
+      RowBox[{"{", "Protected", "}"}]}]},
+    {" "},
+    {GridBox[{
+       {
+        RowBox[{
+         RowBox[{"\[Theta]rq", "[", "rq_Quaternion", "]"}], ":=", 
+         RowBox[{"2", " ", 
+          RowBox[{"ArcCos", "[", 
+           RowBox[{
+           "rq", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], 
+           "]"}]}]}]},
+       {" "},
+       {
+        RowBox[{
+         RowBox[{
+         "\[Theta]rq", "[", 
+          "Dzhanybekhov`RotationQuaternions`Private`args___", "]"}], ":=", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Message", "[", 
+            RowBox[{
+             StyleBox[
+              RowBox[{"\[Theta]rq", "::", "argerr"}], "MessageName"], ",", 
+             RowBox[{
+             "{", "Dzhanybekhov`RotationQuaternions`Private`args", "}"}]}], 
+            "]"}], ";", "$Failed"}], ")"}]}]}
+      },
+      BaselinePosition->{Baseline, {1, 1}},
+      GridBoxAlignment->{
+       "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+        "RowsIndexed" -> {}},
+      GridBoxItemSize->{"Columns" -> {{
+           Scaled[0.999]}}, "ColumnsIndexed" -> {}, "Rows" -> {{1.}}, 
+        "RowsIndexed" -> {}}]}
+   },
+   BaselinePosition->{Baseline, {1, 1}},
+   GridBoxAlignment->{
+    "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, "Rows" -> {{Baseline}}, 
+     "RowsIndexed" -> {}}],
+  Definition[Dzhanybekhov`RotationQuaternions`\[Theta]rq],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.61036334221817*^9},
+ CellTags->"Info3610338141-8718031"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "rq"}]], "Input",
+ CellChangeTimes->{{3.60975730984173*^9, 3.609757310814459*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"rq[\[Theta],vec3] produces a rotation quaternion for the \
+given angle counterclockwise about the given 3-vector direction. \
+rq[\[Theta],x,y,z] accepts the components of the direction vector \
+individually.\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/rq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363342566832*^9},
+ CellTags->"Info3610338142-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "ranv"}]], "Input",
+ CellChangeTimes->{{3.6097573199918747`*^9, 3.6097573254620323`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"ranv[] produces a random 3-vector with components \
+independently sampled uniformly from -1 to 1, inclusive.\"\>", "MSG"], 
+  "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/ranv"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6103633429799337`*^9},
+ CellTags->"Info3610338142-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "ran\[Theta]"}]], "Input",
+ CellChangeTimes->{{3.609757335965663*^9, 3.609757341909174*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"ran\[Theta][] produces a random angle between 0 and 2\[Pi], \
+inclusive.\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/ran\[Theta]"]}]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.6103633434376173`*^9},
+ CellTags->"Info3610338143-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "ranrq"}]], "Input",
+ CellChangeTimes->{{3.609757351460411*^9, 3.609757353586361*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"ranrq[] produces a random rotation quaternion, with a random \
+angle uniformly between 0 and 2\[Pi] and a vector with rectangular components \
+independently and uniformly between -1 and 1.\"\>", "MSG"], 
+  "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/ranrq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363343808917*^9},
+ CellTags->"Info3610338143-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "rqw"}]], "Input",
+ CellChangeTimes->{{3.609757365050727*^9, 3.60975736600414*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"rqw[w] produces a rotation quaternion from a twist vector, \
+which is a 3-vector whose magnitude is the angle of twist in radians \
+counterclockwise about an axis aligned with the direction of the vector.\"\>",
+    "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/rqw"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6103633441475267`*^9},
+ CellTags->"Info3610338143-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "vq"}]], "Input",
+ CellChangeTimes->{{3.6097573805668097`*^9, 3.6097573864126873`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"vq[q] extracts the vector part of the general quaternion q.\"\
+\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/vq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363344486463*^9},
+ CellTags->"Info3610338144-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "wrq"}]], "Input",
+ CellChangeTimes->{{3.6097573994540777`*^9, 3.609757400802302*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"wrq[rq] produces a twist vector from a rotation quaternion. A \
+twist vector is a 3-vector whose magnitude is the angle of twist in radiancs \
+counterclockwise about an axis aligned with the direction of the vector.\"\>",
+    "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/wrq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363344847436*^9},
+ CellTags->"Info3610338144-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "\[Theta]rq"}]], "Input",
+ CellChangeTimes->{{3.609757413277272*^9, 3.609757421076033*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"\[Theta]rq[rq] extracts the angle of rotation from the \
+rotation quaternion rq. \[Theta]rq[rq] is equivalent to \
+2\[NonBreakingSpace]ArcCos[rq\[LeftDoubleBracket]1\[RightDoubleBracket]].\"\>\
+", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/\[Theta]rq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363345198202*^9},
+ CellTags->"Info3610338145-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["a"], "Input",
+ CellChangeTimes->{3.6097574352528677`*^9}],
+
+Cell[BoxData["a"], "Output",
+ CellChangeTimes->{3.610363345392775*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "vrq"}]], "Input",
+ CellChangeTimes->{{3.609756938469314*^9, 3.609756941082471*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"vrq[rq] extracts the direction of rotation as a normalized \
+3-vector from the rotation quaternion rq.\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/vrq"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363345598598*^9},
+ CellTags->"Info3610338145-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "\[Theta]vrq"}]], "Input",
+ CellChangeTimes->{{3.609756960462266*^9, 3.609756970626054*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"\[Theta]vrq[rq] extracts the angle and direction of rotation \
+from the rotation quaternion rq and wraps them in a list. \[Theta]vrq[rq] is \
+equivalent to {\[Theta]rq[rq],vrq[rq]}\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/\[Theta]vrq"]}]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.610363346513749*^9},
+ CellTags->"Info3610338145-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "qv"}]], "Input",
+ CellChangeTimes->{{3.60975725004872*^9, 3.609757251871196*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"qv[v] produces a quaternion representative of the 3-vector v.\
+\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/qv"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.6103633468991613`*^9},
+ CellTags->"Info3610338146-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "rv"}]], "Input",
+ CellChangeTimes->{{3.609757263793713*^9, 3.609757264239184*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"rv[rq,v] produces a new 3-vector by rotating the given \
+3-vector v as specifed by the rotation quaternion rq. The original vector is \
+not changed.\"\>", "MSG"], "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/rv"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363347236211*^9},
+ CellTags->"Info3610338147-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "rf"}]], "Input",
+ CellChangeTimes->{{3.609757294038129*^9, 3.60975729591214*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"rf[rq,v] produces a new 3-vector from v with components in a \
+reference frame computed by rotating the old reference frame as specified by \
+the rotation quaternion rq; equivalent to rv[rq,-v].\"\>", "MSG"], 
+  "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:Dzhanybekhov/ref/rf"]}]], "Print", "PrintUsage",
+ CellChangeTimes->{3.610363347777152*^9},
+ CellTags->"Info3610338147-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "DeployApplication"}]], "Input",
+ CellChangeTimes->{{3.6103633863971367`*^9, 3.6103633887319508`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["\<\"DeployApplication[\\!\\(\\*\\nStyleBox[\\\"appName\\\", \
+\\\"TI\\\"]\\), \\!\\(\\*\\nStyleBox[\\\"destDir\\\", \\\"TI\\\"]\\)] copies \
+the m files and documentation of your application into \
+\\!\\(\\*\\nStyleBox[\\\"destDir\\\", \\\"TI\\\"]\\)\"\>", "MSG"], 
+  "\[NonBreakingSpace]", 
+  ButtonBox[
+   StyleBox["\[RightSkeleton]", "SR"],
+   Active->True,
+   BaseStyle->"Link",
+   ButtonData->"paclet:ApplicationMaker/ref/DeployApplication"]}]], "Print", \
+"PrintUsage",
+ CellChangeTimes->{3.610363390788185*^9},
+ CellTags->"Info3610338190-8718031"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DeployApplication", "[", 
+  RowBox[{
+  "\"\<Dzhanybekhov\>\"", ",", 
+   "\"\</Users/Library/Mathematica/Applications/Dzhanybekhov\>\""}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.610363368127372*^9, 3.610363430288926*^9}}],
+
+Cell[BoxData["$Failed"], "Output",
+ CellChangeTimes->{{3.610363418402637*^9, 3.610363430987615*^9}}]
+}, Open  ]]
+},
+WindowSize->{720, 852},
+WindowMargins->{{0, Automatic}, {Automatic, 23}},
+ShowSelection->True,
+Magnification:>1.25 Inherited,
+FrontEndVersion->"9.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (January 25, \
+2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{
+ "Info3610338124-8525972"->{
+  Cell[1781, 50, 492, 12, 51, "Print",
+   CellTags->"Info3610338124-8525972"],
+  Cell[2726, 78, 527, 12, 89, "Print",
+   CellTags->"Info3610338124-8525972"]},
+ "Info3610338125-8525972"->{
+  Cell[3407, 99, 486, 11, 70, "Print",
+   CellTags->"Info3610338125-8525972"]},
+ "Info3610338141-8718031"->{
+  Cell[52584, 1257, 520, 12, 70, "Print",
+   CellTags->"Info3610338141-8718031"],
+  Cell[53107, 1271, 1639, 47, 145, "Print",
+   CellTags->"Info3610338141-8718031"]},
+ "Info3610338142-8718031"->{
+  Cell[54908, 1328, 527, 12, 89, "Print",
+   CellTags->"Info3610338142-8718031"],
+  Cell[55592, 1349, 435, 11, 70, "Print",
+   CellTags->"Info3610338142-8718031"]},
+ "Info3610338143-8718031"->{
+  Cell[56187, 1369, 405, 11, 51, "Print",
+   CellTags->"Info3610338143-8718031"],
+  Cell[56746, 1389, 514, 12, 89, "Print",
+   CellTags->"Info3610338143-8718031"],
+  Cell[57411, 1410, 531, 12, 89, "Print",
+   CellTags->"Info3610338143-8718031"]},
+ "Info3610338144-8718031"->{
+  Cell[58097, 1431, 381, 10, 51, "Print",
+   CellTags->"Info3610338144-8718031"],
+  Cell[58632, 1450, 540, 12, 89, "Print",
+   CellTags->"Info3610338144-8718031"]},
+ "Info3610338145-8718031"->{
+  Cell[59331, 1471, 518, 12, 70, "Print",
+   CellTags->"Info3610338145-8718031"],
+  Cell[60182, 1501, 423, 10, 70, "Print",
+   CellTags->"Info3610338145-8718031"],
+  Cell[60765, 1520, 511, 12, 70, "Print",
+   CellTags->"Info3610338145-8718031"]},
+ "Info3610338146-8718031"->{
+  Cell[61426, 1541, 385, 10, 51, "Print",
+   CellTags->"Info3610338146-8718031"]},
+ "Info3610338147-8718031"->{
+  Cell[61962, 1560, 468, 11, 70, "Print",
+   CellTags->"Info3610338147-8718031"],
+  Cell[62580, 1580, 517, 12, 89, "Print",
+   CellTags->"Info3610338147-8718031"]},
+ "Info3610338190-8718031"->{
+  Cell[63267, 1601, 590, 14, 70, "Print",
+   CellTags->"Info3610338190-8718031"]}
+ }
+*)
+(*CellTagsIndex
+CellTagsIndex->{
+ {"Info3610338124-8525972", 64631, 1645},
+ {"Info3610338125-8525972", 64819, 1650},
+ {"Info3610338141-8718031", 64928, 1653},
+ {"Info3610338142-8718031", 65124, 1658},
+ {"Info3610338143-8718031", 65318, 1663},
+ {"Info3610338144-8718031", 65594, 1670},
+ {"Info3610338145-8718031", 65788, 1675},
+ {"Info3610338146-8718031", 66064, 1682},
+ {"Info3610338147-8718031", 66176, 1685},
+ {"Info3610338190-8718031", 66370, 1690}
+ }
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 131, 2, 35, "Input"],
+Cell[CellGroupData[{
+Cell[713, 26, 223, 3, 36, "Input"],
+Cell[939, 31, 681, 10, 57, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1657, 46, 121, 2, 35, "Input"],
+Cell[1781, 50, 492, 12, 51, "Print",
+ CellTags->"Info3610338124-8525972"]
+}, Open  ]],
+Cell[2288, 65, 297, 5, 36, "Input"],
+Cell[CellGroupData[{
+Cell[2610, 74, 113, 2, 35, "Input"],
+Cell[2726, 78, 527, 12, 89, "Print",
+ CellTags->"Info3610338124-8525972"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3290, 95, 114, 2, 35, "Input"],
+Cell[3407, 99, 486, 11, 70, "Print",
+ CellTags->"Info3610338125-8525972"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3930, 115, 281, 6, 35, "Input"],
+Cell[4214, 123, 506, 9, 35, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4757, 137, 217, 5, 36, "Input"],
+Cell[4977, 144, 1471, 26, 71, "Message"],
+Cell[6451, 172, 241, 3, 35, "Output"],
+Cell[6695, 177, 1432, 27, 71, "Message"],
+Cell[8130, 206, 1392, 25, 71, "Message"],
+Cell[9525, 233, 197, 4, 35, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9759, 242, 209, 4, 36, "Input"],
+Cell[9971, 248, 684, 15, 27, "Print"],
+Cell[10658, 265, 1448, 27, 50, "Message"],
+Cell[12109, 294, 1484, 27, 50, "Message"],
+Cell[13596, 323, 1440, 27, 50, "Message"],
+Cell[15039, 352, 1440, 27, 50, "Message"],
+Cell[16482, 381, 1476, 27, 50, "Message"],
+Cell[17961, 410, 702, 15, 26, "Print"],
+Cell[18666, 427, 1436, 27, 50, "Message"],
+Cell[20105, 456, 1448, 27, 50, "Message"],
+Cell[21556, 485, 1446, 27, 50, "Message"],
+Cell[23005, 514, 1484, 27, 50, "Message"],
+Cell[24492, 543, 1436, 27, 50, "Message"],
+Cell[25931, 572, 1438, 27, 50, "Message"],
+Cell[27372, 601, 1442, 27, 50, "Message"],
+Cell[28817, 630, 1436, 27, 50, "Message"],
+Cell[30256, 659, 1436, 27, 50, "Message"],
+Cell[31695, 688, 1439, 27, 50, "Message"],
+Cell[33137, 717, 1442, 27, 50, "Message"],
+Cell[34582, 746, 1480, 27, 50, "Message"],
+Cell[36065, 775, 1484, 27, 50, "Message"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[37586, 807, 156, 2, 36, "Input"],
+Cell[CellGroupData[{
+Cell[37767, 813, 770, 21, 26, "Print"],
+Cell[38540, 836, 782, 21, 26, "Print"],
+Cell[39325, 859, 764, 21, 26, "Print"],
+Cell[40092, 882, 770, 21, 26, "Print"],
+Cell[40865, 905, 768, 21, 26, "Print"],
+Cell[41636, 928, 782, 21, 26, "Print"],
+Cell[42421, 951, 764, 21, 26, "Print"],
+Cell[43188, 974, 766, 21, 26, "Print"],
+Cell[43957, 997, 766, 21, 26, "Print"],
+Cell[44726, 1020, 768, 21, 26, "Print"],
+Cell[45497, 1043, 766, 21, 26, "Print"],
+Cell[46266, 1066, 764, 21, 26, "Print"],
+Cell[47033, 1089, 763, 21, 26, "Print"],
+Cell[47799, 1112, 766, 21, 26, "Print"],
+Cell[48568, 1135, 766, 21, 26, "Print"],
+Cell[49337, 1158, 780, 21, 26, "Print"],
+Cell[50120, 1181, 781, 21, 26, "Print"],
+Cell[50904, 1204, 777, 21, 26, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[51730, 1231, 115, 2, 35, "Input"],
+Cell[51848, 1235, 554, 11, 29, "Message"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[52439, 1251, 120, 2, 35, "Input"],
+Cell[CellGroupData[{
+Cell[52584, 1257, 520, 12, 70, "Print",
+ CellTags->"Info3610338141-8718031"],
+Cell[53107, 1271, 1639, 47, 145, "Print",
+ CellTags->"Info3610338141-8718031"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[54795, 1324, 110, 2, 35, "Input"],
+Cell[54908, 1328, 527, 12, 89, "Print",
+ CellTags->"Info3610338142-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[55472, 1345, 117, 2, 35, "Input"],
+Cell[55592, 1349, 435, 11, 70, "Print",
+ CellTags->"Info3610338142-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[56064, 1365, 120, 2, 35, "Input"],
+Cell[56187, 1369, 405, 11, 51, "Print",
+ CellTags->"Info3610338143-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[56629, 1385, 114, 2, 35, "Input"],
+Cell[56746, 1389, 514, 12, 89, "Print",
+ CellTags->"Info3610338143-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[57297, 1406, 111, 2, 35, "Input"],
+Cell[57411, 1410, 531, 12, 89, "Print",
+ CellTags->"Info3610338143-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[57979, 1427, 115, 2, 35, "Input"],
+Cell[58097, 1431, 381, 10, 51, "Print",
+ CellTags->"Info3610338144-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[58515, 1446, 114, 2, 35, "Input"],
+Cell[58632, 1450, 540, 12, 89, "Print",
+ CellTags->"Info3610338144-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[59209, 1467, 119, 2, 35, "Input"],
+Cell[59331, 1471, 518, 12, 70, "Print",
+ CellTags->"Info3610338145-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[59886, 1488, 71, 1, 35, "Input"],
+Cell[59960, 1491, 70, 1, 35, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[60067, 1497, 112, 2, 35, "Input"],
+Cell[60182, 1501, 423, 10, 70, "Print",
+ CellTags->"Info3610338145-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[60642, 1516, 120, 2, 35, "Input"],
+Cell[60765, 1520, 511, 12, 70, "Print",
+ CellTags->"Info3610338145-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[61313, 1537, 110, 2, 35, "Input"],
+Cell[61426, 1541, 385, 10, 51, "Print",
+ CellTags->"Info3610338146-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[61848, 1556, 111, 2, 35, "Input"],
+Cell[61962, 1560, 468, 11, 70, "Print",
+ CellTags->"Info3610338147-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[62467, 1576, 110, 2, 35, "Input"],
+Cell[62580, 1580, 517, 12, 89, "Print",
+ CellTags->"Info3610338147-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[63134, 1597, 130, 2, 36, "Input"],
+Cell[63267, 1601, 590, 14, 70, "Print",
+ CellTags->"Info3610338190-8718031"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[63894, 1620, 247, 6, 57, "Input"],
+Cell[64144, 1628, 100, 1, 69, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
