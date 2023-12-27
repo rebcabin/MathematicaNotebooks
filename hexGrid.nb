@@ -1,0 +1,204 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      6448,        194]
+NotebookOptionsPosition[      5877,        176]
+NotebookOutlinePosition[      6273,        192]
+CellTagsIndexPosition[      6230,        189]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"pattern", " ", "aliases"}], "*)"}], 
+  RowBox[{
+   RowBox[{
+    RowBox[{"p1", "=", 
+     RowBox[{"p1", ":", 
+      RowBox[{"{", 
+       RowBox[{"i_", ",", "j_"}], "}"}]}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"spec", "=", 
+     RowBox[{"spec", ":", 
+      RowBox[{"PatternSequence", "[", 
+       RowBox[{"state_", ",", "p1"}], "]"}]}]}], ";"}], "\[IndentingNewLine]",
+    "\n", 
+   RowBox[{"(*", "parameters", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"crules", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"0", "->", "LightGray"}], ",", 
+       RowBox[{"1", "->", "Blue"}], ",", 
+       RowBox[{"2", "->", "Red"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   "\n", 
+   RowBox[{"(*", 
+    RowBox[{"internal", " ", "functions"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"hexagon", "[", "p1", "]"}], ":=", 
+    RowBox[{"Polygon", "@", 
+     RowBox[{"CirclePoints", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"Sqrt", "[", "3", "]"}], " ", 
+          RowBox[{"(", 
+           RowBox[{"j", "-", 
+            RowBox[{"2", " ", "i"}]}], ")"}]}], ",", 
+         RowBox[{
+          RowBox[{"-", "3"}], " ", "j"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"2", ",", 
+         RowBox[{"90", "\[Degree]"}]}], "}"}], ",", "6"}], "]"}]}]}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"hexagon", "[", 
+     RowBox[{"p1", ",", 
+      RowBox[{"color_", "?", "ColorQ"}], ",", 
+      RowBox[{"edge_", ":", "None"}]}], "]"}], ":=", 
+    RowBox[{"{", 
+     RowBox[{"color", ",", 
+      RowBox[{"EdgeForm", "[", "edge", "]"}], ",", 
+      RowBox[{"hexagon", "[", "p1", "]"}]}], "}"}]}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"hexagon", "[", "spec", "]"}], ":=", 
+    RowBox[{"hexagon", "[", 
+     RowBox[{"p1", ",", 
+      RowBox[{"state", "/.", " ", "crules"}]}], "]"}]}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"boardClicked", "[", "p1", "]"}], "/;", 
+     RowBox[{
+      RowBox[{"board", "[", 
+       RowBox[{"[", 
+        RowBox[{"i", ",", "j"}], "]"}], "]"}], "==", "0"}]}], ":=", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"board", "[", 
+        RowBox[{"[", 
+         RowBox[{"i", ",", "j"}], "]"}], "]"}], "=", "1"}], ";", 
+      RowBox[{"computer", "[", "]"}], ";"}], ")"}]}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"computer", "[", "]"}], ":=", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"board", "[", 
+         RowBox[{"[", "##", "]"}], "]"}], "=", "2"}], ")"}], "&"}], "@@", 
+     RowBox[{"RandomChoice", "@", 
+      RowBox[{"Position", "[", 
+       RowBox[{"board", ",", "0"}], "]"}]}]}]}], "\n", "\[IndentingNewLine]", 
+   
+   RowBox[{
+    RowBox[{"eventHandler", "[", "spec", "]"}], ":=", 
+    RowBox[{
+     RowBox[{"hexagon", "[", "spec", "]"}], "~", "Mouseover", "~", 
+     RowBox[{"hexagon", "[", 
+      RowBox[{"1", ",", "p1"}], "]"}], "~", "MouseAppearance", "~", 
+     "\"\<LinkHand\>\"", "~", "EventHandler", "~", 
+     RowBox[{"{", 
+      RowBox[{"\"\<MouseClicked\>\"", ":>", 
+       RowBox[{"boardClicked", "[", "p1", "]"}]}], "}"}]}]}], "\n", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"gameTile", "[", "spec", "]"}], ":=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"eventHandler", "[", "spec", "]"}], ",", 
+      RowBox[{"hexagon", "[", 
+       RowBox[{"p1", ",", "Transparent", ",", "Black"}], "]"}]}], "}"}]}], 
+   "\n", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"renderBoard", "[", 
+     RowBox[{"board_", ",", 
+      RowBox[{"size_", ":", "500"}]}], "]"}], ":=", 
+    RowBox[{
+     RowBox[{"Graphics", "[", 
+      RowBox[{
+       RowBox[{"MapIndexed", "[", 
+        RowBox[{"gameTile", ",", "board", ",", 
+         RowBox[{"{", "2", "}"}]}], "]"}], ",", 
+       RowBox[{"ImageSize", "->", "size"}]}], "]"}], "//", "Deploy"}]}], 
+   "\[IndentingNewLine]", "\n", 
+   RowBox[{"(*", "gameplay", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"board", "=", 
+     RowBox[{"ConstantArray", "[", 
+      RowBox[{"0", ",", 
+       RowBox[{"{", 
+        RowBox[{"11", ",", "11"}], "}"}]}], "]"}]}], ";"}], "\n", 
+   RowBox[{"Dynamic", "[", 
+    RowBox[{
+     RowBox[{"renderBoard", "[", "board", "]"}], ",", 
+     RowBox[{"TrackedSymbols", ":>", 
+      RowBox[{"{", "board", "}"}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.9123734641290407`*^9, 3.912373466782009*^9}},
+ CellLabel->
+  "In[491]:=",ExpressionUUID->"164c7767-9440-4872-8a96-da13b9b555ee"],
+
+Cell[BoxData[
+ DynamicBox[ToBoxes[
+   $CellContext`renderBoard[$CellContext`board], StandardForm],
+  ImageSizeCache->{500., {155., 159.}},
+  TrackedSymbols:>{$CellContext`board}]], "Output",
+ CellChangeTimes->{3.912373467767696*^9},
+ CellLabel->
+  "Out[503]=",ExpressionUUID->"c3471241-bc79-40b5-9e09-85cbd09db5d8"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SystemCredential", "[", "\"\<OPENAI_API_KEY\>\"", "]"}], "=", 
+  "\"\<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\>\""}]], "Input",
+ CellChangeTimes->{{3.912517496606057*^9, 3.912517507723143*^9}, {
+  3.912517594832896*^9, 3.912517611033482*^9}},
+ CellLabel->
+  "In[504]:=",ExpressionUUID->"61f78f63-3c77-401d-b8d9-fc59add6c2aa"]
+},
+WindowSize->{808, 911},
+WindowMargins->{{1288, Automatic}, {Automatic, 104}},
+FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (July 24, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"15aaed5a-81f7-4954-8b31-612d4b0abc2c"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 4588, 133, 598, "Input",ExpressionUUID->"164c7767-9440-4872-8a96-da13b9b555ee"],
+Cell[5171, 157, 315, 7, 331, "Output",ExpressionUUID->"c3471241-bc79-40b5-9e09-85cbd09db5d8"]
+}, Open  ]],
+Cell[5501, 167, 372, 7, 85, "Input",ExpressionUUID->"61f78f63-3c77-401d-b8d9-fc59add6c2aa"]
+}
+]
+*)
+
+(* End of internal cache information *)
+
