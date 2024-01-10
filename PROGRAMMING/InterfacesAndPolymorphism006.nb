@@ -1,0 +1,1986 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     77616,       1976]
+NotebookOptionsPosition[     63025,       1766]
+NotebookOutlinePosition[     63421,       1782]
+CellTagsIndexPosition[     63378,       1779]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Polymorphism and Interfaces in Mathematica", "Title",ExpressionUUID->"2ba705f7-9116-4e77-925b-57630a118567"],
+
+Cell["\<\
+Brian Beckman
+Version of 30 September 2023\
+\>", "Subtitle",ExpressionUUID->"7d9cce42-ad72-4d22-ae3c-e2e2e0b32183"],
+
+Cell[CellGroupData[{
+
+Cell["Introduction", "Section",ExpressionUUID->"c06f1663-6920-4110-a0b1-2f90f48b55df"],
+
+Cell["\<\
+Imagine the classic C# Enumerable API, leaving out Reset, and implement it \
+for Mathematica Lists and Mathematica hash tables, which are lists of \
+replacement rules subject to Dispatch. This illustrates a polymorphic \
+interface, that is, an interface implemented differently by different \
+concrete providers.\
+\>", "Text",ExpressionUUID->"b2d6ddcb-494f-4875-9305-7f1946898c18"],
+
+Cell["\<\
+Then step via the now-classic duality argument [1] to interfaces for \
+Observable and Observer.\
+\>", "Text",ExpressionUUID->"d78227cb-a75f-4682-abe8-76caa4149893"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["References", "Section",ExpressionUUID->"83865982-3f02-4cf1-9061-77cc2752de88"],
+
+Cell["Enumerable Dual to Observable: http://stanford.io/1kw535m", \
+"ItemNumbered",ExpressionUUID->"f2e587b4-2729-4ab5-9641-e4b602f863ec"],
+
+Cell["IEnumerator Interface: http://bit.ly/1jxWqHe", "ItemNumbered",ExpressionUUID->"e8060d7f-2245-4dac-9bb4-60f81c5dd324"],
+
+Cell["Pattern-Matching Bug: http://bit.ly/1bosOYv", "ItemNumbered",ExpressionUUID->"9b9aa592-179d-4a5c-9c3c-b82d0c202342"],
+
+Cell["Standard Query Operators: http://bit.ly/IS29t3", "ItemNumbered",ExpressionUUID->"5b7415d2-d5e2-4586-8dac-753768f363b7"],
+
+Cell["Possible Notebook Bug: http://bit.ly/1gUoJQD", "ItemNumbered",ExpressionUUID->"bdb700ed-58e4-49ff-87c4-c2b4d21a83b2"],
+
+Cell["Clojure's hash-map API: http://clojure.org/data_structures", \
+"ItemNumbered",ExpressionUUID->"070bebe6-d3af-4dbf-9242-47f750f99e4b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Object-Oriented Programming (OOP)", "Section",ExpressionUUID->"20c31112-6301-409b-bfd7-7d1e490ee671"],
+
+Cell["\<\
+Represent oop's objects as lists of rules that transform patterns into \
+expressions. When an object goes out of scope, its list of rules is \
+garbage-collected. This representation avoids stocking Mathematica's global \
+symbol table with rules, avoiding in-the-offing explicit memory management \
+for those rules. \
+\>", "Text",ExpressionUUID->"8cb5c905-abd3-4322-8b55-6e48750e5bb6"],
+
+Cell["\<\
+Every object-as-instance-of-a-class must have a rule for every class member. \
+Likewise, an object-as-implementer-of-interfaces must have a rule for every \
+member of every interface that the object implements. \
+\>", "Text",ExpressionUUID->"2b22870e-0212-4b7b-8577-a7fb07d15eff"],
+
+Cell["\<\
+We say that an object provides implementations for its class's and \
+interface's members, or that the object is a provider of its class's and \
+interface's members. In both cases, the object provides implementations by \
+providing rewrite rules. \
+\>", "Text",ExpressionUUID->"70897a47-c9f5-4e95-87fa-4a785ae1077d"],
+
+Cell[CellGroupData[{
+
+Cell["Type-Checking", "Subsection",ExpressionUUID->"601659a2-79fe-4cde-8442-57ff66ede7b0"],
+
+Cell["\<\
+We insist that an object must be a list of rewrite rules explicitly \
+constructed in a Dispatch table, i.e., an expression with Head Dispatch. \
+\>", "Text",ExpressionUUID->"4d9b652e-f196-4569-9d3c-bed26c6a5c97"],
+
+Cell["\<\
+Since Mathematica rewrites dispatches back to lists at its own discretion, we \
+cannot be sure that every object is a Dispatch even if we insist that the \
+user explicitly construct objects by invoking Dispatch. Instead, we can only \
+check that an object is either a List or a Dispatch, and that's what the \
+helper function ObjectQ does. This helper is invoked as part of the \
+pattern-matching at call sites of functions that require objects. This \
+invocation at the call site implements run-time type checking.\
+\>", "Text",ExpressionUUID->"1619b0f9-dfde-4fca-8316-269de229a958"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", 
+    RowBox[{"RuleQ", ",", "PatternQ", ",", "ObjectQ"}], "]"}], ";"}], 
+  "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"RuleQ", "[", "this_", "]"}], ":=", 
+    RowBox[{"With", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"k", "=", 
+        RowBox[{"Head", "@", "this"}]}], "}"}], ",", 
+      RowBox[{
+       RowBox[{"k", "===", "Rule"}], "||", 
+       RowBox[{"k", "===", "RuleDelayed"}]}]}], "]"}]}], ";"}], "\n"}], "\n", 
+
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"PatternQ", "[", "pattern_", "]"}], ":=", "True"}], ";"}], 
+  "\n"}], "\n", 
+ RowBox[{
+  RowBox[{"ObjectQ", "[", "this_", "]"}], ":=", "\n", 
+  RowBox[{"Switch", "[", 
+   RowBox[{
+    RowBox[{"Head", "@", "this"}], ",", "\n", "Dispatch", ",", "True", ",", 
+    "\n", "List", ",", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+     "Ensure", " ", "every", " ", "element", " ", "is", " ", "a", " ", 
+      "rule"}], " ", "*)"}], 
+    RowBox[{"this", "===", 
+     RowBox[{"Select", "[", 
+      RowBox[{"this", ",", "RuleQ"}], "]"}]}], ",", "\n", "_", ",", "False"}],
+    "]"}]}]}], "Code",ExpressionUUID->"c62e6ecc-652b-43f9-a7bc-840c8a3b147e"],
+
+Cell["\<\
+To type-check that an object provides a certain class or interface, just \
+check that its list-of-rules or its Dispatch contains rules for each required \
+member. \
+\>", "Text",ExpressionUUID->"59f27f06-2ce3-440a-adb9-038847280877"],
+
+Cell["\<\
+Represent types -- i.e., either classes or interfaces -- as lists of the \
+patterns -- i.e., left-hand-sides -- required for each rule -- i.e., member \
+-- of some concrete representation -- i.e., object. For example, every \
+provider of IEnumerator must provide a rule with a pattern MoveNext[] -- a \
+void-to-Boolean method -- and a pattern for Current -- a property producing a \
+value. \
+\>", "Text",ExpressionUUID->"f3245334-6e93-4f7a-a88b-b6378824ef20"],
+
+Cell["\<\
+To check that an object provides such rules, extract the patterns on the \
+left-hand sides of the rules of the object, then check that they are a \
+superset of  the required patterns. A subtlety is that names must be stripped \
+from parameters of patterns-with-parameters, leaving only the types of \
+parameters. For example, we must convert MoveNext[i_Integer] to \
+MoveNext[_Integer]. Accomplish this by rewriting Pattern expressions to Blank \
+expressions (though see this known bug in the patterm-matcher\
+\[NonBreakingSpace][3]).\
+\>", "Text",ExpressionUUID->"d2a15f1b-7617-4455-8586-9343bd7995e9"],
+
+Cell["TODO: recurse ProvidesTypeQ on parameter types.", "Text",ExpressionUUID->"b66f85d2-9574-428c-8129-3a40c0bb9486"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", 
+    RowBox[{
+    "ProvidesTypeQ", ",", "GetRules", ",", "GetPatterns", ",", 
+     "GetReplacements", ",", "StripName"}], "]"}], ";"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"StripName", "[", "\n", 
+    RowBox[{
+     RowBox[{"Verbatim", "[", "Pattern", "]"}], "[", 
+     RowBox[{"nym_", ",", 
+      RowBox[{"typeSpec", ":", 
+       RowBox[{
+        RowBox[{"Verbatim", "[", "Blank", "]"}], "[", "type___", "]"}]}]}], 
+     "]"}], "]"}], ":=", "typeSpec"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"StripName", "[", 
+    RowBox[{"hd_", "[", "args___", "]"}], "]"}], ":=", 
+   RowBox[{"hd", "@@", 
+    RowBox[{"StripName", "/@", 
+     RowBox[{"{", "args", "}"}]}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"StripName", "[", "else_", "]"}], ":=", "else"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"GetRules", "[", 
+     RowBox[{"this_", "?", "ObjectQ"}], "]"}], ":=", "\n", 
+    RowBox[{"Sort", "@", 
+     RowBox[{"With", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"h", "=", 
+         RowBox[{"Head", "@", "this"}]}], "}"}], ",", "\n", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"h", "===", "Dispatch"}], ",", "\n", 
+         RowBox[{"this", "[", 
+          RowBox[{"[", "1", "]"}], "]"}], ",", "\n", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"h", "===", "List"}], ",", "\n", "this", ",", "\n", 
+           RowBox[{"Throw", "[", "\"\<InvalidOperationException\>\"", "]"}]}],
+           "]"}]}], "]"}]}], "]"}]}]}], ";"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"GetPatterns", "[", 
+     RowBox[{"this_", "?", "ObjectQ"}], "]"}], ":=", "\n", 
+    RowBox[{"StripName", "/@", 
+     RowBox[{"First", "/@", 
+      RowBox[{"GetRules", "@", "this"}]}]}]}], ";"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GetReplacements", "[", 
+    RowBox[{"this_", "?", "ObjectQ"}], "]"}], ":=", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"#", "[", 
+      RowBox[{"[", "2", "]"}], "]"}], "&"}], "/@", 
+    RowBox[{"GetRules", "@", "this"}]}]}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"ProvidesTypeQ", "[", 
+    RowBox[{
+     RowBox[{"this_", "?", "ObjectQ"}], ",", "type_List"}], "]"}], ":=", 
+   RowBox[{"SubsetQ", "[", 
+    RowBox[{
+     RowBox[{"StripName", "/@", "type"}], ",", 
+     RowBox[{"GetPatterns", "[", "this", "]"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ProvidesTypeQ", "[", "else___", "]"}], ":=", 
+  RowBox[{"Throw", "[", 
+   RowBox[{"\"\<IllegalArgumentsException: \>\"", "<>", 
+    RowBox[{"ToString", "@", 
+     RowBox[{"{", "else", "}"}]}]}], "]"}]}]}], "Code",ExpressionUUID->\
+"3afc48ef-166e-4a12-ad7b-7ee43e1183af"],
+
+Cell["\<\
+This does not handle generics, type-wildcards, subtyping, and co- and \
+contra-variance. We leave those developments for another time and place. \
+\>", "Text",ExpressionUUID->"04f243bd-7940-49e4-a5f3-bec728433728"],
+
+Cell[CellGroupData[{
+
+Cell["Unit Tests", "Subsubsection",ExpressionUUID->"bd1f991c-1e06-4f07-89e4-143c3009c0d4"],
+
+Cell[BoxData[
+ RowBox[{"ProvidesTypeQ", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+     RowBox[{"x", "+", "y"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"f", "[", 
+     RowBox[{"_Integer", ",", "_Real"}], "]"}], "}"}]}], "]"}]], "Code",Expres\
+sionUUID->"7cc8ddc3-059d-4cbb-815c-672a28101c36"],
+
+Cell[BoxData[
+ RowBox[{"ProvidesTypeQ", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+     RowBox[{"x", "+", "y"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"f", "[", 
+     RowBox[{"p_Integer", ",", "q_Real"}], "]"}], "}"}]}], "]"}]], "Code",Expr\
+essionUUID->"370fe0ec-d1f8-43a0-953d-c550a2a84b9b"],
+
+Cell[BoxData[
+ RowBox[{"foo$", "=", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+     RowBox[{"x", "+", "y"}]}], "}"}], "//", "Dispatch"}]}]], "Code",Expressio\
+nUUID->"b55d3062-d75a-40b7-9b63-59f4cdd833b3"],
+
+Cell[BoxData[
+ RowBox[{"foo$", "[", 
+  RowBox[{"[", "1", "]"}], "]"}]], "Code",ExpressionUUID->"595f6264-8a75-4409-ab49-36838fa1afad"],
+
+Cell[BoxData[
+ RowBox[{"ProvidesTypeQ", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+      RowBox[{"x", "+", "y"}]}], "}"}], "//", "Dispatch"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"f", "[", 
+     RowBox[{"_Integer", ",", "_Real"}], "]"}], "}"}]}], "]"}]], "Code",Expres\
+sionUUID->"97997b70-ae14-4141-a134-cfb5e92bbd75"],
+
+Cell[BoxData[
+ RowBox[{"!", 
+  RowBox[{"ProvidesTypeQ", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+      RowBox[{"x", "+", "y"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"f", "[", 
+      RowBox[{"_Integer", ",", "_Integer"}], "]"}], "}"}]}], "]"}]}]], "Code",\
+ExpressionUUID->"86fd5529-3438-4d00-a291-d9c93dfd37c5"],
+
+Cell[BoxData[
+ RowBox[{"ProvidesTypeQ", "[", "\n", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+      RowBox[{"x", "+", "y"}]}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"f", "[", 
+     RowBox[{"_Integer", ",", "_Real"}], "]"}], "}"}]}], "]"}]], "Code",Expres\
+sionUUID->"b5e7935f-f6e5-4a1a-a166-d0bfe4dc8370"],
+
+Cell[BoxData[
+ RowBox[{"!", 
+  RowBox[{"ProvidesTypeQ", "[", "\n", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"f", "[", 
+        RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+       RowBox[{"x", "+", "y"}]}], ",", 
+      RowBox[{
+       RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{"_Integer", ",", "_Real"}], "]"}], ",", 
+      RowBox[{"h", "[", "_String", "]"}]}], "}"}]}], "]"}]}]], "Code",Expressi\
+onUUID->"8ddae94b-57fb-4a6d-a3c0-68d7266840d3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$obj", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", "\n", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"h", "[", "s2_String", "]"}], ":>", "s2"}], ",", "\n", 
+       RowBox[{
+        RowBox[{"f", "[", 
+         RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+        RowBox[{"x", "+", "y"}]}], ",", "\n", 
+       RowBox[{
+        RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}]}], "}"}], "//", 
+     "Sort"}], "//", "Dispatch"}]}], ";"}]], "Code",ExpressionUUID->"5c3837f6-\
+f73d-4d91-9b61-d08de6b969b9"],
+
+Cell[BoxData[
+ RowBox[{"ProvidesTypeQ", "[", 
+  RowBox[{"$obj", ",", "\n", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"_Integer", ",", "_Real"}], "]"}], ",", 
+     RowBox[{"h", "[", "_String", "]"}]}], "}"}]}], "]"}]], "Code",ExpressionU\
+UID->"a0d98484-8d44-4e52-841d-0f9553a94a3b"],
+
+Cell[BoxData[
+ RowBox[{"ProvidesTypeQ", "[", 
+  RowBox[{"$obj", ",", "\n", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"q_Integer", ",", "p_Real"}], "]"}], ",", 
+     RowBox[{"h", "[", "r_String", "]"}]}], "}"}]}], "]"}]], "Code",Expression\
+UUID->"91237417-7ae9-46c0-b606-e847c24ae797"],
+
+Cell[BoxData[
+ RowBox[{"ProvidesTypeQ", "[", 
+  RowBox[{"$obj", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"_Integer", ",", "_Real"}], "]"}], ",", 
+     RowBox[{"h", "[", "accidentalName_String", "]"}]}], "}"}]}], 
+  "]"}]], "Code",ExpressionUUID->"7f341cd1-8355-4737-b468-e6f0c023c048"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Utility Functions on Types", "Subsection",ExpressionUUID->"520baec5-0362-4581-bd18-3a8de8d69061"],
+
+Cell["\<\
+We need a way to destructively add a rule to a given object, and it's useful \
+to have a method to check for existence of a single rule pattern; \
+ProvidesTypeQ above checks for the existence of multiple rule patterns.\
+\>", "Text",ExpressionUUID->"b2696cc1-4f92-4cbe-bc01-886e08fa571c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", 
+    RowBox[{
+    "HasPattern", ",", "IsPattern", ",", "WriteRule", ",", "RemoveRule"}], 
+    "]"}], ";"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"HasPattern", "[", 
+    RowBox[{
+     RowBox[{"this_", "?", "ObjectQ"}], ",", 
+     RowBox[{"pattern_", "?", "RuleQ"}]}], "]"}], ":=", "\n", 
+   RowBox[{"SubsetQ", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"StripName", "@", 
+       RowBox[{"First", "@", "pattern"}]}], "}"}], ",", 
+     RowBox[{"GetPatterns", "@", "this"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"HasPattern", "[", 
+     RowBox[{
+      RowBox[{"this_", "?", "ObjectQ"}], ",", 
+      RowBox[{"pattern_", "?", "PatternQ"}]}], "]"}], ":=", "\n", 
+    RowBox[{"SubsetQ", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"StripName", "@", "pattern"}], "}"}], ",", 
+      RowBox[{"GetPatterns", "@", "this"}]}], "]"}]}], ";"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"IsPattern", "[", 
+    RowBox[{"this_", ",", 
+     RowBox[{"that_", "?", "RuleQ"}]}], "]"}], ":=", 
+   RowBox[{
+    RowBox[{"StripName", "@", 
+     RowBox[{"First", "@", "this"}]}], "===", 
+    RowBox[{"StripName", "@", 
+     RowBox[{"First", "@", "that"}]}]}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"IsPattern", "[", 
+     RowBox[{"this_", ",", 
+      RowBox[{"that_", "?", "PatternQ"}]}], "]"}], ":=", 
+    RowBox[{
+     RowBox[{"StripName", "@", 
+      RowBox[{"First", "@", "this"}]}], "===", 
+     RowBox[{"StripName", "@", "that"}]}]}], ";"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"RemoveRule", "[", 
+     RowBox[{
+      RowBox[{"this_", "?", "ObjectQ"}], ",", "ruleOrPattern_"}], "]"}], ":=",
+     "\n", 
+    RowBox[{"Sort", "@", 
+     RowBox[{"Select", "[", 
+      RowBox[{
+       RowBox[{"GetRules", "@", "this"}], ",", 
+       RowBox[{
+        RowBox[{"!", 
+         RowBox[{"IsPattern", "[", 
+          RowBox[{"#", ",", "ruleOrPattern"}], "]"}]}], "&"}]}], "]"}]}]}], 
+   ";"}], "\n"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"WriteRule", "[", 
+    RowBox[{
+     RowBox[{"this_", "?", "ObjectQ"}], ",", 
+     RowBox[{"rule_", "?", "RuleQ"}]}], "]"}], ":=", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Append", "[", 
+      RowBox[{
+       RowBox[{"RemoveRule", "[", 
+        RowBox[{"this", ",", "rule"}], "]"}], ",", "rule"}], "]"}], "//", 
+     "Sort"}], "//", "Dispatch"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"WriteRule", "[", "else___", "]"}], ":=", 
+  RowBox[{"Throw", "[", 
+   RowBox[{"\"\<IllegalArgumentsException: \>\"", "<>", 
+    RowBox[{"ToString", "@", 
+     RowBox[{"{", "else", "}"}]}]}], "]"}]}]}], "Code",ExpressionUUID->\
+"464ace44-0531-4efc-bc85-1b93cb892ae6"],
+
+Cell[CellGroupData[{
+
+Cell["Digression: Consider Clojure hash-maps", "Subsubsection",ExpressionUUID->"fb53bbb8-00cf-44f1-9f82-b29f3dcf408c"],
+
+Cell["\<\
+Clojure has an exceptionally well conceived hash-map data structure and \
+collection of functions. We may, in a future version of this document, \
+emulate that structure and its API. Quoting from [6]\
+\>", "Text",ExpressionUUID->"191671a5-6267-4189-842b-cd3dc5f9e310"],
+
+Cell["\<\
+Maps (IPersistentMap)
+A Map is a collection that maps keys to values.Two different map types are \
+provided - hashed and sorted.Hash maps require keys that correctly support \
+hashCode and equals.Sorted maps require keys that implement Comparable, or an \
+instance of Comparator.Hash maps provide faster access (log32N hops) vs (logN \
+hops), but sorted maps are, well, sorted.count is O (1).conj expects another \
+(possibly single entry) map as the item, and returns a new map which is the \
+old map plus the entries from the new, which may overwrite entries of the \
+old.conj also accepts a MapEntry or a vector of two items (key and value).seq \
+returns a sequence of map entries, which are key/value pairs.Sorted map also \
+supports rseq, which returns the entries in reverse order.Maps implement IFn, \
+for invoke () of one argument (a key) with an optional second argument (a \
+default value), i.e.maps are functions of their keys.nil keys and values are \
+ok.Related functions
+Create a new map : hash - map sorted - map sorted - map - by
+' change' a map : assoc dissoc select - keys merge merge - with zipmap
+Examine a map : get contains?find keys vals map?Examine a map entry : key val\
+\
+\>", "Text",ExpressionUUID->"4cc165c4-8420-41bb-910e-3f63f2b836d2"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["UnitTests", "Subsubsection",ExpressionUUID->"71adac94-0de5-494a-9f97-1cde488d3886"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"id", "->", 
+   RowBox[{"Unique", "[", "]"}]}], "}"}]], "Code",ExpressionUUID->"78a63a52-\
+cf19-4d90-9108-9cc582a3709c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"id", "->", 
+    RowBox[{"Unique", "[", "]"}]}], "}"}], " ", ".", " ", "id"}]], "Code",Expr\
+essionUUID->"067b89c7-886a-466a-93d3-0fade052e209"],
+
+Cell[BoxData[
+ RowBox[{"HasPattern", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"id", "->", 
+     RowBox[{"Unique", "[", "]"}]}], "}"}], ",", "jd"}], "]"}]], "Code",Expres\
+sionUUID->"fee0c38b-b1d1-4db8-adfa-6ee595e2c1e9"],
+
+Cell[BoxData[
+ RowBox[{"HasPattern", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"id", "->", 
+     RowBox[{"Unique", "[", "]"}]}], "}"}], ",", "id"}], "]"}]], "Code",Expres\
+sionUUID->"d5e7dc58-e71d-4158-a61e-cfcb71d52ee4"],
+
+Cell[BoxData[
+ RowBox[{"HasPattern", "[", 
+  RowBox[{"$obj", ",", "\n", 
+   RowBox[{"h", "[", "accidentalName_String", "]"}]}], "]"}]], "Code",Expressi\
+onUUID->"875d461b-167e-4776-8b68-5650f6629b44"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"IsPattern", "[", 
+     RowBox[{"#", ",", 
+      RowBox[{"f", "[", 
+       RowBox[{"x_Integer", ",", "y_Real"}], "]"}]}], "]"}], "&"}], "/@", 
+   RowBox[{"GetRules", "@", "$obj"}]}], "===", 
+  RowBox[{"{", 
+   RowBox[{"True", ",", "False", ",", "False"}], "}"}]}]], "Code",ExpressionUU\
+ID->"43c2f6d4-1ed2-40d8-ac43-c88e5be9c163"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RemoveRule", "[", 
+   RowBox[{"$obj", ",", "\n", 
+    RowBox[{"f", "[", 
+     RowBox[{"x_Integer", ",", "y_Real"}], "]"}]}], "\n", "]"}], "===", 
+  RowBox[{"Sort", "@", 
+   RowBox[{"{", "\n", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"h", "[", "s2_String", "]"}], ":>", "s2"}], ",", "\n", 
+     RowBox[{
+      RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}]}], "}"}]}]}]], "Code",E\
+xpressionUUID->"db04b82d-36c3-422a-9b9b-2b3d70fb407d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RemoveRule", "[", 
+   RowBox[{"$obj", ",", "\n", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"x_Integer", ",", "y_Real"}], "]"}], ":>", 
+     RowBox[{"x", "+", "y"}]}]}], "\n", "]"}], "===", 
+  RowBox[{"Sort", "@", 
+   RowBox[{"{", "\n", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"h", "[", "s2_String", "]"}], ":>", "s2"}], ",", "\n", 
+     RowBox[{
+      RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}]}], "}"}]}]}]], "Code",E\
+xpressionUUID->"c321ce97-29bc-43fe-a699-8debfaa74570"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RemoveRule", "[", 
+   RowBox[{"$obj", ",", "\n", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"z_Integer", ",", "q_Real"}], "]"}], ":>", 
+     RowBox[{"x", "+", "y"}]}]}], "\n", "]"}], "===", 
+  RowBox[{"Sort", "@", 
+   RowBox[{"{", "\n", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"h", "[", "s2_String", "]"}], ":>", "s2"}], ",", "\n", 
+     RowBox[{
+      RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}]}], "}"}]}]}]], "Code",E\
+xpressionUUID->"149b2b6b-7637-4cd1-96e3-60b74f1c5aae"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RemoveRule", "[", 
+   RowBox[{"$obj", ",", "\n", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"z_Integer", ",", "q_Real"}], "]"}], ":>", 
+     RowBox[{"z", "+", "q"}]}]}], "\n", "]"}], "===", 
+  RowBox[{"Sort", "@", 
+   RowBox[{"{", "\n", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"h", "[", "s2_String", "]"}], ":>", "s2"}], ",", "\n", 
+     RowBox[{
+      RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}]}], "}"}]}]}]], "Code",E\
+xpressionUUID->"f2377521-da30-4e35-9450-e4b74d93dfdc"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RemoveRule", "[", 
+   RowBox[{"$obj", ",", "\n", 
+    RowBox[{
+     RowBox[{"j", "[", "l_List", "]"}], ":>", 
+     RowBox[{"Length", "@", "l"}]}]}], "]"}], "===", "$obj"}]], "Code",Express\
+ionUUID->"ecccb160-1dfa-461c-b7c2-80bb9c36133e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"WriteRule", "[", 
+   RowBox[{"$obj", ",", 
+    RowBox[{
+     RowBox[{"j", "[", "l_List", "]"}], ":>", 
+     RowBox[{"Length", "@", "l"}]}]}], "]"}], "===", 
+  RowBox[{"Append", "[", 
+   RowBox[{"$obj", ",", "\n", 
+    RowBox[{
+     RowBox[{"j", "[", "l_List", "]"}], ":>", 
+     RowBox[{"Length", "@", "l"}]}]}], "]"}]}]], "Code",ExpressionUUID->\
+"e877f0a2-2d09-410b-bdaf-b9eb0f706b1a"],
+
+Cell[BoxData[
+ RowBox[{"WriteRule", "[", 
+  RowBox[{"$obj", ",", 
+   RowBox[{
+    RowBox[{"f", "[", 
+     RowBox[{"q_Integer", ",", "z_Real"}], "]"}], ":>", 
+    RowBox[{
+     RowBox[{"q", "^", "2"}], "+", 
+     RowBox[{"z", "^", "2"}]}]}]}], "]"}]], "Code",ExpressionUUID->"8b713a89-\
+db62-4b20-a9eb-9a01a0ae9330"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"WriteRule", "[", 
+   RowBox[{"$obj", ",", 
+    RowBox[{
+     RowBox[{"f", "[", 
+      RowBox[{"q_Integer", ",", "z_Real"}], "]"}], ":>", 
+     RowBox[{
+      RowBox[{"q", "^", "2"}], "+", 
+      RowBox[{"z", "^", "2"}]}]}]}], "]"}], "===", 
+  RowBox[{"Sort", "@", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"h", "[", "s2_String", "]"}], ":>", "s2"}], ",", 
+     RowBox[{
+      RowBox[{"g", "[", "s_String", "]"}], ":>", "s"}], ",", 
+     RowBox[{
+      RowBox[{"f", "[", 
+       RowBox[{"q_Integer", ",", "z_Real"}], "]"}], ":>", 
+      RowBox[{
+       RowBox[{"q", "^", "2"}], "+", 
+       RowBox[{"z", "^", "2"}]}]}]}], "}"}]}]}]], "Code",ExpressionUUID->\
+"cd82d1fc-e861-4ff7-9455-7f4de5022325"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Inheritance and Its Style of Polymorphism", "Subsection",ExpressionUUID->"931fe0c4-ce58-4e0f-a227-17bbf732e9cd"],
+
+Cell["\<\
+Particular rules could simulate inheritance and its style of polymorphism \
+either by chasing prototype chains (upward inheritance) or dispatching at run \
+time (downward inheritance). We don't need to take a cosmic position on this; \
+each class and interface can do it in its own way. \
+\>", "Text",ExpressionUUID->"6ac853a3-4c08-41ea-b442-8c1ea02f134f"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Using Objects", "Subsection",ExpressionUUID->"ab5c967a-22b8-45c7-97ce-596073807017"],
+
+Cell["\<\
+To produce application-level results, apply objects' rules to other, \
+arbitrarily rich work-expressions. This is \"rewrite at run time.\" Contrast \
+with the more familiar \"rewrite at compile time,\" which is how standard oop \
+systems transform work-expressions into actionable, application-level \
+work-code. In a future version of this document, we might exhibit a \
+compile-time option.\
+\>", "Text",ExpressionUUID->"5e4052d4-cc5f-4ac5-8305-1d4e2b9b7fb0"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Overload Resolution; Member Lookup", "Subsection",ExpressionUUID->"f7de6a59-66e2-4fe1-9838-71eca15d3008"],
+
+Cell["\<\
+In the current design, member lookup (overload-resolution) is done at run \
+time. Later, we might include lookup at compile time. \
+\>", "Text",ExpressionUUID->"e5b43be5-c949-4f38-94c4-c2ec8e8fd37e"]
+}, Closed]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["IEnumerator and IEnumerable", "Section",ExpressionUUID->"7faaf2eb-31e2-4029-9e52-7a31a8f744cb"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\n", 
+   RowBox[{
+   "IEnumerable", ",", "\n", "IEnumerator", ",", "\n", "IEnumerableType", ",",
+     "\n", "IEnumeratorType", ",", "\n", "GetEnumerator", ",", "\n", 
+    "MoveNext", ",", "\n", "Current"}], "]"}], ";"}]], "Code",ExpressionUUID->\
+"94b014ba-5820-4a02-a2d0-d8b44f3ae437"],
+
+Cell[CellGroupData[{
+
+Cell["Abstract Types", "Subsection",ExpressionUUID->"f507897e-d83d-4d83-9579-d6f3204b886d"],
+
+Cell["\<\
+Here are the abstract specifications of the types IEnumerable and \
+IEnumerator. This is not a full type system, but it is a start in the right \
+direction. You can check these types by calling ProvidesTypeQ[obj,type]. \
+\>", "Text",ExpressionUUID->"a64e749b-0d08-4ba5-9e54-92303e3fb54f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "IEnumerableType", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"IEnumerableType", "=", 
+   RowBox[{"{", 
+    RowBox[{"GetEnumerator", "[", "]"}], "}"}]}], ";"}]}], "Code",ExpressionUU\
+ID->"7755f833-966c-4f27-99c4-3849004032c3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "IEnumeratorType", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"IEnumeratorType", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"MoveNext", "[", "]"}], ",", "Current"}], "}"}]}], 
+  ";"}]}], "Code",ExpressionUUID->"396e63dd-4ad3-4273-918a-e2bf6e9f6830"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Contracts", "Subsection",ExpressionUUID->"e1ffd411-d80e-4f69-acd9-680f977af160"],
+
+Cell["\<\
+Unlike C#, where interfaces are abstract, our IEnumerator provide an \
+implementation that enforces its contract by requiring every provider object \
+to implement the private protocol of type MoveNext[_Integer] and \
+Current[_Integer]. Enforcing is better than simply hoping. The private \
+contract for the private protocol is documented in the comments of the code \
+below.\
+\>", "Text",ExpressionUUID->"77538bf3-09b9-4093-8c22-5dfe6fbee9eb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "privateProtocolType", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"privateProtocolType", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"MoveNext", "[", "_Integer", "]"}], ",", 
+     RowBox[{"Current", "[", "_Integer", "]"}]}], "}"}]}], ";"}]}], "Code",Exp\
+ressionUUID->"ad821ba9-66c7-4b59-8b39-67eb37bcf36b"],
+
+Cell["\<\
+To get the IEnumerator interface for an object named this, \"call\" the \
+following \"function\" on an object (i.e., dispatch list of rewrite rules) to \
+get a new object that implements (provides rules for) the enumerator's state \
+machine. The new object will call the private protocol of the old object by \
+imposing the old object's rewrite rules on expressions of the form \
+MoveNext[i_Integer] and Current[i_Integer] that must be provided by the old \
+object.\
+\>", "Text",ExpressionUUID->"d6822cb9-6c62-4bf0-a78e-5f6ec57c50b3"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+SIDEBAR: The quotes on \"call\" and \"function\" are to remind you that what \
+you're really doing is rewriting the expression IEnumerator[this_], after \
+substituting an actiual object for the variable this_, into the \
+right-hand-side of the := assignment symbol. The rewrite rule for IEnumerator \
+is permanently installed into the global symbol table because IEnumerator is \
+a permanent part of our programming environment. Mathematica implements \
+function-calling with expression-rewriting, as can be observed by evaluating \
+the following two expressions.  Trace[x+x/.{x->42}], which rewrites first and \
+substitutes second, i.e., rewrites x+x into 2x first, then substitutes 42 for \
+x;  and Trace[Function[x,x+x][42]], which substitues first and rewrites \
+second, i.e., substitutes 42 for x and x+x for Function[x,x+x][42] in one \
+step, and then rewrites 42+42 into 84 after the substitutions. \
+\>", "Item",ExpressionUUID->"d1caba81-91bf-408a-91d1-314ff8d8118b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", "IEnumerator", "]"}], ";"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Checks", " ", "that", " ", "the", " ", "argument", " ", "provides", " ", 
+    "the", " ", 
+    RowBox[{"privateProtocol", "."}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{"IEnumerator", "[", 
+   RowBox[{"this_", "?", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"ProvidesTypeQ", "[", 
+       RowBox[{"#", ",", "privateProtocolType"}], "]"}], "&"}], ")"}]}], 
+   "]"}], ":=", "\n", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+         RowBox[{"Variables", " ", "for", " ", "the", " ", "state"}], "-", 
+         RowBox[{"machine", "."}]}], " ", "*)"}], "\n", 
+       RowBox[{
+        RowBox[{"i", "=", "0"}], ",", "\n", 
+        RowBox[{"iPlus", "=", "Undefined"}]}], "}"}], ",", 
+      RowBox[{"{", "\n", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+         RowBox[{"MoveNext", " ", "is"}], ",", " ", "syntactically", ",", " ", 
+         RowBox[{"a", " ", 
+          RowBox[{"method", "."}]}]}], " ", "*)"}], "\n", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"MoveNext", "[", "]"}], ":>", 
+         RowBox[{"(", " ", "\n", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+           "Access", " ", "the", " ", "private", " ", "implementation", " ", 
+            "of", " ", 
+            RowBox[{"MoveNext", "[", "i", "]"}]}], " ", "*)"}], "\n", 
+          RowBox[{
+           RowBox[{"iPlus", "=", 
+            RowBox[{
+             RowBox[{"MoveNext", "[", "i", "]"}], "/.", "this"}]}], ";", "\n", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "The", " ", "private", " ", "protocol", " ", "returns", " ", 
+             "integer", " ", "indices", " ", "only", " ", "when", " ", 
+             "MoveNext", " ", 
+             RowBox[{"stays", " ", "'"}], 
+             RowBox[{"inside", "'"}], " ", "the", " ", 
+             RowBox[{"sequence", "."}]}], " ", "*)"}], "\n", 
+           RowBox[{"With", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"result", "=", 
+               RowBox[{"(", 
+                RowBox[{"Integer", "===", 
+                 RowBox[{"Head", "[", "iPlus", "]"}]}], ")"}]}], "}"}], ",", 
+             "\n", 
+             RowBox[{
+              RowBox[{"If", "[", 
+               RowBox[{"result", ",", 
+                RowBox[{"i", "=", "iPlus"}]}], "]"}], ";", "\n", 
+              RowBox[{"(*", " ", 
+               RowBox[{"The", " ", "public", " ", "protocol", " ", "for", " ", 
+                RowBox[{"IEnumerator", "'"}], "s", " ", "MoveNext", " ", 
+                "produces", " ", "a", " ", 
+                RowBox[{"Boolean", "."}]}], " ", "*)"}], "\n", "result"}]}], 
+            "]"}]}], ")"}]}], ",", "\n", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+          RowBox[{"Current", " ", "is"}], ",", " ", "syntactically", ",", " ", 
+          RowBox[{"a", " ", 
+           RowBox[{"property", "."}]}]}], " ", "*)"}], "\n", 
+        RowBox[{"Current", ":>", "\n", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+           RowBox[{
+           "The", " ", "following", " ", "effects", " ", "the", " ", 
+            "public"}], ",", " ", 
+           RowBox[{
+           "documented", " ", "protocol", " ", "in", " ", "terms", " ", "of", 
+            " ", "a", " ", "private", " ", "protocol", " ", "member"}], ",", 
+           " ", 
+           RowBox[{"namely", " ", 
+            RowBox[{
+             RowBox[{"Current", "[", "i", "]"}], "."}]}]}], " ", "*)"}], "\n", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{"Not", "[", 
+            RowBox[{"Integer", "===", 
+             RowBox[{"Head", "[", "iPlus", "]"}]}], "]"}], ",", "\n", 
+           RowBox[{"Throw", "[", "\"\<InvalidOperationException\>\"", "]"}], 
+           ",", "\n", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"i", "===", "0"}], ",", "\n", "Undefined", ",", "\n", 
+             RowBox[{"(*", " ", 
+              RowBox[{"Access", " ", 
+               RowBox[{"this", "'"}], "s", " ", "private", " ", 
+               "implementation", " ", "of", " ", 
+               RowBox[{"Current", "[", "i", "]"}]}], " ", "*)"}], "\n", 
+             RowBox[{
+              RowBox[{"Current", "[", "i", "]"}], "/.", "this"}]}], "]"}]}], 
+          "]"}]}]}], "\n", "}"}]}], "]"}], "//", "Sort"}], "//", 
+   "Dispatch"}]}]}], "Code",ExpressionUUID->"850fe8aa-dd69-4c47-b0f0-\
+ef2cbf35d6d9"]
+}, Open  ]],
+
+Cell["\<\
+To get the IEnumerable interface for an object, call the following function, \
+which returns a new object implementing the interface, i.e., providing \
+rewrite rules for the interface's members.\
+\>", "Text",ExpressionUUID->"bd5cd31e-266e-4ad2-a2f4-c7429d2bec2e"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "IEnumerable", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"IEnumerable", "[", 
+   RowBox[{"this_", "?", "ObjectQ"}], "]"}], ":=", 
+  RowBox[{
+   RowBox[{"{", "\n", 
+    RowBox[{
+     RowBox[{"GetEnumerator", "[", "]"}], ":>", 
+     RowBox[{"IEnumerator", "[", "this", "]"}]}], "\n", "}"}], "//", 
+   "Dispatch"}]}]}], "Code",ExpressionUUID->"7dde6fcc-c9e8-4dae-beac-\
+d764a10fd326"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["List: a Provider of IEnumerable", "Section",ExpressionUUID->"09f77029-0c73-4476-a1dd-59d0e7e06bf2"],
+
+Cell["\<\
+list is a provider of IEnumerable. Its type is list; its constructor is \
+list`list, using the class list as a namespace. It must implement the private \
+protocol MoveNext[_Integer] and Current[_Integer]. \
+\>", "Text",ExpressionUUID->"81e15209-d978-4b92-b307-a6475417b53b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "list`list", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"list`list", "[", "data_List", "]"}], ":=", "\n", 
+  RowBox[{"Module", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"len", "=", 
+      RowBox[{"Length", "[", "data", "]"}]}], "}"}], ",", "\n", 
+    RowBox[{"IEnumerable", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+         "what", " ", "follows", " ", "is", " ", "the", " ", "required", " ", 
+          "private", " ", 
+          RowBox[{"protocol", "."}]}], " ", "*)"}], "\n", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"MoveNext", "[", "i_Integer", "]"}], ":>", "\n", 
+          RowBox[{"With", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"iPlus", "=", 
+              RowBox[{"i", "+", "1"}]}], "}"}], ",", "\n", 
+            RowBox[{"(*", " ", 
+             RowBox[{
+              RowBox[{
+              "Required", " ", "to", " ", "produce", " ", "an", " ", 
+               "integer", " ", "iff", " ", "the", " ", "new", " ", "index", 
+               " ", "is", " ", "in"}], "-", 
+              RowBox[{"range", "."}]}], " ", "*)"}], "\n", 
+            RowBox[{"If", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"iPlus", ">", "0"}], "&&", 
+               RowBox[{"iPlus", "<=", "len"}]}], ",", "iPlus", ",", "False"}],
+              "]"}]}], "]"}]}], ",", "\n", 
+         RowBox[{
+          RowBox[{"Current", "[", "i_Integer", "]"}], ":>", "\n", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"i", ">", "0"}], "&&", 
+             RowBox[{"i", "<=", "len"}]}], ",", "\n", 
+            RowBox[{"data", "[", 
+             RowBox[{"[", "i", "]"}], "]"}], ",", "\n", 
+            RowBox[{"Throw", "[", "\"\<IndexOutOfRangeException\>\"", "]"}]}],
+            "]"}]}]}], "\n", "}"}], "//", "Sort"}], "//", "Dispatch"}], "\n", 
+     "]"}]}], "]"}]}]}], "Code",ExpressionUUID->"b66437bb-c5df-449d-a7e6-\
+a0286d1769da"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["ForEach", "Section",ExpressionUUID->"25c2806f-dca2-435b-bb0d-8df3e4b84918"],
+
+Cell["\<\
+Here is a straightforward implementation of forEach, which applies a function \
+to every element of an IEnumerable for side-effect. It corresponds to \
+Mathematica's Scan. It's a prototype for the entire suite of LINQ-ish \
+Standard Query Operators [4]. \
+\>", "Text",ExpressionUUID->"bfd2e298-37b0-4699-b7fe-2634c26ec11f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "forEach", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"forEach", "[", 
+   RowBox[{
+    RowBox[{"enumerable_", "?", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"ProvidesTypeQ", "[", 
+        RowBox[{"#", ",", "IEnumerableType"}], "]"}], "&"}], ")"}]}], ",", 
+    "someFunction_"}], "]"}], ":=", "\n", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"enumerator", "=", 
+      RowBox[{
+       RowBox[{"GetEnumerator", "[", "]"}], "/.", "enumerable"}]}], "}"}], 
+    ",", "\n", 
+    RowBox[{"While", "[", "\n", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"MoveNext", "[", "]"}], "/.", "enumerator"}], ",", "\n", 
+      RowBox[{"someFunction", "[", 
+       RowBox[{"Current", "/.", "enumerator"}], "]"}]}], "\n", "]"}]}], 
+   "]"}]}]}], "Input",ExpressionUUID->"c5f77009-05e5-4294-bfd7-0254b6613803"],
+
+Cell[BoxData[
+ RowBox[{"forEach", "[", 
+  RowBox[{
+   RowBox[{"list`list", "[", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<John Smith\>\"", ",", "\"\<Jim Johnson\>\"", ",", 
+      "\"\<Sue Rabon\>\""}], "}"}], "]"}], ",", "Print"}], "]"}]], "Input",Exp\
+ressionUUID->"197341f4-0623-4820-a7d9-154e718194d4"],
+
+Cell[CellGroupData[{
+
+Cell["A Syntactic Improvement", "Subsection",ExpressionUUID->"690e9e32-7249-495a-9392-83dfd664973b"],
+
+Cell["\<\
+Leo Bushkin and I figured out how to overload Dot -- normally vector inner \
+product -- so we can use more natural OOP notation.\
+\>", "Text",ExpressionUUID->"00475d55-ccb0-4e4f-95dc-f535e3869bc1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "Flip", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Flip", "[", "fn_", "]"}], ":=", 
+   RowBox[{"Function", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"x", ",", "y"}], "}"}], ",", 
+     RowBox[{"fn", "[", 
+      RowBox[{"y", ",", "x"}], "]"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Unprotect", "[", "Dot", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"SetAttributes", "[", 
+   RowBox[{"Dot", ",", "HoldRest"}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Dot", "[", 
+    RowBox[{"rules_", ",", "member_"}], "]"}], ":=", "\n", 
+   RowBox[{"Fold", "[", 
+    RowBox[{
+     RowBox[{"Flip", "@", "ReplaceAll"}], ",", " ", 
+     RowBox[{"List", " ", "@@", " ", "rules"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"Unevaluated", "[", "member", "]"}], "}"}]}], "]"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Dot", "[", 
+    RowBox[{"rules_", ",", "member_", ",", "members__"}], "]"}], " ", ":=", 
+   RowBox[{"(", 
+    RowBox[{"(*", 
+     RowBox[{
+      RowBox[{"Print", "@", "rules"}], ";", 
+      RowBox[{"Print", "@", "member"}], ";", 
+      RowBox[{"Print", "@", "members"}], ";"}], "*)"}], "\n", 
+    RowBox[{"Fold", "[", 
+     RowBox[{
+      RowBox[{"Flip", "@", "ReplaceAll"}], ",", " ", 
+      RowBox[{"List", " ", "@@", " ", "rules"}], ",", 
+      RowBox[{"Unevaluated", "@", 
+       RowBox[{"{", 
+        RowBox[{"member", ",", "members"}], "}"}]}]}], "]"}], ")"}]}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Protect", "[", "Dot", "]"}], ";"}]}], "Code",ExpressionUUID->\
+"d8847156-6fef-4009-984a-2f87f1ac4a8a"],
+
+Cell[CellGroupData[{
+
+Cell["Unit Test", "Subsubsection",ExpressionUUID->"641a0223-7068-4a17-ac7c-00f4f910bf15"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"{", 
+   RowBox[{"m", "->", 
+    RowBox[{"{", 
+     RowBox[{"n", "->", 
+      RowBox[{"{", 
+       RowBox[{"p", "->", "42"}], "}"}]}], "}"}]}], "}"}], " ", ".", " ", "m",
+   " ", ".", " ", "n", " ", ".", " ", "p"}]], "Input",ExpressionUUID->\
+"4ec087ed-5a75-4669-9c0a-eafc7edba182"],
+
+Cell["Here is the more natural notation in action:", "Text",ExpressionUUID->"9aa00662-17ed-4b58-9be7-feec29ef3151"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "forEach", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"forEach", "[", 
+   RowBox[{
+    RowBox[{"enumerable_", "?", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"ProvidesTypeQ", "[", 
+        RowBox[{"#", ",", "IEnumerableType"}], "]"}], "&"}], ")"}]}], ",", 
+    "someFunction_"}], "]"}], ":=", "\n", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"enumerator", "=", 
+      RowBox[{"enumerable", " ", ".", " ", 
+       RowBox[{"GetEnumerator", "[", "]"}]}]}], "}"}], ",", "\n", 
+    RowBox[{"While", "[", "\n", 
+     RowBox[{
+      RowBox[{"enumerator", " ", ".", " ", 
+       RowBox[{"MoveNext", "[", "]"}]}], ",", "\n", 
+      RowBox[{"someFunction", "[", 
+       RowBox[{"enumerator", " ", ".", " ", "Current"}], "]"}]}], "\n", 
+     "]"}]}], "]"}]}]}], "Input",ExpressionUUID->"42146858-955e-4132-9c77-\
+187ccbe61555"],
+
+Cell[BoxData[
+ RowBox[{"forEach", "[", 
+  RowBox[{
+   RowBox[{"list`list", "[", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<John Smith\>\"", ",", "\"\<Jim Johnson\>\"", ",", 
+      "\"\<Sue Rabon\>\""}], "}"}], "]"}], ",", "Print"}], "]"}]], "Input",Exp\
+ressionUUID->"092b6af4-58c7-4be4-98ec-fb259834f8c5"],
+
+Cell["Should behave well for empty lists.", "Text",ExpressionUUID->"612e42ae-4af8-4113-8d92-69edc2d3e8bf"],
+
+Cell[BoxData[
+ RowBox[{"forEach", "[", 
+  RowBox[{
+   RowBox[{"list`list", "[", 
+    RowBox[{"{", "}"}], "]"}], ",", "Print"}], "]"}]], "Input",ExpressionUUID->\
+"7c9c6690-6d90-4033-806d-5b6baa5a4af1"],
+
+Cell["\<\
+Should throw for things that don't provide the IEnumerable type. \
+\>", "Text",ExpressionUUID->"b7e94eeb-5775-4f97-a08f-ac75bc58dda8"],
+
+Cell[BoxData[
+ RowBox[{"Catch", "[", 
+  RowBox[{"forEach", "[", 
+   RowBox[{"foobar", ",", "Print"}], "]"}], "]"}]], "Input",ExpressionUUID->\
+"9e402d52-22f6-42b8-a50f-09b73ee92bf0"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["HashMap: a Provider of IEnumerable", "Section",ExpressionUUID->"64ffe55b-850b-4351-903d-87d8f9461a7a"],
+
+Cell[BoxData[
+ RowBox[{"aHashMap", "=", 
+  RowBox[{
+   RowBox[{"RandomSample", "@", 
+    RowBox[{"MapThread", "[", 
+     RowBox[{"Rule", ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"CharacterRange", "[", 
+         RowBox[{"\"\<a\>\"", ",", "\"\<z\>\""}], "]"}], ",", 
+        RowBox[{"Range", "[", "26", "]"}]}], "}"}]}], "]"}]}], "//", 
+   "Dispatch"}]}]], "Input",ExpressionUUID->"d988b2c8-e6bc-47a9-83cf-\
+4f8815cf1239"],
+
+Cell["\<\
+My impl of hashMap cheats by just using the impl of list`list.\
+\>", "Text",ExpressionUUID->"e58e84df-2755-4780-9368-32afe6baf49d"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"hashMap`hashMap", "[", "kvs_Dispatch", "]"}], ":=", 
+  RowBox[{"list`list", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"List", "@@", "#"}], "&"}], "/@", 
+     RowBox[{"kvs", "[", 
+      RowBox[{"[", "1", "]"}], "]"}]}], "//", "Sort"}], "]"}]}]], "Code",Expre\
+ssionUUID->"0082de7d-3b6f-421d-9081-235a37e19bf0"],
+
+Cell[BoxData[
+ RowBox[{"forEach", "[", 
+  RowBox[{
+   RowBox[{"hashMap`hashMap", "[", "aHashMap", "]"}], ",", "Print"}], 
+  "]"}]], "Input",ExpressionUUID->"f14d3af4-1edb-4c4b-8ae6-6c8338a70a3e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["IObserver and IObservable", "Section",ExpressionUUID->"bb533b7b-5d52-4324-9b8a-f45325fd5db6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\n", 
+   RowBox[{
+   "IObservable", ",", "\n", "ISubject", ",", "\n", "IObserver", ",", "\n", 
+    "IObservableType", ",", "\n", "IObserverType", ",", "\n", "Subscribe", 
+    ",", "\n", "OnNext", ",", " ", "\n", "OnError", ",", "\n", "OnCompleted", 
+    ",", "\n", "Current"}], "]"}], ";"}]], "Code",ExpressionUUID->"8fc7a343-\
+e948-4e65-aa06-6e4f4a1a42ce"],
+
+Cell[CellGroupData[{
+
+Cell["Delay and Force", "Subsection",ExpressionUUID->"edf817f3-d4f7-401e-910d-de815b01cf36"],
+
+Cell["\<\
+Due to a possible bug in the Notebook interface [5], we must abstract \
+definitions of Delay and Force. It's natural to express Delay by wrapping a \
+delayed expression in a thunk -- function of no arguments -- and then Force \
+evaluation by calling the thunk. This is so natural that it hardly merits \
+calling out, and I would not have done but for the fact that it sometimes \
+does not work in the Mathematica Notebook interface, though it does work in \
+the command-line version of Mathematica. The solution is to abstract the \
+operations into explicit calls of Delay and Force and use Hold and \
+ReleaseHold, which work in the Notebook and in the command-line version of \
+Mathematica. \
+\>", "Text",ExpressionUUID->"fdc89264-c4e8-4437-bbb7-ec0279e19766"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", 
+   RowBox[{"Delay", ",", "Force"}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Delay", "=", "Hold"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Force", "=", "ReleaseHold"}], ";"}]}], "Code",ExpressionUUID->\
+"70c877ed-6de7-47e1-a88b-7382c6771762"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Abstract Types", "Subsection",ExpressionUUID->"3a9586c6-5f37-488f-adce-01c2914a3229"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "IObservableType", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"IObservableType", "=", 
+   RowBox[{"{", 
+    RowBox[{"Subscribe", "[", "_", "]"}], "}"}]}], ";"}]}], "Code",ExpressionU\
+UID->"3ebe2afa-3723-408d-9793-e63720834972"],
+
+Cell["\<\
+TODO: Should be Subscribe[_IObserverType]. Also should have a type for \
+exceptions.\
+\>", "Text",ExpressionUUID->"d9d32d84-4e1b-495d-96b0-66e901611ca7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "IObserverType", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"IObserverType", "=", 
+   RowBox[{"{", "\n", 
+    RowBox[{
+     RowBox[{"OnNext", "[", "observation_", "]"}], ",", "\n", 
+     RowBox[{"OnError", "[", "exception_", "]"}], ",", "\n", 
+     RowBox[{"OnCompleted", "[", "]"}]}], "}"}]}], ";"}]}], "Code",ExpressionU\
+UID->"78fdd20c-52ef-452f-9b1c-c960ca518aaa"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Contracts", "Subsection",ExpressionUUID->"72cdd1e5-881d-4020-9d1e-e26928bd6ec3"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "ISubject", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"ISubject", "[", 
+   RowBox[{"this_", "?", "ObjectQ"}], "]"}], ":=", "\n", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"Module", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"subscriptions", "=", 
+        RowBox[{"{", "}"}]}], "}"}], ",", "\n", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"DebugReport", "[", "]"}], ":>", "subscriptions"}], ",", 
+        "\n", 
+        RowBox[{
+         RowBox[{"OnNext", "[", "obn_", "]"}], ":>", "\n", 
+         RowBox[{"Scan", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"#", " ", ".", " ", 
+             RowBox[{"OnNext", "[", "obn", "]"}]}], "&"}], ",", 
+           RowBox[{"GetReplacements", "@", "subscriptions"}]}], "]"}]}], ",", 
+        "\n", 
+        RowBox[{
+         RowBox[{"OnError", "[", "exc_", "]"}], ":>", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Scan", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"#", " ", ".", " ", 
+               RowBox[{"OnError", "[", "exc", "]"}]}], "&"}], ",", 
+             RowBox[{"GetReplacements", "@", "subscriptions"}]}], "]"}], ";", 
+           
+           RowBox[{"subscriptions", "=", "Null"}]}], ")"}]}], ",", "\n", 
+        RowBox[{
+         RowBox[{"OnCompleted", "[", "]"}], ":>", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Scan", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"#", " ", ".", " ", 
+               RowBox[{"OnCompleted", "[", "]"}]}], "&"}], ",", 
+             RowBox[{"GetReplacements", "@", "subscriptions"}]}], "]"}], ";", 
+           
+           RowBox[{"subscriptions", "=", "Null"}]}], ")"}]}], ",", "\n", 
+        RowBox[{
+         RowBox[{"Subscribe", "[", 
+          RowBox[{"that_", "?", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"ProvidesTypeQ", "[", 
+              RowBox[{"#", ",", "IObserverType"}], "]"}], "&"}], ")"}]}], 
+          "]"}], ":>", "\n", 
+         RowBox[{"Module", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"id", ",", "subscription"}], "}"}], ",", "\n", 
+           RowBox[{
+            RowBox[{"id", "=", 
+             RowBox[{"If", "[", 
+              RowBox[{
+               RowBox[{"HasPattern", "[", 
+                RowBox[{"that", ",", "SubscriptionId"}], "]"}], ",", "\n", 
+               RowBox[{"that", " ", ".", " ", "SubscriptionId"}], ",", "\n", 
+               RowBox[{"Unique", "[", "]"}]}], "]"}]}], ";", "\n", 
+            RowBox[{"subscription", "=", 
+             RowBox[{"(", 
+              RowBox[{"id", "->", "that"}], ")"}]}], ";", "\n", 
+            RowBox[{"AppendTo", "[", 
+             RowBox[{"subscriptions", ",", "subscription"}], "]"}], ";", "\n", 
+            RowBox[{"With", "[", 
+             RowBox[{
+              RowBox[{"{", 
+               RowBox[{"unsubscribe", "=", 
+                RowBox[{"Delay", "[", 
+                 RowBox[{"subscriptions", "=", 
+                  RowBox[{"RemoveRule", "[", 
+                   RowBox[{"subscriptions", ",", "id"}], "]"}]}], "]"}]}], 
+               "}"}], ",", "\n", "unsubscribe"}], "]"}]}]}], "]"}]}]}], "\n", 
+       "}"}]}], "]"}], "//", "Sort"}], "//", "Dispatch"}]}]}], "Code",Expressi\
+onUUID->"b3b7ad2b-82cd-4f49-9c35-af742ac15583"],
+
+Cell[CellGroupData[{
+
+Cell["User-Supplied Subscription Ids", "Subsubsection",ExpressionUUID->"28f5ff6d-6216-439a-b462-ca0bf79718cb"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "$obr", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$obr", "[", "subscriptionId_", "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"{", "\n", 
+     RowBox[{
+      RowBox[{"SubscriptionId", ":>", "subscriptionId"}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnNext", "[", "msg_", "]"}], ":>", 
+       RowBox[{"Print", "[", 
+        RowBox[{
+         RowBox[{"ToString", "@", "subscriptionId"}], "<>", 
+         "\"\<: Observer OnNext: \>\"", "<>", " ", 
+         RowBox[{"ToString", "@", "msg"}]}], "]"}]}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnError", "[", "exc_", "]"}], ":>", 
+       RowBox[{"Print", "[", 
+        RowBox[{
+         RowBox[{"ToString", "@", "subscriptionId"}], "<>", 
+         "\"\<: Observer OnError: \>\"", "<>", " ", 
+         RowBox[{"ToString", "@", "exc"}]}], "]"}]}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnCompleted", "[", "]"}], ":>", 
+       RowBox[{"Print", "[", 
+        RowBox[{
+         RowBox[{"ToString", "@", "subscriptionId"}], "<>", 
+         "\"\<: Observer OnCompleted!\>\""}], "]"}]}]}], "}"}], "//", 
+    "Sort"}], "//", "Dispatch"}]}]}], "Input",ExpressionUUID->"73c32a71-0005-\
+4373-be83-0ae081375fcb"],
+
+Cell[BoxData[
+ RowBox[{"unsubscribeFirstObserver", "=", 
+  RowBox[{"$myObl", " ", ".", " ", 
+   RowBox[{"Subscribe", "[", 
+    RowBox[{"$obr", "[", 
+     RowBox[{"Unique", "[", "]"}], "]"}], "]"}]}]}]], "Input",ExpressionUUID->\
+"3cf22806-d648-4fe0-a116-7d84849983ea"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"DebugReport", "[", "]"}]}]], "Input",ExpressionUUID->"be0282ce-\
+d504-4534-a021-03ec52d7c140"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"OnNext", "[", "42", "]"}]}]], "Input",ExpressionUUID->"6d648595-\
+0faa-42a1-891b-e90249fec96e"],
+
+Cell[BoxData[
+ RowBox[{"unsubscribeSecondObserver", "=", 
+  RowBox[{"$myObl", " ", ".", " ", 
+   RowBox[{"Subscribe", "[", 
+    RowBox[{"$obr", "[", 
+     RowBox[{"Unique", "[", "]"}], "]"}], "]"}]}]}]], "Input",ExpressionUUID->\
+"b47e4bf8-d104-43f8-aed0-38e0833f9c57"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"DebugReport", "[", "]"}]}]], "Input",ExpressionUUID->"2a92ff31-\
+d9e1-4a26-b49f-c57dfc8dc090"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"OnNext", "[", "42", "]"}]}]], "Input",ExpressionUUID->"4d9837c9-\
+c339-45d7-af86-a0a857a3b365"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Force", "[", "unsubscribeFirstObserver", "]"}], ";"}]], "Input",Exp\
+ressionUUID->"42e5da98-1c5b-472f-b4a6-db9fca7e7103"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"OnNext", "[", "42", "]"}]}]], "Input",ExpressionUUID->"1363255e-\
+eef4-4f62-b147-32c4aaea514c"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["System-Supplied Subscription Ids", "Subsubsection",ExpressionUUID->"f73dc6ad-2338-4abf-b996-ac4bb32a708c"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$obr", "[", "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"{", "\n", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"OnNext", "[", "msg_", "]"}], ":>", 
+       RowBox[{"Print", "[", 
+        RowBox[{"\"\<Observer OnNext: \>\"", "<>", " ", 
+         RowBox[{"ToString", "@", "msg"}]}], "]"}]}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnError", "[", "exc_", "]"}], ":>", 
+       RowBox[{"Print", "[", 
+        RowBox[{"\"\<Observer OnError: \>\"", "<>", " ", 
+         RowBox[{"ToString", "@", "exc"}]}], "]"}]}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnCompleted", "[", "]"}], ":>", 
+       RowBox[{"Print", "[", "\"\<Observer OnCompleted!\>\"", "]"}]}]}], 
+     "}"}], "//", "Sort"}], "//", "Dispatch"}]}]], "Input",ExpressionUUID->\
+"903fcf40-19bf-454d-a235-1e77a09a3abd"],
+
+Cell[BoxData[
+ RowBox[{"unsubscribeThirdObserver", "=", 
+  RowBox[{"$myObl", " ", ".", " ", 
+   RowBox[{"Subscribe", "[", 
+    RowBox[{"$obr", "[", "]"}], "]"}]}]}]], "Input",ExpressionUUID->"3928b680-\
+a7f1-489f-a517-27e917f0540e"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"DebugReport", "[", "]"}]}]], "Input",ExpressionUUID->"affe91ad-\
+00c7-4a4f-b473-3ea3bb9aa65b"],
+
+Cell[BoxData[
+ RowBox[{"unsubscribeFourthObserver", "=", 
+  RowBox[{"$myObl", " ", ".", " ", 
+   RowBox[{"Subscribe", "[", 
+    RowBox[{"$obr", "[", "]"}], "]"}]}]}]], "Input",ExpressionUUID->"cff2fe46-\
+9743-411b-bade-9dec45654525"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"OnNext", "[", "42", "]"}]}]], "Input",ExpressionUUID->"924a81f0-\
+95f0-40c6-a190-4c0190850405"],
+
+Cell[BoxData[
+ RowBox[{"Force", "[", "unsubscribeThirdObserver", "]"}]], "Input",ExpressionU\
+UID->"f3c72d8e-5bd8-4eeb-8d21-02c6f4be06a1"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"OnNext", "[", "42", "]"}]}]], "Input",ExpressionUUID->"e468fb3c-\
+93f3-407c-a09d-1b44a5ad4db7"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"OnCompleted", "[", "]"}]}]], "Input",ExpressionUUID->"b928d9dc-\
+4ea5-40b8-8476-e391a7e11373"],
+
+Cell[BoxData[
+ RowBox[{"$myObl", " ", ".", " ", 
+  RowBox[{"OnNext", "[", "42", "]"}]}]], "Input",ExpressionUUID->"d002649b-\
+d43b-4e90-a1d4-2e8feeb8196d"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["GenerateWithTime", "Subsection",ExpressionUUID->"3f5b7017-64ae-4d78-9f37-b8ad4711baed"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "$foobr", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"$foobr", "[", "subscriptionId_", "]"}], ":=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"{", "\n", 
+     RowBox[{
+      RowBox[{"SubscriptionId", ":>", "subscriptionId"}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnNext", "[", "msg_", "]"}], ":>", 
+       RowBox[{"(", 
+        RowBox[{"$foo", "=", 
+         RowBox[{
+          RowBox[{"ToString", "@", "subscriptionId"}], "<>", 
+          "\"\<: Observer OnNext: \>\"", "<>", " ", 
+          RowBox[{"ToString", "@", "msg"}]}]}], ")"}]}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnError", "[", "exc_", "]"}], ":>", 
+       RowBox[{"(", 
+        RowBox[{"$foo", "=", 
+         RowBox[{
+          RowBox[{"ToString", "@", "subscriptionId"}], "<>", 
+          "\"\<: Observer OnError: \>\"", "<>", " ", 
+          RowBox[{"ToString", "@", "exc"}]}]}], ")"}]}], ",", "\n", 
+      RowBox[{
+       RowBox[{"OnCompleted", "[", "]"}], ":>", 
+       RowBox[{"(", 
+        RowBox[{"$foo", "=", 
+         RowBox[{
+          RowBox[{"ToString", "@", "subscriptionId"}], "<>", 
+          "\"\<: Observer OnCompleted!\>\""}]}], ")"}]}]}], "}"}], "//", 
+    "Sort"}], "//", "Dispatch"}]}]}], "Input",ExpressionUUID->"112cd6f2-95f7-\
+4978-8c1b-ad81761b706d"],
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "[", "$foo", "]"}]], "Input",ExpressionUUID->"6879c83f-b532-4306-8f58-f5c835c545c9"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "GenerateWithTime", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"GenerateWithTime", "[", "\n", 
+    RowBox[{"initialState_", ",", "\n", "condition_", ",", 
+     RowBox[{"(*", " ", 
+      RowBox[{"State", " ", "\[Rule]", " ", "Bool"}], " ", "*)"}], "\n", 
+     "resultSelector_", ",", " ", 
+     RowBox[{"(*", " ", 
+      RowBox[{"State", " ", "\[Rule]", " ", "Result"}], " ", "*)"}], "\n", 
+     "timeSelector_", ",", " ", 
+     RowBox[{"(*", " ", 
+      RowBox[{"State", " ", "\[Rule]", " ", "Real"}], " ", "*)"}], "\n", 
+     "iterate_"}], " ", 
+    RowBox[{"(*", " ", 
+     RowBox[{"State", " ", "\[Rule]", " ", "State"}], " ", "*)"}], "]"}], ":=",
+    "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Subscribe", "[", 
+        RowBox[{"obr_", "?", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"ProvidesTypeQ", "[", 
+            RowBox[{"#", ",", "IObserverType"}], "]"}], "&"}], ")"}]}], "]"}],
+        ":>", "\n", 
+       RowBox[{"Module", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+          "task", ",", "getTask", ",", "\n", "createCleanUpTask", ",", 
+           "cleanUpTask", ",", "getCleanUpTask", ",", "\n", 
+           RowBox[{"state", "=", "initialState"}]}], "}"}], ",", "\n", 
+         RowBox[{"(*", " ", 
+          RowBox[{"TODO", ":", " ", 
+           RowBox[{
+           "catch", " ", "exceptions", " ", "and", " ", "call", " ", 
+            "OnError"}]}], " ", "*)"}], "\n", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"getTask", "[", "]"}], ":=", "task"}], ";", "\n", 
+          RowBox[{
+           RowBox[{"getCleanUpTask", "[", "]"}], ":=", "cleanUpTask"}], ";", 
+          "\n", 
+          RowBox[{
+           RowBox[{"createCleanUpTask", "[", "]"}], ":=", 
+           RowBox[{"cleanUpTask", "=", 
+            RowBox[{"CreateScheduledTask", "[", "\n", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"RemoveScheduledTask", "@", 
+                RowBox[{"getTask", "[", "]"}]}], ";", "\n", 
+               RowBox[{"obr", " ", ".", " ", 
+                RowBox[{"OnCompleted", "[", "]"}]}], ";", "\n", 
+               RowBox[{"RemoveScheduledTask", "@", 
+                RowBox[{"getCleanUpTask", "[", "]"}]}]}], ",", "\n", 
+              RowBox[{"{", 
+               RowBox[{"timeSelector", "@", "state"}], "}"}]}], "]"}]}]}], 
+          ";", "\n", 
+          RowBox[{"task", "=", 
+           RowBox[{"RunScheduledTask", "[", "\n", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"obr", " ", ".", " ", 
+               RowBox[{"OnNext", "[", 
+                RowBox[{"resultSelector", "@", "state"}], "]"}]}], ";", "\n", 
+              
+              RowBox[{"state", "=", 
+               RowBox[{"iterate", "@", "state"}]}], ";", "\n", 
+              RowBox[{"If", "[", 
+               RowBox[{
+                RowBox[{"condition", "@", "state"}], ",", "\n", 
+                RowBox[{"StartScheduledTask", "@", 
+                 RowBox[{"getTask", "[", "]"}]}], ",", "\n", 
+                RowBox[{"StartScheduledTask", "@", 
+                 RowBox[{"createCleanUpTask", "[", "]"}]}]}], "]"}]}], ",", 
+             "\n", 
+             RowBox[{"{", 
+              RowBox[{"timeSelector", "@", "state"}], "}"}]}], "]"}]}], 
+          ";"}]}], "\n", "]"}]}], "}"}], "//", "Sort"}], "//", "Dispatch"}]}],
+   ";"}]}], "Code",ExpressionUUID->"960b0d40-6245-4191-9daa-6842b628f2b7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$foo", "=", 
+   RowBox[{"-", "1"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"RemoveScheduledTask", "@", 
+   RowBox[{"ScheduledTasks", "[", "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Force", "[", "\n", 
+   RowBox[{
+    RowBox[{"GenerateWithTime", "[", 
+     RowBox[{"0", ",", 
+      RowBox[{
+       RowBox[{"#", "<", "5"}], "&"}], ",", 
+      RowBox[{"#", "&"}], ",", 
+      RowBox[{
+       RowBox[{"(", "0.25", ")"}], "&"}], ",", 
+      RowBox[{
+       RowBox[{"#", "+", "1"}], "&"}]}], "]"}], " ", ".", " ", 
+    RowBox[{"Subscribe", "[", 
+     RowBox[{"$foobr", "[", 
+      RowBox[{"Unique", "[", "]"}], "]"}], "]"}]}], "]"}], ";"}]}], "Input",Ex\
+pressionUUID->"0d54ee05-60da-4146-b492-c6193ce31bb6"],
+
+Cell[BoxData[
+ RowBox[{"ScheduledTasks", "[", "]"}]], "Input",ExpressionUUID->"994413f8-3d7e-4790-8162-2ea930873ea2"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1189, 1235},
+WindowMargins->{{Automatic, 1891}, {57, Automatic}},
+FrontEndVersion->"13.3 for Mac OS X ARM (64-bit) (June 3, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"4cf30e91-ffa9-4a5c-8764-3cd158025c7c"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 114, 0, 98, "Title",ExpressionUUID->"2ba705f7-9116-4e77-925b-57630a118567"],
+Cell[697, 24, 125, 3, 85, "Subtitle",ExpressionUUID->"7d9cce42-ad72-4d22-ae3c-e2e2e0b32183"],
+Cell[CellGroupData[{
+Cell[847, 31, 86, 0, 67, "Section",ExpressionUUID->"c06f1663-6920-4110-a0b1-2f90f48b55df"],
+Cell[936, 33, 391, 6, 58, "Text",ExpressionUUID->"b2d6ddcb-494f-4875-9305-7f1946898c18"],
+Cell[1330, 41, 174, 3, 35, "Text",ExpressionUUID->"d78227cb-a75f-4682-abe8-76caa4149893"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1541, 49, 84, 0, 67, "Section",ExpressionUUID->"83865982-3f02-4cf1-9061-77cc2752de88"],
+Cell[1628, 51, 138, 1, 32, "ItemNumbered",ExpressionUUID->"f2e587b4-2729-4ab5-9641-e4b602f863ec"],
+Cell[1769, 54, 123, 0, 32, "ItemNumbered",ExpressionUUID->"e8060d7f-2245-4dac-9bb4-60f81c5dd324"],
+Cell[1895, 56, 122, 0, 32, "ItemNumbered",ExpressionUUID->"9b9aa592-179d-4a5c-9c3c-b82d0c202342"],
+Cell[2020, 58, 125, 0, 32, "ItemNumbered",ExpressionUUID->"5b7415d2-d5e2-4586-8dac-753768f363b7"],
+Cell[2148, 60, 123, 0, 32, "ItemNumbered",ExpressionUUID->"bdb700ed-58e4-49ff-87c4-c2b4d21a83b2"],
+Cell[2274, 62, 139, 1, 32, "ItemNumbered",ExpressionUUID->"070bebe6-d3af-4dbf-9242-47f750f99e4b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2450, 68, 107, 0, 67, "Section",ExpressionUUID->"20c31112-6301-409b-bfd7-7d1e490ee671"],
+Cell[2560, 70, 394, 6, 58, "Text",ExpressionUUID->"8cb5c905-abd3-4322-8b55-6e48750e5bb6"],
+Cell[2957, 78, 290, 4, 58, "Text",ExpressionUUID->"2b22870e-0212-4b7b-8577-a7fb07d15eff"],
+Cell[3250, 84, 325, 5, 58, "Text",ExpressionUUID->"70897a47-c9f5-4e95-87fa-4a785ae1077d"],
+Cell[CellGroupData[{
+Cell[3600, 93, 90, 0, 54, "Subsection",ExpressionUUID->"601659a2-79fe-4cde-8442-57ff66ede7b0"],
+Cell[3693, 95, 222, 3, 35, "Text",ExpressionUUID->"4d9b652e-f196-4569-9d3c-bed26c6a5c97"],
+Cell[3918, 100, 594, 8, 81, "Text",ExpressionUUID->"1619b0f9-dfde-4fca-8316-269de229a958"],
+Cell[4515, 110, 1193, 37, 248, "Code",ExpressionUUID->"c62e6ecc-652b-43f9-a7bc-840c8a3b147e"],
+Cell[5711, 149, 242, 4, 35, "Text",ExpressionUUID->"59f27f06-2ce3-440a-adb9-038847280877"],
+Cell[5956, 155, 469, 7, 81, "Text",ExpressionUUID->"f3245334-6e93-4f7a-a88b-b6378824ef20"],
+Cell[6428, 164, 613, 9, 104, "Text",ExpressionUUID->"d2a15f1b-7617-4455-8586-9343bd7995e9"],
+Cell[7044, 175, 118, 0, 35, "Text",ExpressionUUID->"b66f85d2-9574-428c-8129-3a40c0bb9486"],
+Cell[7165, 177, 2728, 80, 500, "Code",ExpressionUUID->"3afc48ef-166e-4a12-ad7b-7ee43e1183af"],
+Cell[9896, 259, 224, 3, 35, "Text",ExpressionUUID->"04f243bd-7940-49e4-a5f3-bec728433728"],
+Cell[CellGroupData[{
+Cell[10145, 266, 90, 0, 45, "Subsubsection",ExpressionUUID->"bd1f991c-1e06-4f07-89e4-143c3009c0d4"],
+Cell[10238, 268, 383, 11, 37, "Code",ExpressionUUID->"7cc8ddc3-059d-4cbb-815c-672a28101c36"],
+Cell[10624, 281, 385, 11, 37, "Code",ExpressionUUID->"370fe0ec-d1f8-43a0-953d-c550a2a84b9b"],
+Cell[11012, 294, 286, 8, 37, "Code",ExpressionUUID->"b55d3062-d75a-40b7-9b63-59f4cdd833b3"],
+Cell[11301, 304, 134, 2, 37, "Code",ExpressionUUID->"595f6264-8a75-4409-ab49-36838fa1afad"],
+Cell[11438, 308, 420, 12, 37, "Code",ExpressionUUID->"97997b70-ae14-4141-a134-cfb5e92bbd75"],
+Cell[11861, 322, 413, 12, 37, "Code",ExpressionUUID->"86fd5529-3438-4d00-a291-d9c93dfd37c5"],
+Cell[12277, 336, 484, 14, 59, "Code",ExpressionUUID->"b5e7935f-f6e5-4a1a-a166-d0bfe4dc8370"],
+Cell[12764, 352, 580, 17, 59, "Code",ExpressionUUID->"8ddae94b-57fb-4a6d-a3c0-68d7266840d3"],
+Cell[13347, 371, 551, 16, 101, "Code",ExpressionUUID->"5c3837f6-f73d-4d91-9b61-d08de6b969b9"],
+Cell[13901, 389, 309, 8, 59, "Code",ExpressionUUID->"a0d98484-8d44-4e52-841d-0f9553a94a3b"],
+Cell[14213, 399, 312, 8, 59, "Code",ExpressionUUID->"91237417-7ae9-46c0-b606-e847c24ae797"],
+Cell[14528, 409, 318, 8, 37, "Code",ExpressionUUID->"7f341cd1-8355-4737-b468-e6f0c023c048"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14895, 423, 103, 0, 54, "Subsection",ExpressionUUID->"520baec5-0362-4581-bd18-3a8de8d69061"],
+Cell[15001, 425, 297, 4, 58, "Text",ExpressionUUID->"b2696cc1-4f92-4cbe-bc01-886e08fa571c"],
+Cell[15301, 431, 2742, 86, 353, "Code",ExpressionUUID->"464ace44-0531-4efc-bc85-1b93cb892ae6"],
+Cell[CellGroupData[{
+Cell[18068, 521, 118, 0, 45, "Subsubsection",ExpressionUUID->"fb53bbb8-00cf-44f1-9f82-b29f3dcf408c"],
+Cell[18189, 523, 278, 4, 58, "Text",ExpressionUUID->"191671a5-6267-4189-842b-cd3dc5f9e310"],
+Cell[18470, 529, 1274, 19, 242, "Text",ExpressionUUID->"4cc165c4-8420-41bb-910e-3f63f2b836d2"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[19781, 553, 89, 0, 45, "Subsubsection",ExpressionUUID->"71adac94-0de5-494a-9f97-1cde488d3886"],
+Cell[19873, 555, 159, 4, 70, "Code",ExpressionUUID->"78a63a52-cf19-4d90-9108-9cc582a3709c"],
+Cell[20035, 561, 195, 5, 70, "Code",ExpressionUUID->"067b89c7-886a-466a-93d3-0fade052e209"],
+Cell[20233, 568, 225, 6, 70, "Code",ExpressionUUID->"fee0c38b-b1d1-4db8-adfa-6ee595e2c1e9"],
+Cell[20461, 576, 225, 6, 70, "Code",ExpressionUUID->"d5e7dc58-e71d-4158-a61e-cfcb71d52ee4"],
+Cell[20689, 584, 200, 4, 70, "Code",ExpressionUUID->"875d461b-167e-4776-8b68-5650f6629b44"],
+Cell[20892, 590, 389, 11, 70, "Code",ExpressionUUID->"43c2f6d4-1ed2-40d8-ac43-c88e5be9c163"],
+Cell[21284, 603, 473, 13, 70, "Code",ExpressionUUID->"db04b82d-36c3-422a-9b9b-2b3d70fb407d"],
+Cell[21760, 618, 527, 15, 70, "Code",ExpressionUUID->"c321ce97-29bc-43fe-a699-8debfaa74570"],
+Cell[22290, 635, 527, 15, 70, "Code",ExpressionUUID->"149b2b6b-7637-4cd1-96e3-60b74f1c5aae"],
+Cell[22820, 652, 527, 15, 70, "Code",ExpressionUUID->"f2377521-da30-4e35-9450-e4b74d93dfdc"],
+Cell[23350, 669, 273, 7, 70, "Code",ExpressionUUID->"ecccb160-1dfa-461c-b7c2-80bb9c36133e"],
+Cell[23626, 678, 422, 12, 70, "Code",ExpressionUUID->"e877f0a2-2d09-410b-bdaf-b9eb0f706b1a"],
+Cell[24051, 692, 315, 9, 70, "Code",ExpressionUUID->"8b713a89-db62-4b20-a9eb-9a01a0ae9330"],
+Cell[24369, 703, 749, 23, 70, "Code",ExpressionUUID->"cd82d1fc-e861-4ff7-9455-7f4de5022325"]
+}, Closed]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25167, 732, 118, 0, 54, "Subsection",ExpressionUUID->"931fe0c4-ce58-4e0f-a227-17bbf732e9cd"],
+Cell[25288, 734, 366, 5, 70, "Text",ExpressionUUID->"6ac853a3-4c08-41ea-b442-8c1ea02f134f"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[25691, 744, 90, 0, 38, "Subsection",ExpressionUUID->"ab5c967a-22b8-45c7-97ce-596073807017"],
+Cell[25784, 746, 471, 7, 70, "Text",ExpressionUUID->"5e4052d4-cc5f-4ac5-8305-1d4e2b9b7fb0"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[26292, 758, 111, 0, 38, "Subsection",ExpressionUUID->"f7de6a59-66e2-4fe1-9838-71eca15d3008"],
+Cell[26406, 760, 209, 3, 70, "Text",ExpressionUUID->"e5b43be5-c949-4f38-94c4-c2ec8e8fd37e"]
+}, Closed]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[26664, 769, 101, 0, 67, "Section",ExpressionUUID->"7faaf2eb-31e2-4029-9e52-7a31a8f744cb"],
+Cell[26768, 771, 338, 7, 185, "Code",ExpressionUUID->"94b014ba-5820-4a02-a2d0-d8b44f3ae437"],
+Cell[CellGroupData[{
+Cell[27131, 782, 91, 0, 54, "Subsection",ExpressionUUID->"f507897e-d83d-4d83-9579-d6f3204b886d"],
+Cell[27225, 784, 298, 4, 58, "Text",ExpressionUUID->"a64e749b-0d08-4ba5-9e54-92303e3fb54f"],
+Cell[27526, 790, 277, 7, 59, "Code",ExpressionUUID->"7755f833-966c-4f27-99c4-3849004032c3"],
+Cell[27806, 799, 305, 8, 59, "Code",ExpressionUUID->"396e63dd-4ad3-4273-918a-e2bf6e9f6830"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28148, 812, 86, 0, 54, "Subsection",ExpressionUUID->"e1ffd411-d80e-4f69-acd9-680f977af160"],
+Cell[28237, 814, 453, 7, 81, "Text",ExpressionUUID->"77538bf3-09b9-4093-8c22-5dfe6fbee9eb"],
+Cell[28693, 823, 362, 9, 59, "Code",ExpressionUUID->"ad821ba9-66c7-4b59-8b39-67eb37bcf36b"],
+Cell[29058, 834, 544, 8, 81, "Text",ExpressionUUID->"d6822cb9-6c62-4bf0-a78e-5f6ec57c50b3"],
+Cell[CellGroupData[{
+Cell[29627, 846, 985, 13, 137, "Item",ExpressionUUID->"d1caba81-91bf-408a-91d1-314ff8d8118b"],
+Cell[30615, 861, 4517, 111, 542, "Code",ExpressionUUID->"850fe8aa-dd69-4c47-b0f0-ef2cbf35d6d9"]
+}, Open  ]],
+Cell[35147, 975, 273, 4, 58, "Text",ExpressionUUID->"bd5cd31e-266e-4ad2-a2f4-c7429d2bec2e"],
+Cell[35423, 981, 432, 12, 101, "Code",ExpressionUUID->"7dde6fcc-c9e8-4dae-beac-d764a10fd326"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[35904, 999, 105, 0, 67, "Section",ExpressionUUID->"09f77029-0c73-4476-a1dd-59d0e7e06bf2"],
+Cell[36012, 1001, 284, 4, 58, "Text",ExpressionUUID->"81e15209-d978-4b92-b307-a6475417b53b"],
+Cell[36299, 1007, 2049, 52, 311, "Code",ExpressionUUID->"b66437bb-c5df-449d-a7e6-a0286d1769da"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[38385, 1064, 81, 0, 67, "Section",ExpressionUUID->"25c2806f-dca2-435b-bb0d-8df3e4b84918"],
+Cell[38469, 1066, 333, 5, 58, "Text",ExpressionUUID->"bfd2e298-37b0-4699-b7fe-2634c26ec11f"],
+Cell[38805, 1073, 872, 25, 152, "Input",ExpressionUUID->"c5f77009-05e5-4294-bfd7-0254b6613803"],
+Cell[39680, 1100, 306, 8, 25, "Input",ExpressionUUID->"197341f4-0623-4820-a7d9-154e718194d4"],
+Cell[CellGroupData[{
+Cell[40011, 1112, 100, 0, 54, "Subsection",ExpressionUUID->"690e9e32-7249-495a-9392-83dfd664973b"],
+Cell[40114, 1114, 207, 3, 35, "Text",ExpressionUUID->"00475d55-ccb0-4e4f-95dc-f535e3869bc1"],
+Cell[40324, 1119, 1604, 48, 206, "Code",ExpressionUUID->"d8847156-6fef-4009-984a-2f87f1ac4a8a"],
+Cell[CellGroupData[{
+Cell[41953, 1171, 89, 0, 45, "Subsubsection",ExpressionUUID->"641a0223-7068-4a17-ac7c-00f4f910bf15"],
+Cell[42045, 1173, 316, 9, 25, "Input",ExpressionUUID->"4ec087ed-5a75-4669-9c0a-eafc7edba182"],
+Cell[42364, 1184, 115, 0, 35, "Text",ExpressionUUID->"9aa00662-17ed-4b58-9be7-feec29ef3151"],
+Cell[42482, 1186, 898, 25, 152, "Input",ExpressionUUID->"42146858-955e-4132-9c77-187ccbe61555"],
+Cell[43383, 1213, 306, 8, 25, "Input",ExpressionUUID->"092b6af4-58c7-4be4-98ec-fb259834f8c5"],
+Cell[43692, 1223, 106, 0, 35, "Text",ExpressionUUID->"612e42ae-4af8-4113-8d92-69edc2d3e8bf"],
+Cell[43801, 1225, 201, 5, 25, "Input",ExpressionUUID->"7c9c6690-6d90-4033-806d-5b6baa5a4af1"],
+Cell[44005, 1232, 144, 2, 35, "Text",ExpressionUUID->"b7e94eeb-5775-4f97-a08f-ac75bc58dda8"],
+Cell[44152, 1236, 182, 4, 25, "Input",ExpressionUUID->"9e402d52-22f6-42b8-a50f-09b73ee92bf0"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[44395, 1247, 108, 0, 67, "Section",ExpressionUUID->"64ffe55b-850b-4351-903d-87d8f9461a7a"],
+Cell[44506, 1249, 437, 12, 25, "Input",ExpressionUUID->"d988b2c8-e6bc-47a9-83cf-4f8815cf1239"],
+Cell[44946, 1263, 141, 2, 35, "Text",ExpressionUUID->"e58e84df-2755-4780-9368-32afe6baf49d"],
+Cell[45090, 1267, 361, 10, 37, "Code",ExpressionUUID->"0082de7d-3b6f-421d-9081-235a37e19bf0"],
+Cell[45454, 1279, 195, 4, 25, "Input",ExpressionUUID->"f14d3af4-1edb-4c4b-8ae6-6c8338a70a3e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[45686, 1288, 99, 0, 67, "Section",ExpressionUUID->"bb533b7b-5d52-4324-9b8a-f45325fd5db6"],
+Cell[45788, 1290, 409, 8, 248, "Code",ExpressionUUID->"8fc7a343-e948-4e65-aa06-6e4f4a1a42ce"],
+Cell[CellGroupData[{
+Cell[46222, 1302, 92, 0, 54, "Subsection",ExpressionUUID->"edf817f3-d4f7-401e-910d-de815b01cf36"],
+Cell[46317, 1304, 771, 11, 127, "Text",ExpressionUUID->"fdc89264-c4e8-4437-bbb7-ec0279e19766"],
+Cell[47091, 1317, 292, 8, 80, "Code",ExpressionUUID->"70c877ed-6de7-47e1-a88b-7382c6771762"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[47420, 1330, 91, 0, 54, "Subsection",ExpressionUUID->"3a9586c6-5f37-488f-adce-01c2914a3229"],
+Cell[47514, 1332, 278, 7, 59, "Code",ExpressionUUID->"3ebe2afa-3723-408d-9793-e63720834972"],
+Cell[47795, 1341, 163, 3, 35, "Text",ExpressionUUID->"d9d32d84-4e1b-495d-96b0-66e901611ca7"],
+Cell[47961, 1346, 418, 10, 122, "Code",ExpressionUUID->"78fdd20c-52ef-452f-9b1c-c960ca518aaa"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[48416, 1361, 86, 0, 54, "Subsection",ExpressionUUID->"72cdd1e5-881d-4020-9d1e-e26928bd6ec3"],
+Cell[48505, 1363, 3362, 86, 395, "Code",ExpressionUUID->"b3b7ad2b-82cd-4f49-9c35-af742ac15583"],
+Cell[CellGroupData[{
+Cell[51892, 1453, 110, 0, 45, "Subsubsection",ExpressionUUID->"28f5ff6d-6216-439a-b462-ca0bf79718cb"],
+Cell[52005, 1455, 1212, 31, 131, "Input",ExpressionUUID->"73c32a71-0005-4373-be83-0ae081375fcb"],
+Cell[53220, 1488, 268, 6, 25, "Input",ExpressionUUID->"3cf22806-d648-4fe0-a116-7d84849983ea"],
+Cell[53491, 1496, 154, 3, 25, "Input",ExpressionUUID->"be0282ce-d504-4534-a021-03ec52d7c140"],
+Cell[53648, 1501, 155, 3, 25, "Input",ExpressionUUID->"6d648595-0faa-42a1-891b-e90249fec96e"],
+Cell[53806, 1506, 269, 6, 25, "Input",ExpressionUUID->"b47e4bf8-d104-43f8-aed0-38e0833f9c57"],
+Cell[54078, 1514, 154, 3, 25, "Input",ExpressionUUID->"2a92ff31-d9e1-4a26-b49f-c57dfc8dc090"],
+Cell[54235, 1519, 155, 3, 25, "Input",ExpressionUUID->"4d9837c9-c339-45d7-af86-a0a857a3b365"],
+Cell[54393, 1524, 156, 3, 25, "Input",ExpressionUUID->"42e5da98-1c5b-472f-b4a6-db9fca7e7103"],
+Cell[54552, 1529, 155, 3, 25, "Input",ExpressionUUID->"1363255e-eef4-4f62-b147-32c4aaea514c"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[54744, 1537, 112, 0, 45, "Subsubsection",ExpressionUUID->"f73dc6ad-2338-4abf-b996-ac4bb32a708c"],
+Cell[54859, 1539, 818, 21, 89, "Input",ExpressionUUID->"903fcf40-19bf-454d-a235-1e77a09a3abd"],
+Cell[55680, 1562, 232, 5, 25, "Input",ExpressionUUID->"3928b680-a7f1-489f-a517-27e917f0540e"],
+Cell[55915, 1569, 154, 3, 25, "Input",ExpressionUUID->"affe91ad-00c7-4a4f-b473-3ea3bb9aa65b"],
+Cell[56072, 1574, 233, 5, 25, "Input",ExpressionUUID->"cff2fe46-9743-411b-bade-9dec45654525"],
+Cell[56308, 1581, 155, 3, 25, "Input",ExpressionUUID->"924a81f0-95f0-40c6-a190-4c0190850405"],
+Cell[56466, 1586, 138, 2, 25, "Input",ExpressionUUID->"f3c72d8e-5bd8-4eeb-8d21-02c6f4be06a1"],
+Cell[56607, 1590, 155, 3, 25, "Input",ExpressionUUID->"e468fb3c-93f3-407c-a09d-1b44a5ad4db7"],
+Cell[56765, 1595, 154, 3, 25, "Input",ExpressionUUID->"b928d9dc-4ea5-40b8-8476-e391a7e11373"],
+Cell[56922, 1600, 155, 3, 25, "Input",ExpressionUUID->"d002649b-d43b-4e90-a1d4-2e8feeb8196d"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[57126, 1609, 93, 0, 54, "Subsection",ExpressionUUID->"3f5b7017-64ae-4d78-9f37-b8ad4711baed"],
+Cell[57222, 1611, 1296, 34, 131, "Input",ExpressionUUID->"112cd6f2-95f7-4978-8c1b-ad81761b706d"],
+Cell[58521, 1647, 118, 1, 25, "Input",ExpressionUUID->"6879c83f-b532-4306-8f58-f5c835c545c9"],
+Cell[58642, 1650, 3484, 84, 584, "Code",ExpressionUUID->"960b0d40-6245-4191-9daa-6842b628f2b7"],
+Cell[62129, 1736, 736, 22, 89, "Input",ExpressionUUID->"0d54ee05-60da-4146-b492-c6193ce31bb6"],
+Cell[62868, 1760, 117, 1, 25, "Input",ExpressionUUID->"994413f8-3d7e-4790-8162-2ea930873ea2"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
