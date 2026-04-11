@@ -1,0 +1,1750 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[     73616,       1742]
+NotebookOptionsPosition[     72484,       1712]
+NotebookOutlinePosition[     72931,       1730]
+CellTagsIndexPosition[     72888,       1727]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Pullbacks and Pushforwards", "Title",
+ CellChangeTimes->{{3.9848365238532543`*^9, 
+  3.9848365329864807`*^9}},ExpressionUUID->"316c9f58-1947-4f61-8f3e-\
+dd2001331ced"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", "geomGraph", "]"}], ";"}], "\n"}], "\[IndentingNewLine]", 
+ RowBox[{"With", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"(*", 
+     RowBox[{
+     "Helper", " ", "function", " ", "to", " ", "style", " ", "the", " ", 
+      "structural", " ", "labels", " ", "with", " ", "a", " ", "white", " ", 
+      "background"}], "*)"}], 
+    RowBox[{"strucLabel", "=", 
+     RowBox[{"Function", "[", 
+      RowBox[{"text", ",", 
+       RowBox[{"Framed", "[", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"text", ",", "12", ",", 
+           RowBox[{"GrayLevel", "[", "0.4", "]"}], ",", "Bold"}], "]"}], ",", 
+         
+         RowBox[{"FrameStyle", "->", "None"}], ",", 
+         RowBox[{"Background", "->", "White"}], ",", 
+         RowBox[{"FrameMargins", "->", "2"}]}], "]"}]}], "]"}]}], "}"}], ",", 
+   
+   RowBox[{"geomGraph", "=", 
+    RowBox[{"Graph", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<M\>\"", ",", "\"\<N\>\"", ",", "\"\<TpM\>\"", 
+        ",", "\"\<TfN\>\"", ",", "\"\<TpMco\>\"", ",", "\"\<TfNco\>\""}], 
+       "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"(*", 
+        RowBox[{"Mathematical", " ", "Maps"}], "*)"}], 
+       RowBox[{
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<M\>\"", ",", "\"\<N\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TpM\>\"", ",", "\"\<TfN\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TfNco\>\"", ",", "\"\<TpMco\>\""}], "]"}], ",", 
+        RowBox[{"(*", 
+         RowBox[{"Structural", " ", "Associations"}], "*)"}], 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<M\>\"", ",", "\"\<TpMco\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<N\>\"", ",", "\"\<TfN\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<N\>\"", ",", "\"\<TfNco\>\""}], "]"}]}], "}"}], ",", 
+      RowBox[{"VertexCoordinates", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<M\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "2"}], "}"}]}], ",", 
+         RowBox[{"\"\<N\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"1.3", ",", "2"}], "}"}]}], ",", 
+         RowBox[{"\"\<TpM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "1"}], "}"}]}], ",", 
+         RowBox[{"\"\<TfN\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"1.3", ",", "1"}], "}"}]}], ",", 
+         RowBox[{"\"\<TpMco\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}]}], ",", 
+         RowBox[{"\"\<TfNco\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"1.3", ",", "0"}], "}"}]}]}], "}"}]}], ",", 
+      RowBox[{"VertexLabels", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<M\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{"\"\<Manifold M\>\"", ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<N\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{"\"\<Manifold N\>\"", ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TpM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           
+           RowBox[{"\"\<\\!\\(\\*SubscriptBox[\\(T\\), \\(p\\)]\\)M (Vectors)\
+\>\"", ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TfN\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           
+           RowBox[{"\"\<\\!\\(\\*SubscriptBox[\\(T\\), \\(f(p)\\)]\\)N \
+(Vectors)\>\"", ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TpMco\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           
+           RowBox[{"\"\<\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(p\\), \\(*\\)]\
+\\)M (Covectors)\>\"", ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TfNco\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           
+           RowBox[{"\"\<\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(f(p)\\), \
+\\(*\\)]\\)N (Covectors)\>\"", ",", "Center"}], "]"}]}]}], "}"}]}], ",", 
+      RowBox[{"EdgeLabels", "->", 
+       RowBox[{"{", 
+        RowBox[{"(*", 
+         RowBox[{
+         "Main", " ", "map", " ", "labels", " ", "lifted", " ", "safely", " ",
+           "above", " ", "the", " ", "arrows"}], "*)"}], 
+        RowBox[{
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<N\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{"\"\<Map f\>\"", ",", "14"}], "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", 
+                RowBox[{"-", "0.2"}]}], "}"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpM\>\"", ",", "\"\<TfN\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<Pushforward \\!\\(\\*SubscriptBox[\\(f\\), \\(*\\)]\
+\\)\>\"", ",", "14"}], "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", 
+                RowBox[{"-", "0.2"}]}], "}"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TfNco\>\"", ",", "\"\<TpMco\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<Pullback \\!\\(\\*SuperscriptBox[\\(f\\), \
+\\(*\\)]\\)\>\"", ",", "14"}], "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", 
+                RowBox[{"-", "0.2"}]}], "}"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{"(*", 
+          RowBox[{"Using", " ", 
+           RowBox[{"{", 
+            RowBox[{"0.5", ",", 
+             RowBox[{"{", 
+              RowBox[{"0.5", ",", "0.5"}], "}"}]}], "}"}], " ", "locks", " ", 
+           "the", " ", "absolute", " ", "center", " ", "of", " ", "the", " ", 
+           "text", " ", "box", " ", "precisely", " ", "onto", " ", "the", " ",
+            "line", " ", "stroke"}], "*)"}], 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Tangent Space\>\"", "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", "0.5"}], "}"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<N\>\"", ",", "\"\<TfN\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Tangent Space\>\"", "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", "0.5"}], "}"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{"(*", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"0.75", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", "0.5"}], "}"}]}], "}"}], " ", "slides", " ",
+             "it", " ", "down", " ", "the", " ", "curve"}], ",", 
+           RowBox[{
+            RowBox[{"keeping", " ", "the", " ", "text", " ", "dead"}], "-", 
+            RowBox[{"center", " ", "over", " ", "the", " ", "dots"}]}]}], 
+          "*)"}], 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpMco\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Cotangent Space\>\"", "]"}], ",", 
+            
+            RowBox[{"{", 
+             RowBox[{"0.75", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", "0.5"}], "}"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<N\>\"", ",", "\"\<TfNco\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Cotangent Space\>\"", "]"}], ",", 
+            
+            RowBox[{"{", 
+             RowBox[{"0.75", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.5", ",", "0.5"}], "}"}]}], "}"}]}], "]"}]}]}], 
+        "}"}]}], ",", 
+      RowBox[{"EdgeShapeFunction", "->", 
+       RowBox[{"{", 
+        RowBox[{"(*", 
+         RowBox[{"Draw", " ", "the", " ", "sweeping", " ", "curves"}], "*)"}], 
+        RowBox[{
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpMco\>\""}], "]"}], "->", 
+          RowBox[{"GraphElementData", "[", 
+           RowBox[{"{", 
+            RowBox[{"\"\<CurvedArc\>\"", ",", 
+             RowBox[{"\"\<Curvature\>\"", "->", "0.8"}]}], "}"}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<N\>\"", ",", "\"\<TfNco\>\""}], "]"}], "->", 
+          RowBox[{"GraphElementData", "[", 
+           RowBox[{"{", 
+            RowBox[{"\"\<CurvedArc\>\"", ",", 
+             RowBox[{"\"\<Curvature\>\"", "->", 
+              RowBox[{"-", "0.8"}]}]}], "}"}], "]"}]}], ",", 
+         RowBox[{"(*", 
+          RowBox[{
+          "EXPLICITLY", " ", "lock", " ", "the", " ", "arrowheads", " ", "on",
+            " ", "the", " ", "main", " ", "maps", " ", "so", " ", "the", " ", 
+           "engine", " ", "cannot", " ", "delete", " ", "them"}], "*)"}], 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<N\>\""}], "]"}], "->", 
+          RowBox[{"GraphElementData", "[", 
+           RowBox[{"{", 
+            RowBox[{"\"\<FilledArrow\>\"", ",", 
+             RowBox[{"\"\<ArrowSize\>\"", "->", "0.04"}]}], "}"}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpM\>\"", ",", "\"\<TfN\>\""}], "]"}], "->", 
+          RowBox[{"GraphElementData", "[", 
+           RowBox[{"{", 
+            RowBox[{"\"\<FilledArrow\>\"", ",", 
+             RowBox[{"\"\<ArrowSize\>\"", "->", "0.04"}]}], "}"}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TfNco\>\"", ",", "\"\<TpMco\>\""}], "]"}], "->", 
+          RowBox[{"GraphElementData", "[", 
+           RowBox[{"{", 
+            RowBox[{"\"\<FilledArrow\>\"", ",", 
+             RowBox[{"\"\<ArrowSize\>\"", "->", "0.04"}]}], "}"}], "]"}]}]}], 
+        "}"}]}], ",", 
+      RowBox[{"VertexShapeFunction", "->", 
+       RowBox[{"Function", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"coord", ",", "name", ",", "size"}], "}"}], ",", 
+         RowBox[{"If", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"name", "===", "\"\<M\>\""}], "||", 
+            RowBox[{"name", "===", "\"\<N\>\""}]}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"RGBColor", "[", 
+              RowBox[{"0.15", ",", "0.15", ",", "0.25"}], "]"}], ",", 
+             RowBox[{"Disk", "[", 
+              RowBox[{"coord", ",", 
+               RowBox[{
+                RowBox[{"Max", "[", "size", "]"}], "*", "1.3"}]}], "]"}]}], 
+            "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"RGBColor", "[", 
+              RowBox[{"0.15", ",", "0.15", ",", "0.25"}], "]"}], ",", 
+             RowBox[{"Rectangle", "[", 
+              RowBox[{
+               RowBox[{"coord", "-", "size"}], ",", 
+               RowBox[{"coord", "+", "size"}]}], "]"}]}], "}"}]}], "]"}]}], 
+        "]"}]}], ",", 
+      RowBox[{"VertexSize", "->", 
+       RowBox[{"{", 
+        RowBox[{"\"\<Scaled\>\"", ",", "0.18"}], "}"}]}], ",", 
+      RowBox[{"VertexLabelStyle", "->", 
+       RowBox[{"Directive", "[", 
+        RowBox[{"White", ",", 
+         RowBox[{"FontFamily", "->", "\"\<Helvetica\>\""}], ",", "14"}], 
+        "]"}]}], ",", 
+      RowBox[{"EdgeStyle", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"_", "->", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Black", ",", 
+            RowBox[{"AbsoluteThickness", "[", "3", "]"}]}], "]"}]}], ",", 
+         RowBox[{"(*", 
+          RowBox[{"Re", "-", 
+           RowBox[{"apply", " ", "the", " ", "thick", " ", "dotted", " ", 
+            RowBox[{"style", ".", 
+             RowBox[{"Arrowheads", "[", "0", "]"}]}], " ", "removes", " ", 
+            "directional", " ", "points", " ", "from", " ", "structural", " ",
+             "lines"}]}], "*)"}], 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], "->", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Dotted", ",", 
+            RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "4.5", "]"}], ",", 
+            RowBox[{"Arrowheads", "[", "0", "]"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpMco\>\""}], "]"}], "->", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Dotted", ",", 
+            RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "4.5", "]"}], ",", 
+            RowBox[{"Arrowheads", "[", "0", "]"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<N\>\"", ",", "\"\<TfN\>\""}], "]"}], "->", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Dotted", ",", 
+            RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "4.5", "]"}], ",", 
+            RowBox[{"Arrowheads", "[", "0", "]"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<N\>\"", ",", "\"\<TfNco\>\""}], "]"}], "->", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Dotted", ",", 
+            RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "4.5", "]"}], ",", 
+            RowBox[{"Arrowheads", "[", "0", "]"}]}], "]"}]}]}], "}"}]}], ",", 
+      
+      RowBox[{"ImagePadding", "->", "60"}], ",", 
+      RowBox[{"ImageSize", "->", "750"}]}], "]"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.984838650754169*^9, 3.984838650755123*^9}},
+ CellLabel->"In[22]:=",ExpressionUUID->"cc4a82c8-a6e3-4042-a5ba-9027ddc2b565"],
+
+Cell[BoxData[
+ GraphicsBox[
+  NamespaceBox["NetworkGraphics",
+   DynamicModuleBox[{Typeset`graph = HoldComplete[
+     Graph[{
+      "M", "N", "TpM", "TfN", "TpMco", "TfNco"}, {{{1, 2}, {3, 4}, {6, 5}, {1,
+        3}, {1, 5}, {2, 4}, {2, 6}}, Null}, {
+      EdgeLabels -> {DirectedEdge["M", "N"] -> Placed[
+           Style["Map f", 14], {0.5, {0.5, -0.2}}], 
+         DirectedEdge["TpM", "TfN"] -> Placed[
+           Style["Pushforward \!\(\*SubscriptBox[\(f\), \(*\)]\)", 14], {
+           0.5, {0.5, -0.2}}], DirectedEdge["N", "TfN"] -> Placed[
+           Framed[
+            Style["Tangent Space", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], {0.5, {0.5, 0.5}}], 
+         DirectedEdge["TfNco", "TpMco"] -> Placed[
+           Style["Pullback \!\(\*SuperscriptBox[\(f\), \(*\)]\)", 14], {
+           0.5, {0.5, -0.2}}], DirectedEdge["M", "TpM"] -> Placed[
+           Framed[
+            Style["Tangent Space", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], {0.5, {0.5, 0.5}}], 
+         DirectedEdge["N", "TfNco"] -> Placed[
+           Framed[
+            Style["Cotangent Space", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], {0.75, {0.5, 0.5}}], 
+         DirectedEdge["M", "TpMco"] -> Placed[
+           Framed[
+            Style["Cotangent Space", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], {0.75, {0.5, 0.5}}]}, 
+       EdgeShapeFunction -> {
+        DirectedEdge["TfNco", "TpMco"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.04}], DirectedEdge["N", "TfNco"] -> 
+         GraphComputation`GraphElementData[{
+           "CurvedArc", "Curvature" -> -0.8}], DirectedEdge["M", "TpMco"] -> 
+         GraphComputation`GraphElementData[{"CurvedArc", "Curvature" -> 0.8}],
+          DirectedEdge["M", "N"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.04}], DirectedEdge["TpM", "TfN"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.04}]}, 
+       EdgeStyle -> {DirectedEdge["N", "TfNco"] -> Directive[
+           Dashing[{0, Small}], 
+           GrayLevel[0.5], 
+           AbsoluteThickness[4.5], 
+           Arrowheads[0]], DirectedEdge["TfNco", "TpMco"] -> Directive[
+           GrayLevel[0], 
+           AbsoluteThickness[3]], DirectedEdge["N", "TfN"] -> Directive[
+           Dashing[{0, Small}], 
+           GrayLevel[0.5], 
+           AbsoluteThickness[4.5], 
+           Arrowheads[0]], DirectedEdge["M", "TpMco"] -> Directive[
+           Dashing[{0, Small}], 
+           GrayLevel[0.5], 
+           AbsoluteThickness[4.5], 
+           Arrowheads[0]], DirectedEdge["M", "N"] -> Directive[
+           GrayLevel[0], 
+           AbsoluteThickness[3]], DirectedEdge["TpM", "TfN"] -> Directive[
+           GrayLevel[0], 
+           AbsoluteThickness[3]], DirectedEdge["M", "TpM"] -> Directive[
+           Dashing[{0, Small}], 
+           GrayLevel[0.5], 
+           AbsoluteThickness[4.5], 
+           Arrowheads[0]]}, ImagePadding -> 60, ImageSize -> 750, 
+       VertexCoordinates -> {{0, 2}, {1.3, 2}, {0, 1}, {1.3, 1}, {0, 0}, {
+         1.3, 0}}, 
+       VertexLabels -> {
+        "N" -> Placed["Manifold N", Center], "TpM" -> 
+         Placed["\!\(\*SubscriptBox[\(T\), \(p\)]\)M (Vectors)", Center], "M" -> 
+         Placed["Manifold M", Center], "TfNco" -> 
+         Placed["\!\(\*SubsuperscriptBox[\(T\), \(f(p)\), \(*\)]\)N \
+(Covectors)", Center], "TpMco" -> 
+         Placed["\!\(\*SubsuperscriptBox[\(T\), \(p\), \(*\)]\)M (Covectors)",
+            Center], "TfN" -> 
+         Placed["\!\(\*SubscriptBox[\(T\), \(f(p)\)]\)N (Vectors)", Center]}, 
+       VertexLabelStyle -> {
+         Directive[
+          GrayLevel[1], FontFamily -> "Helvetica", 14]}, VertexShapeFunction -> {
+         Function[{$CellContext`coord, $CellContext`name, $CellContext`size}, 
+          
+          If[
+           Or[$CellContext`name === "M", $CellContext`name === "N"], {
+            RGBColor[0.15, 0.15, 0.25], 
+            Disk[$CellContext`coord, Max[$CellContext`size] 1.3]}, {
+            RGBColor[0.15, 0.15, 0.25], 
+            
+            Rectangle[$CellContext`coord - $CellContext`size, \
+$CellContext`coord + $CellContext`size]}]]}, 
+       VertexSize -> {{"Scaled", 0.18}}}]]}, 
+    TagBox[GraphicsGroupBox[{
+       {Hue[0.6, 0.7, 0.7], Opacity[0.7], CapForm["Round"], 
+        Arrowheads[{{Medium, 0.8}}], {
+         {GrayLevel[0], AbsoluteThickness[3], 
+          {Arrowheads[{{0.04, 0.8, {
+               GraphicsBox[
+                
+                FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                 0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                 0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+           ArrowBox[{{0., 2.}, {1.3, 2.}}]}}, InsetBox[
+          StyleBox["\<\"Map f\"\>",
+           StripOnInput->False,
+           FontSize->14], Offset[{0, 2}, {0.65, 2.}], ImageScaled[{0.5, -0.2}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0.5], AbsoluteThickness[4.5], Dashing[{0, Small}], 
+          Arrowheads[0], ArrowBox[{{0., 2.}, {0., 1.}}]}, InsetBox[
+          FrameBox[
+           StyleBox["\<\"Tangent Space\"\>",
+            StripOnInput->False,
+            LineColor->GrayLevel[0.4],
+            FrontFaceColor->GrayLevel[0.4],
+            BackFaceColor->GrayLevel[0.4],
+            GraphicsColor->GrayLevel[0.4],
+            FontSize->12,
+            FontWeight->Bold,
+            FontColor->GrayLevel[0.4]],
+           Background->GrayLevel[1],
+           FrameMargins->2,
+           FrameStyle->None,
+           StripOnInput->False], Offset[{0, 2}, {0., 1.5}], ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0.5], AbsoluteThickness[4.5], Dashing[{0, Small}], 
+          Arrowheads[0], BezierCurveBox[{{0., 2.}, {0.8, 1.}, {0., 0.}}]}, 
+         InsetBox[
+          FrameBox[
+           StyleBox["\<\"Cotangent Space\"\>",
+            StripOnInput->False,
+            LineColor->GrayLevel[0.4],
+            FrontFaceColor->GrayLevel[0.4],
+            BackFaceColor->GrayLevel[0.4],
+            GraphicsColor->GrayLevel[0.4],
+            FontSize->12,
+            FontWeight->Bold,
+            FontColor->GrayLevel[0.4]],
+           Background->GrayLevel[1],
+           FrameMargins->2,
+           FrameStyle->None,
+           StripOnInput->False], Offset[{0, 2}, {0., 0.5}], ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0.5], AbsoluteThickness[4.5], Dashing[{0, Small}], 
+          Arrowheads[0], ArrowBox[{{1.3, 2.}, {1.3, 1.}}]}, InsetBox[
+          FrameBox[
+           StyleBox["\<\"Tangent Space\"\>",
+            StripOnInput->False,
+            LineColor->GrayLevel[0.4],
+            FrontFaceColor->GrayLevel[0.4],
+            BackFaceColor->GrayLevel[0.4],
+            GraphicsColor->GrayLevel[0.4],
+            FontSize->12,
+            FontWeight->Bold,
+            FontColor->GrayLevel[0.4]],
+           Background->GrayLevel[1],
+           FrameMargins->2,
+           FrameStyle->None,
+           StripOnInput->False], Offset[{0, 2}, {1.3, 1.5}], ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0.5], AbsoluteThickness[4.5], Dashing[{0, Small}], 
+          Arrowheads[0], BezierCurveBox[{{1.3, 2.}, {0.5, 1.}, {1.3, 0.}}]}, 
+         InsetBox[
+          FrameBox[
+           StyleBox["\<\"Cotangent Space\"\>",
+            StripOnInput->False,
+            LineColor->GrayLevel[0.4],
+            FrontFaceColor->GrayLevel[0.4],
+            BackFaceColor->GrayLevel[0.4],
+            GraphicsColor->GrayLevel[0.4],
+            FontSize->12,
+            FontWeight->Bold,
+            FontColor->GrayLevel[0.4]],
+           Background->GrayLevel[1],
+           FrameMargins->2,
+           FrameStyle->None,
+           StripOnInput->False], Offset[{0, 2}, {1.3, 0.5}], ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0], AbsoluteThickness[3], 
+          {Arrowheads[{{0.04, 0.8, {
+               GraphicsBox[
+                
+                FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                 0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                 0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+           ArrowBox[{{0., 1.}, {1.3, 1.}}]}}, InsetBox[
+          
+          StyleBox["\<\"Pushforward \\!\\(\\*SubscriptBox[\\(f\\), \
+\\(*\\)]\\)\"\>",
+           StripOnInput->False,
+           FontSize->14], Offset[{0, 2}, {0.65, 1.}], ImageScaled[{0.5, -0.2}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0], AbsoluteThickness[3], 
+          {Arrowheads[{{0.04, 0.8, {
+               GraphicsBox[
+                
+                FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                 0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                 0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+           ArrowBox[{{1.3, 0.}, {0., 0.}}]}}, InsetBox[
+          
+          StyleBox["\<\"Pullback \\!\\(\\*SuperscriptBox[\\(f\\), \\(*\\)]\\)\
+\"\>",
+           StripOnInput->False,
+           FontSize->14], Offset[{0, 2}, {0.65, 0.}], ImageScaled[{0.5, -0.2}],
+          BaseStyle->"Graphics"]}}, 
+       {Hue[0.6, 0.5, 1.], EdgeForm[{GrayLevel[0], Opacity[0.7]}], {
+         {RGBColor[0.15, 0.15, 0.25], DiskBox[{0., 2.}, 0.2790885343399116]}, 
+         InsetBox[
+          StyleBox["\<\"Manifold M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontFamily->"Helvetica",
+           FontSize->14,
+           FontColor->GrayLevel[1]], {0., 2.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], DiskBox[{1.3, 2.}, 0.2790885343399116]},
+          InsetBox[
+          StyleBox["\<\"Manifold N\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontFamily->"Helvetica",
+           FontSize->14,
+           FontColor->GrayLevel[1]], {1.3, 2.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{-0.21468348795377815, 0.7853165120462219}, \
+{0.21468348795377815, 1.2146834879537782}]}, InsetBox[
+          
+          StyleBox["\<\"\\!\\(\\*SubscriptBox[\\(T\\), \\(p\\)]\\)M (Vectors)\
+\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontFamily->"Helvetica",
+           FontSize->14,
+           FontColor->GrayLevel[1]], {0., 1.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{1.0853165120462218, 0.7853165120462219}, \
+{1.5146834879537783, 1.2146834879537782}]}, InsetBox[
+          
+          StyleBox["\<\"\\!\\(\\*SubscriptBox[\\(T\\), \\(f(p)\\)]\\)N \
+(Vectors)\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontFamily->"Helvetica",
+           FontSize->14,
+           FontColor->GrayLevel[1]], {1.3, 1.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{-0.21468348795377815, -0.21468348795377815}, \
+{0.21468348795377815, 0.21468348795377815}]}, InsetBox[
+          
+          StyleBox["\<\"\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(p\\), \\(*\\)]\
+\\)M (Covectors)\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontFamily->"Helvetica",
+           FontSize->14,
+           FontColor->GrayLevel[1]], {0., 0.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{1.0853165120462218, -0.21468348795377815}, \
+{1.5146834879537783, 0.21468348795377815}]}, InsetBox[
+          
+          StyleBox["\<\"\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(f(p)\\), \
+\\(*\\)]\\)N (Covectors)\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontFamily->"Helvetica",
+           FontSize->14,
+           FontColor->GrayLevel[1]], {1.3, 0.},
+          BaseStyle->"Graphics"]}}}],
+     MouseAppearanceTag["NetworkGraphics"]],
+    AllowKernelInitialization->False]],
+  DefaultBaseStyle->"NetworkGraphics",
+  FormatType->TraditionalForm,
+  FrameTicks->None,
+  ImagePadding->60,
+  ImageSize->750]], "Output",
+ CellChangeTimes->{3.984838653017997*^9},
+ CellLabel->"Out[23]=",ExpressionUUID->"ea2e7204-0b0e-46f3-be61-22461c24be51"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", "bundleGraph", "]"}], ";"}], "\n"}], "\[IndentingNewLine]", 
+ RowBox[{"With", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"(*", 
+     RowBox[{"White", "-", 
+      RowBox[{
+      "background", " ", "labels", " ", "for", " ", "structural", " ", 
+       "lines"}]}], "*)"}], 
+    RowBox[{
+     RowBox[{"strucLabel", "=", 
+      RowBox[{"Function", "[", 
+       RowBox[{"text", ",", 
+        RowBox[{"Framed", "[", 
+         RowBox[{
+          RowBox[{"Style", "[", 
+           RowBox[{"text", ",", "12", ",", 
+            RowBox[{"GrayLevel", "[", "0.4", "]"}], ",", "Bold"}], "]"}], ",", 
+          RowBox[{"FrameStyle", "->", "None"}], ",", 
+          RowBox[{"Background", "->", "White"}], ",", 
+          RowBox[{"FrameMargins", "->", "2"}]}], "]"}]}], "]"}]}], ",", 
+     RowBox[{"mapLabel", "=", 
+      RowBox[{"Function", "[", 
+       RowBox[{"text", ",", 
+        RowBox[{"Style", "[", 
+         RowBox[{"text", ",", "13", ",", "Black", ",", "Bold"}], "]"}]}], 
+       "]"}]}]}], "}"}], ",", 
+   RowBox[{"bundleGraph", "=", 
+    RowBox[{"Graph", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<TM\>\"", ",", "\"\<TStarM\>\"", ",", "\"\<M\>\"", 
+        ",", "\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"(*", "Projections", "*)"}], 
+       RowBox[{
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TM\>\"", ",", "\"\<M\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TStarM\>\"", ",", "\"\<M\>\""}], "]"}], ",", 
+        RowBox[{"(*", "Inclusions", "*)"}], 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TpM\>\"", ",", "\"\<TM\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TpStarM\>\"", ",", "\"\<TStarM\>\""}], "]"}], ",", 
+        RowBox[{"(*", 
+         RowBox[{"Associations", " ", 
+          RowBox[{"(", 
+           RowBox[{"Base", " ", "point", " ", "attachment"}], ")"}]}], "*)"}], 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<M\>\"", ",", "\"\<TpStarM\>\""}], "]"}], ",", 
+        RowBox[{"(*", "Duality", "*)"}], 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "]"}]}], "}"}], ",", 
+      RowBox[{"VertexCoordinates", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<TM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "2"}], "}"}]}], ",", 
+         RowBox[{"\"\<TStarM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"2.6", ",", "2"}], "}"}]}], ",", 
+         RowBox[{"\"\<M\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"1.3", ",", "1"}], "}"}]}], ",", 
+         RowBox[{"\"\<TpM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}]}], ",", 
+         RowBox[{"\"\<TpStarM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"2.6", ",", "0"}], "}"}]}]}], "}"}]}], ",", 
+      RowBox[{"VertexLabels", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<TM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{"\"\<Tangent Bundle TM\>\"", ",", "14", ",", "White"}], 
+             "]"}], ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TStarM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<Cotangent Bundle \\!\\(\\*SuperscriptBox[\\(T\\), \
+\\(*\\)]\\)M\>\"", ",", "14", ",", "White"}], "]"}], ",", "Center"}], "]"}]}],
+          ",", 
+         RowBox[{"\"\<M\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{"\"\<Manifold M\>\"", ",", "14", ",", "White"}], "]"}], ",",
+             "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TpM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<\\!\\(\\*SubscriptBox[\\(T\\), \\(p\\)]\\)M\>\"", ",",
+               "14", ",", "White"}], "]"}], ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TpStarM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(p\\), \
+\\(*\\)]\\)M\>\"", ",", "14", ",", "White"}], "]"}], ",", "Center"}], 
+           "]"}]}]}], "}"}]}], ",", 
+      RowBox[{"EdgeShapeFunction", "->", 
+       RowBox[{"{", 
+        RowBox[{"(*", 
+         RowBox[{
+         "Projections", " ", "and", " ", "Inclusions", " ", "get", " ", 
+          "Solid", " ", "Arrows"}], "*)"}], 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TM\>\"", ",", "\"\<M\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TStarM\>\"", ",", "\"\<M\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TpM\>\"", ",", "\"\<TM\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TpStarM\>\"", ",", "\"\<TStarM\>\""}], "]"}]}], "->", 
+          RowBox[{"GraphElementData", "[", 
+           RowBox[{"{", 
+            RowBox[{"\"\<FilledArrow\>\"", ",", 
+             RowBox[{"\"\<ArrowSize\>\"", "->", "0.035"}]}], "}"}], "]"}]}], ",", 
+         RowBox[{"(*", 
+          RowBox[{"Associations", " ", "get", " ", "Dotted", " ", "Lines"}], 
+          "*)"}], 
+         RowBox[{
+          RowBox[{
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<M\>\"", ",", "\"\<TpStarM\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "]"}]}], "->", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Dotted", ",", 
+              RowBox[{"AbsoluteThickness", "[", "4", "]"}], ",", 
+              RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+              RowBox[{"Line", "[", "#1", "]"}]}], "}"}], "&"}], ")"}]}]}], 
+        "}"}]}], ",", 
+      RowBox[{"EdgeLabels", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TM\>\"", ",", "\"\<M\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"mapLabel", "[", "\"\<Projection \[Pi]\>\"", "]"}], ",", 
+            "0.5", ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"-", "1"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TStarM\>\"", ",", "\"\<M\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{
+            "mapLabel", 
+             "[", "\"\<Projection \\!\\(\\*SuperscriptBox[\\(\[Pi]\\), \
+\\(*\\)]\\)\>\"", "]"}], ",", "0.5", ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"-", "1"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpM\>\"", ",", "\"\<TM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"mapLabel", "[", "\"\<Fiber Inclusion\>\"", "]"}], ",", 
+            "0.5", ",", 
+            RowBox[{"{", 
+             RowBox[{"1.2", ",", "0.5"}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpStarM\>\"", ",", "\"\<TStarM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"mapLabel", "[", "\"\<Fiber Inclusion\>\"", "]"}], ",", 
+            "0.5", ",", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"-", "0.2"}], ",", "0.5"}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Attached at p\>\"", "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", "Center"}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpStarM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Attached at p\>\"", "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", "Center"}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Dual Pairing\>\"", "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", "Center"}], "}"}]}], "]"}]}]}], "}"}]}], ",", 
+      RowBox[{"VertexShapeFunction", "->", 
+       RowBox[{"Function", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"coord", ",", "name", ",", "size"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"RGBColor", "[", 
+            RowBox[{"0.15", ",", "0.15", ",", "0.25"}], "]"}], ",", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"name", "===", "\"\<M\>\""}], ",", 
+             RowBox[{"Disk", "[", 
+              RowBox[{"coord", ",", "0.2"}], "]"}], ",", 
+             RowBox[{"Rectangle", "[", 
+              RowBox[{
+               RowBox[{"coord", "-", 
+                RowBox[{"{", 
+                 RowBox[{"0.3", ",", "0.15"}], "}"}]}], ",", 
+               RowBox[{"coord", "+", 
+                RowBox[{"{", 
+                 RowBox[{"0.3", ",", "0.15"}], "}"}]}]}], "]"}]}], "]"}]}], 
+          "}"}]}], "]"}]}], ",", 
+      RowBox[{"ImagePadding", "->", "80"}], ",", 
+      RowBox[{"ImageSize", "->", "800"}]}], "]"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.9848413339866734`*^9, 3.984841333987359*^9}},
+ CellLabel->"In[30]:=",ExpressionUUID->"6d1901f5-3e5c-4443-9dba-b20c2f0b32e6"],
+
+Cell[BoxData[
+ GraphicsBox[
+  NamespaceBox["NetworkGraphics",
+   DynamicModuleBox[{Typeset`graph = HoldComplete[
+     Graph[{
+      "TM", "TStarM", "M", "TpM", "TpStarM"}, {{{1, 3}, {2, 3}, {4, 1}, {5, 
+       2}, {3, 4}, {3, 5}, {4, 5}}, Null}, {
+      EdgeLabels -> {DirectedEdge["M", "TpStarM"] -> Placed[
+           Framed[
+            Style["Attached at p", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], {0.5, Center}], 
+         DirectedEdge["TM", "M"] -> Placed[
+           Style["Projection \[Pi]", 13, 
+            GrayLevel[0], Bold], 0.5, {0.5, -1}], DirectedEdge["TStarM", "M"] -> 
+         Placed[
+           Style["Projection \!\(\*SuperscriptBox[\(\[Pi]\), \(*\)]\)", 13, 
+            GrayLevel[0], Bold], 0.5, {0.5, -1}], DirectedEdge["M", "TpM"] -> 
+         Placed[
+           Framed[
+            Style["Attached at p", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], {0.5, Center}], 
+         DirectedEdge["TpM", "TM"] -> Placed[
+           Style["Fiber Inclusion", 13, 
+            GrayLevel[0], Bold], 0.5, {1.2, 0.5}], 
+         DirectedEdge["TpM", "TpStarM"] -> Placed[
+           Framed[
+            Style["Dual Pairing", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], {0.5, Center}], 
+         DirectedEdge["TpStarM", "TStarM"] -> Placed[
+           Style["Fiber Inclusion", 13, 
+            GrayLevel[0], Bold], 0.5, {-0.2, 0.5}]}, 
+       EdgeShapeFunction -> {
+        DirectedEdge["TpStarM", "TStarM"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}], 
+         DirectedEdge["TpM", "TpStarM"] -> ({Dotted, 
+           AbsoluteThickness[4], 
+           GrayLevel[0.5], 
+           Line[#]}& ), DirectedEdge["M", "TpStarM"] -> ({Dotted, 
+           AbsoluteThickness[4], 
+           GrayLevel[0.5], 
+           Line[#]}& ), DirectedEdge["M", "TpM"] -> ({Dotted, 
+           AbsoluteThickness[4], 
+           GrayLevel[0.5], 
+           Line[#]}& ), DirectedEdge["TStarM", "M"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}], DirectedEdge["TpM", "TM"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}], DirectedEdge["TM", "M"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}]}, ImagePadding -> 80, 
+       ImageSize -> 800, 
+       VertexCoordinates -> {{0, 2}, {2.6, 2}, {1.3, 1}, {0, 0}, {2.6, 0}}, 
+       VertexLabels -> {"TpM" -> Placed[
+           Style["\!\(\*SubscriptBox[\(T\), \(p\)]\)M", 14, 
+            GrayLevel[1]], Center], "M" -> Placed[
+           Style["Manifold M", 14, 
+            GrayLevel[1]], Center], "TM" -> Placed[
+           Style["Tangent Bundle TM", 14, 
+            GrayLevel[1]], Center], "TStarM" -> Placed[
+           Style["Cotangent Bundle \!\(\*SuperscriptBox[\(T\), \(*\)]\)M", 14, 
+            GrayLevel[1]], Center], "TpStarM" -> Placed[
+           Style["\!\(\*SubsuperscriptBox[\(T\), \(p\), \(*\)]\)M", 14, 
+            GrayLevel[1]], Center]}, VertexShapeFunction -> {
+         Function[{$CellContext`coord, $CellContext`name, $CellContext`size}, {
+           RGBColor[0.15, 0.15, 0.25], 
+           If[$CellContext`name === "M", 
+            Disk[$CellContext`coord, 0.2], 
+            
+            Rectangle[$CellContext`coord - {0.3, 
+             0.15}, $CellContext`coord + {0.3, 0.15}]]}]}}]]}, 
+    TagBox[GraphicsGroupBox[{
+       {Hue[0.6, 0.7, 0.7], Opacity[0.7], CapForm["Round"], 
+        Arrowheads[{{Medium, 0.8}}], {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{0., 2.}, {1.3, 1.}}]}, InsetBox[
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0.5`", ",", 
+             RowBox[{"-", "1"}]}], "}"}], "\[InvisibleApplication]", 
+           RowBox[{"(", 
+            StyleBox["\<\"Projection \[Pi]\"\>",
+             StripOnInput->False,
+             LineColor->GrayLevel[0],
+             FrontFaceColor->GrayLevel[0],
+             BackFaceColor->GrayLevel[0],
+             GraphicsColor->GrayLevel[0],
+             FontSize->13,
+             FontWeight->Bold,
+             FontColor->GrayLevel[0]], ")"}]}], Offset[{0, 2}, {0.65, 1.5}], 
+          ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{2.6, 2.}, {1.3, 1.}}]}, InsetBox[
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0.5`", ",", 
+             RowBox[{"-", "1"}]}], "}"}], "\[InvisibleApplication]", 
+           RowBox[{"(", 
+            
+            StyleBox["\<\"Projection \\!\\(\\*SuperscriptBox[\\(\[Pi]\\), \
+\\(*\\)]\\)\"\>",
+             StripOnInput->False,
+             LineColor->GrayLevel[0],
+             FrontFaceColor->GrayLevel[0],
+             BackFaceColor->GrayLevel[0],
+             GraphicsColor->GrayLevel[0],
+             FontSize->13,
+             FontWeight->Bold,
+             FontColor->GrayLevel[0]], ")"}]}], 
+          Offset[{0, 2}, {1.9500000000000002, 1.5}], ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, 
+        {GrayLevel[0.5], AbsoluteThickness[4], Dashing[{0, Small}], 
+         LineBox[{{1.3, 1.}, {0., 0.}}]}, 
+        {GrayLevel[0.5], AbsoluteThickness[4], Dashing[{0, Small}], 
+         LineBox[{{1.3, 1.}, {2.6, 0.}}]}, {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{0., 0.}, {0., 2.}}]}, InsetBox[
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"1.2`", ",", "0.5`"}], "}"}], "\[InvisibleApplication]", 
+           RowBox[{"(", 
+            StyleBox["\<\"Fiber Inclusion\"\>",
+             StripOnInput->False,
+             LineColor->GrayLevel[0],
+             FrontFaceColor->GrayLevel[0],
+             BackFaceColor->GrayLevel[0],
+             GraphicsColor->GrayLevel[0],
+             FontSize->13,
+             FontWeight->Bold,
+             FontColor->GrayLevel[0]], ")"}]}], Offset[{0, 2}, {0., 1.}], 
+          ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, 
+        {GrayLevel[0.5], AbsoluteThickness[4], Dashing[{0, Small}], 
+         LineBox[{{0., 0.}, {2.6, 0.}}]}, {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{2.6, 0.}, {2.6, 2.}}]}, InsetBox[
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "0.2`"}], ",", "0.5`"}], "}"}], "\[InvisibleApplication]", 
+           RowBox[{"(", 
+            StyleBox["\<\"Fiber Inclusion\"\>",
+             StripOnInput->False,
+             LineColor->GrayLevel[0],
+             FrontFaceColor->GrayLevel[0],
+             BackFaceColor->GrayLevel[0],
+             GraphicsColor->GrayLevel[0],
+             FontSize->13,
+             FontWeight->Bold,
+             FontColor->GrayLevel[0]], ")"}]}], Offset[{0, 2}, {2.6, 1.}], 
+          ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}}, 
+       {Hue[0.6, 0.5, 1.], EdgeForm[{GrayLevel[0], Opacity[0.7]}], {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{-0.3, 1.85}, {0.3, 2.15}]}, InsetBox[
+          StyleBox["\<\"Tangent Bundle TM\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {0., 2.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{2.3000000000000003, 1.85}, {2.9, 2.15}]}, InsetBox[
+          
+          StyleBox["\<\"Cotangent Bundle \\!\\(\\*SuperscriptBox[\\(T\\), \
+\\(*\\)]\\)M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {2.6, 2.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], DiskBox[{1.3, 1.}, 0.2]}, InsetBox[
+          StyleBox["\<\"Manifold M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {1.3, 1.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{-0.3, -0.15}, {0.3, 0.15}]}, InsetBox[
+          StyleBox["\<\"\\!\\(\\*SubscriptBox[\\(T\\), \\(p\\)]\\)M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {0., 0.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{2.3000000000000003, -0.15}, {2.9, 0.15}]}, InsetBox[
+          
+          StyleBox["\<\"\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(p\\), \\(*\\)]\
+\\)M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {2.6, 0.},
+          BaseStyle->"Graphics"]}}}],
+     MouseAppearanceTag["NetworkGraphics"]],
+    AllowKernelInitialization->False]],
+  DefaultBaseStyle->"NetworkGraphics",
+  FormatType->TraditionalForm,
+  FrameTicks->None,
+  ImagePadding->80,
+  ImageSize->800]], "Output",
+ CellChangeTimes->{3.984841337600338*^9},
+ CellLabel->"Out[31]=",ExpressionUUID->"2c05dcaf-06d6-4843-a6db-34e4c342b01b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"ClearAll", "[", "bundleGraph", "]"}], ";"}], "\n"}], "\[IndentingNewLine]", 
+ RowBox[{"With", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"(*", 
+     RowBox[{"White", "-", 
+      RowBox[{
+      "background", " ", "labels", " ", "for", " ", "structural", " ", 
+       "lines", " ", "to", " ", "ensure", " ", "legibility"}]}], "*)"}], 
+    RowBox[{
+     RowBox[{"strucLabel", "=", 
+      RowBox[{"Function", "[", 
+       RowBox[{"text", ",", 
+        RowBox[{"Framed", "[", 
+         RowBox[{
+          RowBox[{"Style", "[", 
+           RowBox[{"text", ",", "12", ",", 
+            RowBox[{"GrayLevel", "[", "0.4", "]"}], ",", "Bold"}], "]"}], ",", 
+          RowBox[{"FrameStyle", "->", "None"}], ",", 
+          RowBox[{"Background", "->", "White"}], ",", 
+          RowBox[{"FrameMargins", "->", "2"}]}], "]"}]}], "]"}]}], ",", 
+     RowBox[{"(*", 
+      RowBox[{
+      "Map", " ", "labels", " ", "without", " ", "the", " ", "coordinate", " ",
+        "spillover"}], "*)"}], 
+     RowBox[{"mapLabel", "=", 
+      RowBox[{"Function", "[", 
+       RowBox[{"text", ",", 
+        RowBox[{"Style", "[", 
+         RowBox[{"text", ",", "13", ",", "Black", ",", "Bold"}], "]"}]}], 
+       "]"}]}]}], "}"}], ",", 
+   RowBox[{"bundleGraph", "=", 
+    RowBox[{"Graph", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<TM\>\"", ",", "\"\<TStarM\>\"", ",", "\"\<M\>\"", 
+        ",", "\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TM\>\"", ",", "\"\<M\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TStarM\>\"", ",", "\"\<M\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TpM\>\"", ",", "\"\<TM\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TpStarM\>\"", ",", "\"\<TStarM\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<M\>\"", ",", "\"\<TpStarM\>\""}], "]"}], ",", 
+        RowBox[{"DirectedEdge", "[", 
+         RowBox[{"\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "]"}]}], "}"}], ",", 
+      RowBox[{"VertexCoordinates", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<TM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "2"}], "}"}]}], ",", 
+         RowBox[{"\"\<TStarM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"2.6", ",", "2"}], "}"}]}], ",", 
+         RowBox[{"\"\<M\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"1.3", ",", "1"}], "}"}]}], ",", 
+         RowBox[{"\"\<TpM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "0"}], "}"}]}], ",", 
+         RowBox[{"\"\<TpStarM\>\"", "->", 
+          RowBox[{"{", 
+           RowBox[{"2.6", ",", "0"}], "}"}]}]}], "}"}]}], ",", 
+      RowBox[{"VertexLabels", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<TM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<Tangent Bundle\\n    TM\>\"", ",", "14", ",", 
+              "White"}], "]"}], ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TStarM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<Cotangent Bundle\\n    \\!\\(\\*SuperscriptBox[\\(T\
+\\), \\(*\\)]\\)M\>\"", ",", "14", ",", "White"}], "]"}], ",", "Center"}], 
+           "]"}]}], ",", 
+         RowBox[{"\"\<M\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             RowBox[{"\"\<Manifold M\>\"", ",", "14", ",", "White"}], "]"}], ",",
+             "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TpM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<\\!\\(\\*SubscriptBox[\\(T\\), \\(p\\)]\\)M\>\"", ",",
+               "14", ",", "White"}], "]"}], ",", "Center"}], "]"}]}], ",", 
+         RowBox[{"\"\<TpStarM\>\"", "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"Style", "[", 
+             
+             RowBox[{"\"\<\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(p\\), \
+\\(*\\)]\\)M\>\"", ",", "14", ",", "White"}], "]"}], ",", "Center"}], 
+           "]"}]}]}], "}"}]}], ",", 
+      RowBox[{"EdgeLabels", "->", 
+       RowBox[{"{", 
+        RowBox[{"(*", 
+         RowBox[{"Standard", " ", 
+          RowBox[{"Placed", "[", 
+           RowBox[{"label", ",", "pos"}], "]"}], " ", "syntax", " ", "to", " ",
+           "prevent", " ", "coordinate", " ", "printing"}], "*)"}], 
+        RowBox[{
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TM\>\"", ",", "\"\<M\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"mapLabel", "[", "\"\<Projection \[Pi]\>\"", "]"}], ",", 
+            "0.5"}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TStarM\>\"", ",", "\"\<M\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{
+            "mapLabel", 
+             "[", "\"\<Projection \\!\\(\\*SuperscriptBox[\\(\[Pi]\\), \
+\\(*\\)]\\)\>\"", "]"}], ",", "0.5"}], "]"}]}], ",", 
+         RowBox[{"(*", 
+          RowBox[{"Using", " ", 
+           RowBox[{"{", 
+            RowBox[{"0.5", ",", 
+             RowBox[{"{", 
+              RowBox[{"1.5", ",", "0.5"}], "}"}]}], "}"}], " ", "to", " ", 
+           "push", " ", "the", " ", "text", " ", "horizontally", " ", "away", 
+           " ", "from", " ", "the", " ", "line"}], "*)"}], 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpM\>\"", ",", "\"\<TM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"mapLabel", "[", "\"\<Fiber Inclusion\>\"", "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"{", 
+               RowBox[{"1.5", ",", "0.5"}], "}"}]}], "}"}]}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpStarM\>\"", ",", "\"\<TStarM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"mapLabel", "[", "\"\<Fiber Inclusion\>\"", "]"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"0.5", ",", 
+              RowBox[{"{", 
+               RowBox[{
+                RowBox[{"-", "0.5"}], ",", "0.5"}], "}"}]}], "}"}]}], "]"}]}],
+          ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Attached at p\>\"", "]"}], ",", 
+            "0.5"}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<M\>\"", ",", "\"\<TpStarM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Attached at p\>\"", "]"}], ",", 
+            "0.5"}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{"DirectedEdge", "[", 
+           RowBox[{"\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "]"}], "->", 
+          RowBox[{"Placed", "[", 
+           RowBox[{
+            RowBox[{"strucLabel", "[", "\"\<Dual Pairing\>\"", "]"}], ",", 
+            "0.5"}], "]"}]}]}], "}"}]}], ",", 
+      RowBox[{"EdgeShapeFunction", "->", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TM\>\"", ",", "\"\<M\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TStarM\>\"", ",", "\"\<M\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TpM\>\"", ",", "\"\<TM\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TpStarM\>\"", ",", "\"\<TStarM\>\""}], "]"}]}], "->", 
+          RowBox[{"GraphElementData", "[", 
+           RowBox[{"{", 
+            RowBox[{"\"\<FilledArrow\>\"", ",", 
+             RowBox[{"\"\<ArrowSize\>\"", "->", "0.035"}]}], "}"}], "]"}]}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<M\>\"", ",", "\"\<TpM\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<M\>\"", ",", "\"\<TpStarM\>\""}], "]"}], "|", 
+           RowBox[{"DirectedEdge", "[", 
+            RowBox[{"\"\<TpM\>\"", ",", "\"\<TpStarM\>\""}], "]"}]}], "->", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Dotted", ",", 
+              RowBox[{"AbsoluteThickness", "[", "4", "]"}], ",", 
+              RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+              RowBox[{"Line", "[", "#1", "]"}]}], "}"}], "&"}], ")"}]}]}], 
+        "}"}]}], ",", 
+      RowBox[{"VertexShapeFunction", "->", 
+       RowBox[{"Function", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"coord", ",", "name", ",", "size"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"RGBColor", "[", 
+            RowBox[{"0.15", ",", "0.15", ",", "0.25"}], "]"}], ",", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"name", "===", "\"\<M\>\""}], ",", 
+             RowBox[{"Disk", "[", 
+              RowBox[{"coord", ",", "0.22"}], "]"}], ",", 
+             RowBox[{"Rectangle", "[", 
+              RowBox[{
+               RowBox[{"coord", "-", 
+                RowBox[{"{", 
+                 RowBox[{"0.35", ",", "0.18"}], "}"}]}], ",", 
+               RowBox[{"coord", "+", 
+                RowBox[{"{", 
+                 RowBox[{"0.35", ",", "0.18"}], "}"}]}]}], "]"}]}], "]"}]}], 
+          "}"}]}], "]"}]}], ",", 
+      RowBox[{"ImagePadding", "->", "100"}], ",", 
+      RowBox[{"ImageSize", "->", "850"}]}], "]"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.984841402655325*^9, 3.984841484204445*^9}},
+ CellLabel->"In[36]:=",ExpressionUUID->"116a6e20-aae3-4724-862d-36eaddeafefe"],
+
+Cell[BoxData[
+ GraphicsBox[
+  NamespaceBox["NetworkGraphics",
+   DynamicModuleBox[{Typeset`graph = HoldComplete[
+     Graph[{
+      "TM", "TStarM", "M", "TpM", "TpStarM"}, {{{1, 3}, {2, 3}, {4, 1}, {5, 
+       2}, {3, 4}, {3, 5}, {4, 5}}, Null}, {
+      EdgeLabels -> {DirectedEdge["M", "TpStarM"] -> Placed[
+           Framed[
+            Style["Attached at p", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], 0.5], DirectedEdge["TM", "M"] -> 
+         Placed[
+           Style["Projection \[Pi]", 13, 
+            GrayLevel[0], Bold], 0.5], DirectedEdge["TStarM", "M"] -> Placed[
+           Style["Projection \!\(\*SuperscriptBox[\(\[Pi]\), \(*\)]\)", 13, 
+            GrayLevel[0], Bold], 0.5], DirectedEdge["M", "TpM"] -> Placed[
+           Framed[
+            Style["Attached at p", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], 0.5], DirectedEdge["TpM", "TM"] -> 
+         Placed[
+           Style["Fiber Inclusion", 13, 
+            GrayLevel[0], Bold], {0.5, {1.5, 0.5}}], 
+         DirectedEdge["TpM", "TpStarM"] -> Placed[
+           Framed[
+            Style["Dual Pairing", 12, 
+             GrayLevel[0.4], Bold], FrameStyle -> None, Background -> 
+            GrayLevel[1], FrameMargins -> 2], 0.5], 
+         DirectedEdge["TpStarM", "TStarM"] -> Placed[
+           Style["Fiber Inclusion", 13, 
+            GrayLevel[0], Bold], {0.5, {-0.5, 0.5}}]}, 
+       EdgeShapeFunction -> {
+        DirectedEdge["TpStarM", "TStarM"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}], 
+         DirectedEdge["TpM", "TpStarM"] -> ({Dotted, 
+           AbsoluteThickness[4], 
+           GrayLevel[0.5], 
+           Line[#]}& ), DirectedEdge["M", "TpStarM"] -> ({Dotted, 
+           AbsoluteThickness[4], 
+           GrayLevel[0.5], 
+           Line[#]}& ), DirectedEdge["M", "TpM"] -> ({Dotted, 
+           AbsoluteThickness[4], 
+           GrayLevel[0.5], 
+           Line[#]}& ), DirectedEdge["TStarM", "M"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}], DirectedEdge["TpM", "TM"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}], DirectedEdge["TM", "M"] -> 
+         GraphComputation`GraphElementData[{
+           "FilledArrow", "ArrowSize" -> 0.035}]}, ImagePadding -> 100, 
+       ImageSize -> 850, 
+       VertexCoordinates -> {{0, 2}, {2.6, 2}, {1.3, 1}, {0, 0}, {2.6, 0}}, 
+       VertexLabels -> {"TpM" -> Placed[
+           Style["\!\(\*SubscriptBox[\(T\), \(p\)]\)M", 14, 
+            GrayLevel[1]], Center], "M" -> Placed[
+           Style["Manifold M", 14, 
+            GrayLevel[1]], Center], "TM" -> Placed[
+           Style["Tangent Bundle\n    TM", 14, 
+            GrayLevel[1]], Center], "TStarM" -> Placed[
+           Style[
+           "Cotangent Bundle\n    \!\(\*SuperscriptBox[\(T\), \(*\)]\)M", 14, 
+            
+            GrayLevel[1]], Center], "TpStarM" -> Placed[
+           Style["\!\(\*SubsuperscriptBox[\(T\), \(p\), \(*\)]\)M", 14, 
+            GrayLevel[1]], Center]}, VertexShapeFunction -> {
+         Function[{$CellContext`coord, $CellContext`name, $CellContext`size}, {
+           RGBColor[0.15, 0.15, 0.25], 
+           If[$CellContext`name === "M", 
+            Disk[$CellContext`coord, 0.22], 
+            
+            Rectangle[$CellContext`coord - {0.35, 
+             0.18}, $CellContext`coord + {0.35, 0.18}]]}]}}]]}, 
+    TagBox[GraphicsGroupBox[{
+       {Hue[0.6, 0.7, 0.7], Opacity[0.7], CapForm["Round"], 
+        Arrowheads[{{Medium, 0.8}}], {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{0., 2.}, {1.3, 1.}}]}, InsetBox[
+          StyleBox["\<\"Projection \[Pi]\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->13,
+           FontWeight->Bold,
+           FontColor->GrayLevel[0]], Offset[{0, 2}, {0.65, 1.5}], 
+          ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{2.6, 2.}, {1.3, 1.}}]}, InsetBox[
+          
+          StyleBox["\<\"Projection \\!\\(\\*SuperscriptBox[\\(\[Pi]\\), \
+\\(*\\)]\\)\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->13,
+           FontWeight->Bold,
+           FontColor->GrayLevel[0]], 
+          Offset[{0, 2}, {1.9500000000000002, 1.5}], ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0.5], AbsoluteThickness[4], Dashing[{0, Small}], 
+          LineBox[{{1.3, 1.}, {0., 0.}}]}, InsetBox[
+          FrameBox[
+           StyleBox["\<\"Attached at p\"\>",
+            StripOnInput->False,
+            LineColor->GrayLevel[0.4],
+            FrontFaceColor->GrayLevel[0.4],
+            BackFaceColor->GrayLevel[0.4],
+            GraphicsColor->GrayLevel[0.4],
+            FontSize->12,
+            FontWeight->Bold,
+            FontColor->GrayLevel[0.4]],
+           Background->GrayLevel[1],
+           FrameMargins->2,
+           FrameStyle->None,
+           StripOnInput->False], Offset[{0, 2}, {0.65, 0.5}], ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0.5], AbsoluteThickness[4], Dashing[{0, Small}], 
+          LineBox[{{1.3, 1.}, {2.6, 0.}}]}, InsetBox[
+          FrameBox[
+           StyleBox["\<\"Attached at p\"\>",
+            StripOnInput->False,
+            LineColor->GrayLevel[0.4],
+            FrontFaceColor->GrayLevel[0.4],
+            BackFaceColor->GrayLevel[0.4],
+            GraphicsColor->GrayLevel[0.4],
+            FontSize->12,
+            FontWeight->Bold,
+            FontColor->GrayLevel[0.4]],
+           Background->GrayLevel[1],
+           FrameMargins->2,
+           FrameStyle->None,
+           StripOnInput->False], Offset[{0, 2}, {1.9500000000000002, 0.5}], 
+          ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{0., 0.}, {0., 2.}}]}, InsetBox[
+          StyleBox["\<\"Fiber Inclusion\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->13,
+           FontWeight->Bold,
+           FontColor->GrayLevel[0]], Offset[{0, 2}, {0., 1.}], ImageScaled[{1.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         {GrayLevel[0.5], AbsoluteThickness[4], Dashing[{0, Small}], 
+          LineBox[{{0., 0.}, {2.6, 0.}}]}, InsetBox[
+          FrameBox[
+           StyleBox["\<\"Dual Pairing\"\>",
+            StripOnInput->False,
+            LineColor->GrayLevel[0.4],
+            FrontFaceColor->GrayLevel[0.4],
+            BackFaceColor->GrayLevel[0.4],
+            GraphicsColor->GrayLevel[0.4],
+            FontSize->12,
+            FontWeight->Bold,
+            FontColor->GrayLevel[0.4]],
+           Background->GrayLevel[1],
+           FrameMargins->2,
+           FrameStyle->None,
+           StripOnInput->False], Offset[{0, 2}, {1.3, 0.}], ImageScaled[{0.5, 0}],
+          BaseStyle->"Graphics"]}, {
+         {Arrowheads[{{0.035, 0.8, {
+              GraphicsBox[
+               
+               FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 
+                0}}}, {{{-1., -0.31249915682968066`}, {-0.8749949409780775, \
+-8.881784197001252*^-16}, {-1., 0.3124991568296789}, {
+                0., -8.881784197001252*^-16}}}]], 0.8749949409780782}}}], 
+          ArrowBox[{{2.6, 0.}, {2.6, 2.}}]}, InsetBox[
+          StyleBox["\<\"Fiber Inclusion\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[0],
+           FrontFaceColor->GrayLevel[0],
+           BackFaceColor->GrayLevel[0],
+           GraphicsColor->GrayLevel[0],
+           FontSize->13,
+           FontWeight->Bold,
+           FontColor->GrayLevel[0]], Offset[{0, 2}, {2.6, 1.}], ImageScaled[{-0.5, 0.5}],
+          BaseStyle->"Graphics"]}}, 
+       {Hue[0.6, 0.5, 1.], EdgeForm[{GrayLevel[0], Opacity[0.7]}], {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{-0.35, 1.82}, {0.35, 2.18}]}, InsetBox[
+          StyleBox["\<\"Tangent Bundle\\n    TM\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {0., 2.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{2.25, 1.82}, {2.95, 2.18}]}, InsetBox[
+          
+          StyleBox["\<\"Cotangent Bundle\\n    \
+\\!\\(\\*SuperscriptBox[\\(T\\), \\(*\\)]\\)M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {2.6, 2.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], DiskBox[{1.3, 1.}, 0.22]}, InsetBox[
+          StyleBox["\<\"Manifold M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {1.3, 1.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{-0.35, -0.18}, {0.35, 0.18}]}, InsetBox[
+          StyleBox["\<\"\\!\\(\\*SubscriptBox[\\(T\\), \\(p\\)]\\)M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {0., 0.},
+          BaseStyle->"Graphics"]}, {
+         {RGBColor[0.15, 0.15, 0.25], 
+          RectangleBox[{2.25, -0.18}, {2.95, 0.18}]}, InsetBox[
+          
+          StyleBox["\<\"\\!\\(\\*SubsuperscriptBox[\\(T\\), \\(p\\), \\(*\\)]\
+\\)M\"\>",
+           StripOnInput->False,
+           LineColor->GrayLevel[1],
+           FrontFaceColor->GrayLevel[1],
+           BackFaceColor->GrayLevel[1],
+           GraphicsColor->GrayLevel[1],
+           FontSize->14,
+           FontColor->GrayLevel[1]], {2.6, 0.},
+          BaseStyle->"Graphics"]}}}],
+     MouseAppearanceTag["NetworkGraphics"]],
+    AllowKernelInitialization->False]],
+  DefaultBaseStyle->"NetworkGraphics",
+  FormatType->TraditionalForm,
+  FrameTicks->None,
+  ImagePadding->100,
+  ImageSize->850]], "Output",
+ CellChangeTimes->{3.9848414042932577`*^9, 3.984841485245525*^9},
+ CellLabel->"Out[37]=",ExpressionUUID->"958e1b4e-7e0b-4af9-aed4-43599069a50d"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1327, 1283},
+WindowMargins->{{Automatic, 1381}, {34, Automatic}},
+LightDark->"Light",
+Magnification:>1.25 Inherited,
+FrontEndVersion->"14.3 for Mac OS X ARM (64-bit) (July 8, 2025)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"454ef790-5bcd-49b0-8bad-cce5ba758d4e"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[576, 22, 173, 3, 120, "Title",ExpressionUUID->"316c9f58-1947-4f61-8f3e-dd2001331ced"],
+Cell[CellGroupData[{
+Cell[774, 29, 14568, 346, 1109, "Input",ExpressionUUID->"cc4a82c8-a6e3-4042-a5ba-9027ddc2b565"],
+Cell[15345, 377, 13434, 302, 1216, "Output",ExpressionUUID->"ea2e7204-0b0e-46f3-be61-22461c24be51"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28816, 684, 10314, 249, 777, "Input",ExpressionUUID->"6d1901f5-3e5c-4443-9dba-b20c2f0b32e6"],
+Cell[39133, 935, 11015, 247, 803, "Output",ExpressionUUID->"2c05dcaf-06d6-4843-a6db-34e4c342b01b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[50185, 1187, 10270, 247, 828, "Input",ExpressionUUID->"116a6e20-aae3-4724-862d-36eaddeafefe"],
+Cell[60458, 1436, 11998, 272, 860, "Output",ExpressionUUID->"958e1b4e-7e0b-4af9-aed4-43599069a50d"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
